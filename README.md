@@ -55,7 +55,7 @@ Returns the information about the current user that is logged in.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /user/:userid
+  * URL: /users/:userid
   * Body: none
 
 * Successful Response when there is a logged in user
@@ -95,8 +95,8 @@ information.
 
 * Require Authentication: false
 * Request
-  * Method: GET
-  * URL: /user/:userid
+  * Method: POST
+  * URL: /users/:userid
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -165,7 +165,7 @@ user's information.
 * Require Authentication: false
 * Request
   * Method: POST
-  * URL: /user
+  * URL: /users
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -299,7 +299,7 @@ Returns all the spots owned (created) by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /user/:userId/spots
+  * URL: /users/:userId/spots
   * Body: none
 
 * Successful Response
@@ -480,7 +480,7 @@ Create and return a new image for a spot specified by id.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: POST
-  * URL: /user/:userId/spot/:spotId/image
+  * URL: /users/:userId/spot/:spotId/image
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -527,7 +527,7 @@ Updates and returns an existing spot.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: PUT
-  * URL: /user/:userId/spot/:spotId
+  * URL: /users/:userId/spot/:spotId
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -615,7 +615,7 @@ Deletes an existing spot.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /user/:userId/spot/:spotId
+  * URL: /users/:userId/spot/:spotId
   * Body: none
 
 * Successful Response
@@ -653,7 +653,7 @@ Returns all the reviews written by the current user.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /user/:userId/reviews
+  * URL: /users/:userId/reviews
   * Body: none
 
 * Successful Response
@@ -846,7 +846,7 @@ Create and return a new image for a review specified by id.
 * Require proper authorization: Review must belong to the current user
 * Request
   * Method: POST
-  * URL: /user/:userId/reviews/:reviewId/image
+  * URL: /users/:userId/reviews/:reviewId/image
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -973,7 +973,7 @@ Delete an existing review.
 * Require proper authorization: Review must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /user/:userId/reviews/:reviewId
+  * URL: /users/:userId/reviews/:reviewId
   * Body: none
 
 * Successful Response
@@ -1011,7 +1011,7 @@ Return all the bookings that the current user has made.
 * Require Authentication: true
 * Request
   * Method: GET
-  * URL: /user/:userId/bookings
+  * URL: /users/:userId/bookings
   * Body: none
 
 * Successful Response
@@ -1207,7 +1207,7 @@ Update and return an existing booking.
 * Require proper authorization: Booking must belong to the current user
 * Request
   * Method: PUT
-  * URL: /user/:userId/bookings/:bookingId
+  * URL: /users/:userId/bookings/:bookingId
   * Headers:
     * Content-Type: application/json
   * Body:
@@ -1305,7 +1305,7 @@ Delete an existing booking.
   Spot must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /user/:userId/bookings/:bookingId
+  * URL: /users/:userId/bookings/:bookingId
   * Body: none
 
 * Successful Response
@@ -1357,7 +1357,7 @@ Delete an existing image for a Spot.
 * Require proper authorization: Spot must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /user/:userId/spot/:spotId/image/:imageId
+  * URL: /users/:userId/spot/:spotId/image/:imageId
   * Body: none
 
 * Successful Response
@@ -1394,7 +1394,7 @@ Delete an existing image for a Review.
 * Require proper authorization: Review must belong to the current user
 * Request
   * Method: DELETE
-  * URL: /user/:userId/reviews/:reviewId/image/:imageId
+  * URL: /users/:userId/reviews/:reviewId/image/:imageId
   * Body: none
 
 * Successful Response
