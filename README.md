@@ -2,6 +2,8 @@
 
 ## Database Schema Design
 
+![image](https://user-images.githubusercontent.com/111015201/216239358-d7552347-34ff-460d-81b7-2b6e6aa9ccbd.png)
+
 ## API Documentation
 
 ## USER AUTHENTICATION/AUTHORIZATION
@@ -1477,5 +1479,5 @@ Return spots filtered by query parameters.
       }
     }
     ```
-![image](https://user-images.githubusercontent.com/111015201/216239358-d7552347-34ff-460d-81b7-2b6e6aa9ccbd.png)
+
 
