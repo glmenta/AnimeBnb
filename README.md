@@ -2,10 +2,6 @@
 
 ## Database Schema Design
 
-![airbnb-dbdiagram]
-
-[airbnb-dbdiagram]: ../assets/airbnb_dbdiagram.png
-
 ## API Documentation
 
 ## USER AUTHENTICATION/AUTHORIZATION
@@ -1481,5 +1477,5 @@ Return spots filtered by query parameters.
       }
     }
     ```
-![image](https://user-images.githubusercontent.com/111015201/216237612-af3dd38f-49c0-483a-b278-ad1f1884361e.png)
+![image](https://user-images.githubusercontent.com/111015201/216239358-d7552347-34ff-460d-81b7-2b6e6aa9ccbd.png)
 
