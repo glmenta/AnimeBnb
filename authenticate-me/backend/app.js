@@ -6,6 +6,7 @@ const csurf = require('csurf');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 
+const { ValidationError } = require('sequelize');
 //isProduction that will be true if the environment is in production or not by checking the environment key in the configuration file (backend/config/index.js)
 const { environment } = require('./config');
 const isProduction = environment === 'production';
@@ -50,14 +51,47 @@ app.use(
 //The XSRF-TOKEN cookie value needs to be sent in the header of any request with all HTTP verbs besides GET.
 //This header will be used to validate the _csrf cookie to confirm that the request comes from your site and not an unauthorized site.
 
-// backend/app.js
 const routes = require('./routes');
-
-// ...
 
 app.use(routes); // Connect all the routes
 
-// backend/app.js
-// ...
+//The first error handler is actually just a regular middleware. It will catch any requests that don't match any of the routes defined and create a server error with a status code of 404.
+app.use((_req, _res, next) => {
+  const err = new Error("The requested resource couldn't be found.");
+  //If this resource-not-found middleware is called, an error will be created with the message "The requested resource couldn't be found."
+  err.title = "Resource Not Found";
+  err.errors = ["The requested resource couldn't be found."];
+  err.status = 404;
+  //and a status code of 404.
+  next(err);
+  //Afterwards, next will be invoked with the error. Remember, next invoked with nothing means that error handlers defined after this middleware will not be invoked.
+  //However, next invoked with an error means that error handlers defined after this middleware will be invoked.
+});
+
+//The second error handler is for catching Sequelize errors and formatting them before sending the error response.
+app.use((err, _req, _res, next) => {
+  // check if error is a Sequelize error:
+  if (err instanceof ValidationError) {
+  //If the error that caused this error-handler to be called is an instance of ValidationError from the sequelize package,
+    err.errors = err.errors.map((e) => e.message);
+  //then the error was created from a Sequelize database validation error and the additional keys of title string
+    err.title = 'Validation error';
+  }
+  //and errors array will be added to the error and passed into the next error handling middleware.
+  next(err);
+});
+
+//The last error handler is for formatting all the errors before returning a JSON response.
+//It will include the error message, the errors array, and the error stack trace (if the environment is in development) with the status code of the error message.
+app.use((err, _req, res, _next) => {
+  res.status(err.status || 500);
+  console.error(err);
+  res.json({
+    title: err.title || 'Server Error',
+    message: err.message,
+    errors: err.errors,
+    stack: isProduction ? null : err.stack
+  });
+});
 
 module.exports = app;
