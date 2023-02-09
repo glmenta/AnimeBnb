@@ -38,4 +38,20 @@ router.delete(
     }
   );
 
+// Restore session user
+router.get(
+    '/',
+    restoreUser,
+    (req, res) => {
+      const { user } = req;
+      //The GET /api/session get session user route will return the session user as JSON under the key of user .
+      if (user) {
+        return res.json({
+          user: user.toSafeObject()
+        });
+        //If there is not a session, it will return a JSON with an empty object.
+      } else return res.json({ user: null });
+    }
+  );
+
 module.exports = router;
