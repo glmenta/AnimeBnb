@@ -36,29 +36,29 @@ router.post(
     '/',
     validateSignup,
     async (req, res) => {
-      const { email, password, username } = req.body;
-      const user = await User.signup({ email, username, password });
-
+      const { email, username, password, firstName, lastName } = req.body;
+      const user = await User.signup({ email, username, password, firstName, lastName });
+      console.log(user)
       await setTokenCookie(res, user);
 
       return res.json({
-        user: user
+        user
       });
     }
   );
 // Sign up
-router.post(
-    '/',
-    async (req, res) => {
-      const { email, password, username } = req.body;
-      //call the signup static method on the User model.
-      const user = await User.signup({ email, username, password });
-    //If the user is successfully created, then call setTokenCookie and return a JSON response with the user information.
-      await setTokenCookie(res, user);
+// router.post(
+//     '/',
+//     async (req, res) => {
+//       const { email, password, username, firstName, lastName  } = req.body;
+//       //call the signup static method on the User model.
+//       const user = await User.signup({ email, username, password, firstName, lastName  });
+//     //If the user is successfully created, then call setTokenCookie and return a JSON response with the user information.
+//       await setTokenCookie(res, user);
 
-      return res.json({
-        user: user
-      });
-    }
-  );
+//       return res.json({
+//         user: user
+//       });
+//     }
+//   );
 module.exports = router;
