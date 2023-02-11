@@ -7,7 +7,6 @@ if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;  // define your schema in options object
 }
 
-
 module.exports = {
   async up (queryInterface, Sequelize) {
     options.tableName = 'ReviewImages';
@@ -23,7 +22,6 @@ module.exports = {
       {
         reviewId: 3,
         url: 'link3',
-
       }
     ], {});
   },
