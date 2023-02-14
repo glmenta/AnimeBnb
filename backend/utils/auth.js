@@ -76,4 +76,5 @@ const setTokenCookie = (res, user) => {
     return next(err);
   };
 
+
   module.exports = { setTokenCookie, restoreUser, requireAuth };

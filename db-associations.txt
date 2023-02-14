@@ -1,0 +1,22 @@
+Associate Spots and Reviews
+spotId in reviews table references spots
+A spot has many reviews
+
+Associate Spots and Users (as owner)
+ownerId in spots table references Users
+A spot belongs to a user
+
+Associate Spots and Bookings
+spotId in bookings references spots
+
+Associate Users and Bookings
+userId in bookings references users
+
+Associate Spots and SpotImages
+spotId in spotImage references spots
+spots have many spotImages
+A spot has many images
+
+Associate Reviews and ReviewImages
+reviewId in reviewImages references reviews
+images belongs to a review
