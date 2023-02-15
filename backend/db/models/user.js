@@ -89,7 +89,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         len: [3, 256],
-        isEmail: true
+        isEmail: true,
       }
     },
     hashedPassword: {
