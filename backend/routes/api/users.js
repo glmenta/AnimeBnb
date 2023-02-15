@@ -39,7 +39,6 @@ router.post(
       const { email, username, password, firstName, lastName } = req.body;
       const existingEmail = await User.findOne({ where: { email } })
       const existingUser = await User.findOne({ where: { username } })
-
       if (existingEmail) {
         return res.status(403).json(
           {
