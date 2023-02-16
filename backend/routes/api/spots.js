@@ -19,7 +19,10 @@ router.get('/:spotId', async (req,res) => {
             { model: User },
             { model: Review },
             { model: SpotImage }
-        ]
+        ],
+        attributes: ['id', 'ownerId', 'address', 'city',
+        'state', 'country', 'lat', 'lng', 'name', 'description',
+        'price', 'createdAt', 'updatedAt']
     })
     if (allSpots) {
         res.status(200).json(allSpots)
