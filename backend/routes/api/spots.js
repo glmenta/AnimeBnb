@@ -13,20 +13,61 @@ router.get('/', async (req,res) => {
 
 //get all spots by spotId
 router.get('/:spotId', async (req,res) => {
-    const spotId = 1
-    const Spot = await Spot.findByPk(spotId, {
-        // include: {
-        //     [ model: User ],
-        //     [ model: Review ],
-        //     [ model: SpotImage]
-        // }
+    const id = req.params.spotId
+    const allSpots = await Spot.findByPk(id, {
+        include:[
+            { model: User },
+            { model: Review },
+            { model: SpotImage }
+        ]
     })
-    res.status(200).json({Spot})
+    if (allSpots) {
+        res.status(200).json(allSpots)
+    } else {
+        res.status(404).json({
+            "message": "Spot couldn't be found",
+            "statusCode": 404
+        })
+    }
 })
 
 //get all spots by current user
-// router.get('/current', async (req,res) => {
+router.get('/current', async (req,res) => {
+    let currentUser = await User.findByPk()
+})
 
-// })
-
+//create a spot
+router.post('/', requireAuth, async (req,res) => {
+    const id = req.params.id
+    const { address, city, state, country, lat, lng, name, description, price } = req.body
+    const ownerId = await User.findByPk(id)
+    const newSpot = await Spot.create({
+        ownerId,
+        address,
+        city,
+        state,
+        country,
+        lat,
+        lng,
+        name,
+        description,
+        price
+    })
+    if (newSpot) { return res.status(201).json(newSpot) }
+    else return res.status(400).json({
+        "message": "Validation Error",
+        "statusCode": 400,
+        "errors": {
+          "address": "Street address is required",
+          "city": "City is required",
+          "state": "State is required",
+          "country": "Country is required",
+          "lat": "Latitude is not valid",
+          "lng": "Longitude is not valid",
+          "name": "Name must be less than 50 characters",
+          "description": "Description is required",
+          "price": "Price per day is required"
+        }
+      })
+})
 module.exports = router;

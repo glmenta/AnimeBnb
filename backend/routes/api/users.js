@@ -32,34 +32,46 @@ const validateSignup = [
     handleValidationErrors
   ];
 
-router.post(
-    '/',
-    validateSignup,
-    async (req, res) => {
-      const { email, username, password, firstName, lastName } = req.body;
-      const existingEmail = await User.findOne({ where: { email } })
-      const existingUser = await User.findOne({ where: { username } })
-      if (existingEmail) {
-        return res.status(403).json(
-          {
-            "message": "User already exists",
-            "statusCode": 403,
-            "errors": {
-              "email": "User with that email already exists"
-            }
-          }
-        )
-      }
+router.post( '/', validateSignup, async (req, res) => {
+    const { email, username, password, firstName, lastName } = req.body;
+    const existingEmail = await User.findOne({ where: { email } })
+    const existingUser = await User.findOne({ where: { username } })
 
-      if (existingUser) {
-        return res.status(403).json({
+    if(!req.body) {
+      res.status(400).json({
+        "message": "Validation error",
+        "statusCode": 400,
+        "errors": {
+          "email": "Invalid email",
+          "username": "Username is required",
+          "firstName": "First Name is required",
+          "lastName": "Last Name is required"
+        }
+      })
+    }
+
+    if (existingEmail) {
+      return res.status(403).json(
+         {
           "message": "User already exists",
           "statusCode": 403,
           "errors": {
-            "username": "User with that username already exists"
-          }
-        })
-      }
+            "email": "User with that email already exists"
+           }
+         }
+      )
+    }
+
+    if (existingUser) {
+      return res.status(403).json({
+        "message": "User already exists",
+        "statusCode": 403,
+        "errors": {
+          "username": "User with that username already exists"
+        }
+      })
+    }
+
       const user = await User.signup({ email, username, password, firstName, lastName });
       await setTokenCookie(res, user);
       return res.json({
@@ -67,6 +79,8 @@ router.post(
       });
     }
   );
+
+  //if curre user.id = ownerId => authorized;
 // Sign up
 // router.post(
 //     '/',
