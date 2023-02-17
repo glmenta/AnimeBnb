@@ -1,8 +1,7 @@
 const express = require('express')
 const { requireAuth } = require('../../utils/auth');
 const { Spot, SpotImage, Review, User } = require('../../db/models');
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');
+
 const { Session } = require('./session');
 const router = express.Router();
 
@@ -43,8 +42,61 @@ router.get('/current', requireAuth, async (req,res) => {
 
 //create a spot
 router.post('/', requireAuth, async (req,res) => {
+    const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
+    const requiredInputErrors = {
+        "message": "Validation Error",
+        "statusCode": 400,
+        "errors": {}
+    }
+
+    if (!address || address === "") {
+        requiredInputErrors.errors = { "address": "Street address is required" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!city || city === "") {
+        requiredInputErrors.errors = { "city": "City is required" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!state || state === "") {
+        requiredInputErrors.errors = { "state": "State is required" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!country || country === "") {
+        requiredInputErrors.errors = { "country": "Country is required" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!lat || lat === "") {
+        requiredInputErrors.errors = { "lat": "Latitude is not valid" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!lng || lng === "") {
+        requiredInputErrors.errors = { "lng": "Longitude is not valid" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!name || name === "") {
+        requiredInputErrors.errors = { "name": "Name must be less than 50 characters" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!description || !description === "") {
+        requiredInputErrors.errors = { "description": "Description is required" }
+        return res.json({requiredInputErrors})
+    }
+
+    if (!price || price === "") {
+        requiredInputErrors.errors = { "price": "Price per day is required" }
+        return res.json({requiredInputErrors})
+    }
+
     const newSpot = await Spot.create({
+        ownerId,
         address,
         city,
         state,
@@ -55,22 +107,9 @@ router.post('/', requireAuth, async (req,res) => {
         description,
         price
     })
-    if (newSpot) { return res.status(201).json(newSpot) }
-    else return res.status(400).json({
-        "message": "Validation Error",
-        "statusCode": 400,
-        "errors": {
-          "address": "Street address is required",
-          "city": "City is required",
-          "state": "State is required",
-          "country": "Country is required",
-          "lat": "Latitude is not valid",
-          "lng": "Longitude is not valid",
-          "name": "Name must be less than 50 characters",
-          "description": "Description is required",
-          "price": "Price per day is required"
-        }
-      })
+    if (newSpot) {
+        return res.status(201).json(newSpot)
+    }
 })
 
 //Add img to spot based on spotId

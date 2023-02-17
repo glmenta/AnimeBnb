@@ -71,14 +71,6 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Spot',
-    scopes: {
-      getAvgReview: {
-        include: [
-          { model: Review,
-            attributes: [Sequelize.fn('AVG', sequelize.col('Review.stars'))]}
-        ]
-      }
-    }
   });
   return Spot;
 };

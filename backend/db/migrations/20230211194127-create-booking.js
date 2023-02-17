@@ -8,6 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    options.tableName = 'Bookings'
     await queryInterface.createTable('Bookings', {
       id: {
         allowNull: false,
@@ -18,12 +19,14 @@ module.exports = {
       spotId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Spots' }
+        references: { model: 'Spots' },
+        onDelete: 'CASCADE'
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Users' }
+        references: { model: 'Users' },
+        onDelete: 'CASCADE'
       },
       startDate: {
         type: Sequelize.DATE,
@@ -46,6 +49,7 @@ module.exports = {
     }, options);
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Bookings');
+    options.tableName = 'Bookings'
+    await queryInterface.dropTable(options);
   }
 };
