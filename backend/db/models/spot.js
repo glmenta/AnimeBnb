@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model, Sequelize } = require('sequelize');
+const { Review } = require('./review')
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
@@ -72,6 +71,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Spot',
+    scopes: {
+      getAvgReview: {
+        include: [
+          { model: Review,
+            attributes: [Sequelize.fn('AVG', sequelize.col('Review.stars'))]}
+        ]
+      }
+    }
   });
   return Spot;
 };

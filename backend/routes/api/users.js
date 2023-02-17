@@ -37,17 +37,37 @@ router.post( '/', validateSignup, async (req, res) => {
     const existingEmail = await User.findOne({ where: { email } })
     const existingUser = await User.findOne({ where: { username } })
 
-    if(!req.body) {
-      res.status(400).json({
-        "message": "Validation error",
-        "statusCode": 400,
-        "errors": {
-          "email": "Invalid email",
-          "username": "Username is required",
-          "firstName": "First Name is required",
-          "lastName": "Last Name is required"
-        }
-      })
+    let bodyValErr = {
+      "message": "Validation error",
+      "statusCode": 400,
+      "error": {}
+    }
+
+    if (!email || email === "") {
+      bodyValErr.error = {
+        "email": "Invalid email"
+      }
+      return res.json({bodyValErr})
+    }
+
+    if (!username || username === "") {
+      bodyValErr.error = {
+        "email": "Invalid email"
+      }
+      return res.json({bodyValErr})
+    }
+
+    if (!firstName || firstName === "") {
+      bodyValErr.error = {
+        "firstName": "First Name is required"
+      }
+      return res.json({bodyValErr})
+    }
+    if (!lastName || lastName === "") {
+      bodyValErr.error = {
+        "lastName": "Last Name is required"
+      }
+      return res.json({bodyValErr})
     }
 
     if (existingEmail) {
