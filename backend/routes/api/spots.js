@@ -19,7 +19,10 @@ router.get('/:spotId', async (req,res) => {
             { model: User },
             { model: Review },
             { model: SpotImage }
-        ]
+        ],
+        attributes: ['id', 'ownerId', 'address', 'city',
+        'state', 'country', 'lat', 'lng', 'name', 'description',
+        'price', 'createdAt', 'updatedAt']
     })
     if (allSpots) {
         res.status(200).json(allSpots)
@@ -32,8 +35,12 @@ router.get('/:spotId', async (req,res) => {
 })
 
 //get all spots by current user
-router.get('/current', async (req,res) => {
-    let currentUser = await User.findByPk()
+router.get('/current', requireAuth, async (req,res) => {
+    console.log(current)
+    let allSpots = await User.findAll()
+    if (allSpots) {
+        res.status(200).json(allSpots)
+    }
 })
 
 //create a spot

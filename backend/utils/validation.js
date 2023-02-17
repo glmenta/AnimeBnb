@@ -9,7 +9,7 @@ const handleValidationErrors = (req, _res, next) => {
   if (!validationErrors.isEmpty()) {
     const errors = validationErrors
       .array()
-      .map((error) => `${error.msg}`);
+      .forEach(error => errors[error.param] = error.msg);
 //f there are validation errors, create an error with all the validation error messages and invoke the next error-handling middleware.
     const err = Error('Bad request.');
     err.errors = errors;
