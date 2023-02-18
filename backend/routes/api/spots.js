@@ -1,6 +1,6 @@
 const express = require('express')
-const { requireAuth } = require('../../utils/auth');
-const { Spot, SpotImage, Review, User } = require('../../db/models');
+const { restoreUser, requireAuth } = require('../../utils/auth');
+const { Spot, SpotImage, Review, User, Sequelize } = require('../../db/models');
 
 const { Session } = require('./session');
 const router = express.Router();
@@ -15,21 +15,35 @@ router.get('/', async (req,res) => {
     res.status(200).json({spots})
 })
 
+//get all spots by current user
+router.get('/current', restoreUser, requireAuth, async (req,res) => {
+    const userId = req.user.id
+    const userSpots = await Spot.findByPk(userId);
+    if (userSpots) {
+        currSpots = await Spot.findAll({ where: { ownerId: userId }})
+        res.status(200)
+        return res.json({ "Spots": currSpots })
+    }
+})
+
 //get details of a spot by spotId
 router.get('/:spotId', async (req,res) => {
     const id = req.params.spotId
-    const allSpots = await Spot.findByPk(id, {
-        include:[
-            { model: User },
-            { model: Review },
-            { model: SpotImage }
-        ],
+    const spot = await Spot.findOne({
+        where: { id },
         attributes: ['id', 'ownerId', 'address', 'city',
-        'state', 'country', 'lat', 'lng', 'name', 'description',
-        'price', 'createdAt', 'updatedAt']
+            'state', 'country', 'lat', 'lng', 'name', 'description',
+            'price', 'createdAt', 'updatedAt',
+            [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+            [Sequelize.col('SpotImages.url'), 'preview']],
+            include: [
+                { model: Review, attributes: []},
+                { model: SpotImage },
+                { model: User, as: 'Owner' }
+            ]
     })
-    if (allSpots) {
-        res.status(200).json(allSpots)
+    if (spot.id) {
+        res.status(200).json(spot)
     } else {
         res.status(404).json({
             "message": "Spot couldn't be found",
@@ -37,21 +51,6 @@ router.get('/:spotId', async (req,res) => {
         })
     }
 })
-
-//get all spots by current user
-router.get('/current', requireAuth, async (req,res) => {
-    const userId = req.user.id
-    const userSpots = await Spot.findByPk(userId);
-    if (userSpots) {
-        currSpots = await Spot.findAll({ where: { ownerId: userId }})
-        res.status(200)
-        return res.json({ "Spots": currSpots })
-    } else {
-        throw new Error("No user logged in")
-    }
-})
-
-
 //create a spot
 router.post('/', requireAuth, async (req,res) => {
     const ownerId = req.user.id

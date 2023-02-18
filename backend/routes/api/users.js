@@ -4,8 +4,8 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
+// const { token } = require('morgan')
 
-const router = express.Router();
 
 //The validateSignup middleware is composed of the check and handleValidationErrors middleware.
 const validateSignup = [
@@ -14,11 +14,14 @@ const validateSignup = [
       .exists({ checkFalsy: true })
       .isEmail()
       .withMessage('Please provide a valid email.'),
-    check('username')
+    check('username', 'Validation Error')
     //req.body.username is a minimum length of 4 and is not an email,
       .exists({ checkFalsy: true })
       .isLength({ min: 4 })
-      .withMessage('Please provide a username with at least 4 characters.'),
+      .withMessage('Please provide a username with at least 4 characters.')
+      .not()
+      .isEmpty()
+      .withMessage('Please provide a valid username'),
     check('username')
       .not()
       .isEmail()
@@ -32,73 +35,138 @@ const validateSignup = [
     handleValidationErrors
   ];
 
-router.post( '/', validateSignup, async (req, res) => {
-    const { email, username, password, firstName, lastName } = req.body;
-    const existingEmail = await User.findOne({ where: { email } })
-    const existingUser = await User.findOne({ where: { username } })
-
-    let bodyValErr = {
-      "message": "Validation error",
-      "statusCode": 400,
-      "error": {}
-    }
-
-    if (!email || email === "") {
-      bodyValErr.error = {
-        "email": "Invalid email"
-      }
-      return res.json({bodyValErr})
-    }
-
-    if (!username || username === "") {
-      bodyValErr.error = {
-        "email": "Invalid email"
-      }
-      return res.json({bodyValErr})
-    }
-
-    if (!firstName || firstName === "") {
-      bodyValErr.error = {
-        "firstName": "First Name is required"
-      }
-      return res.json({bodyValErr})
-    }
-    if (!lastName || lastName === "") {
-      bodyValErr.error = {
-        "lastName": "Last Name is required"
-      }
-      return res.json({bodyValErr})
-    }
-
-    if (existingEmail) {
-      return res.status(403).json(
-         {
-          "message": "User already exists",
-          "statusCode": 403,
-          "errors": {
-            "email": "User with that email already exists"
-           }
-         }
-      )
-    }
-
-    if (existingUser) {
-      return res.status(403).json({
-        "message": "User already exists",
-        "statusCode": 403,
-        "errors": {
-          "username": "User with that username already exists"
+const router = express.Router();
+// Sign up
+router.post('/', validateSignup, async (req, res) => {
+    console.log("Look over here!")
+    const { email, password, username, firstName, lastName } = req.body;
+    const emailCheck = await User.findOne({
+      where: {email: email}
+    })
+    const usernameCheck = await User.findOne({
+      where: {username: username}
+    })
+    if(emailCheck) { //Validation check if a user with the specified email exists
+      const err = new Error("User already exists")
+      err.status = 403
+      return res.json({
+        message: err.message,
+        statusCode: err.status,
+        errors: {
+          email: "User with that email already exists"
         }
       })
     }
-
-      const user = await User.signup({ email, username, password, firstName, lastName });
-      await setTokenCookie(res, user);
+    if (usernameCheck){ //Validation check if a user has a duplicated username
+      const err = new Error("User already exists")
+      err.status = 403;
       return res.json({
-        user
-      });
+        message: err.message,
+        statusCode: err.status,
+        errors: {
+          email: "User with that username already exists"
+        }
+      })
     }
-  );
+    else {
+    const user = await User.signup({ email, username, password, firstName, lastName });
+    const newToken = await setTokenCookie(res, user);
+    return await res.json({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+      token: newToken
+    });
+    }
+  }
+);
+// router.post( '/', validateSignup, async (req, res) => {
+//     const { email, firstName, lastName, username, password } = req.body;
+//     const existingEmail = await User.findOne({ where: { email: email } })
+//     const existingUser = await User.findOne({ where: { username: username } })
+//     let bodyValErr = {
+//       "message": "Validation error",
+//       "statusCode": 400,
+//       "error": {}
+//     }
+
+//     if (!email || email === "" || !email.includes('@') || !email.includes(".")) {
+//       bodyValErr.error = {
+//         "email": "Please enter a valid email"
+//       }
+//       return res.json({bodyValErr})
+//     }
+
+//     if (!username || username === "") {
+//       bodyValErr.error = {
+//         "email": "Invalid username"
+//       }
+//       return res.json({bodyValErr})
+//     }
+
+//     if (!firstName || firstName === "") {
+//       bodyValErr.error = {
+//         "firstName": "First Name is required"
+//       }
+//       return res.json({bodyValErr})
+//     }
+//     if (!lastName || lastName === "") {
+//       bodyValErr.error = {
+//         "lastName": "Last Name is required"
+//       }
+//       return res.json({bodyValErr})
+//     }
+
+//     if (existingEmail) {
+//       return res.status(403).json(
+//          {
+//           "message": "User already exists",
+//           "statusCode": 403,
+//           "errors": {
+//             "email": "User with that email already exists"
+//            }
+//          }
+//       )
+//     }
+
+//     if (existingUser) {
+//       return res.status(403).json({
+//         "message": "User already exists",
+//         "statusCode": 403,
+//         "errors": {
+//           "username": "User with that username already exists"
+//         }
+//       })
+//     }
+
+//       const user = await User.signup({ email, firstName, lastName, username, password, });
+//       const userToken = await setTokenCookie(res, user);
+//       userInfo = user.toJSON()
+//       userInfo.token = userToken
+//       return res.json({
+//         userInfo
+//       });
+//     }
+
+    //   const { email, firstName, lastName, password, username } = req.body;
+    //   const user = await User.signup({
+    //     email,
+    //     firstName,
+    //     lastName,
+    //     username,
+    //     password,
+    //   });
+
+    //   const returnToken = await setTokenCookie(res, user);
+
+    //   userObj = user.toJSON();
+    //   userObj.token = returnToken;
+
+    //   return res.json(userObj);
+    // }
+  //);
 
   //if curre user.id = ownerId => authorized;
 // Sign up

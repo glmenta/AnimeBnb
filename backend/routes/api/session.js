@@ -60,10 +60,11 @@ router.post(
         "statusCode": 401})
       }
 
-      await setTokenCookie(res, user);
-
+      const userToken = await setTokenCookie(res, user);
+      userInfo = user.toJSON();
+      userInfo.token = userToken
       return res.json({
-        user: user
+        userInfo
       });
     }
   );
