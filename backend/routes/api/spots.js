@@ -7,8 +7,12 @@ const router = express.Router();
 
 //get all spots
 router.get('/', async (req,res) => {
-    const Spots = await Spot.findAll()
-    res.status(200).json({Spots})
+    const spots = await Spot.findAll({
+        attributes: ['id', 'ownerId', 'address', 'city',
+        'state', 'country', 'lat', 'lng', 'name', 'description',
+        'price', 'createdAt', 'updatedAt']
+    })
+    res.status(200).json({spots})
 })
 
 //get details of a spot by spotId
@@ -36,9 +40,17 @@ router.get('/:spotId', async (req,res) => {
 
 //get all spots by current user
 router.get('/current', requireAuth, async (req,res) => {
-    const spots = await Spot.find({ ownerId: req.user.id});
-    res.status(200).json({Spots: spots })
+    const userId = req.user.id
+    const userSpots = await Spot.findByPk(userId);
+    if (userSpots) {
+        currSpots = await Spot.findAll({ where: { ownerId: userId }})
+        res.status(200)
+        return res.json({ "Spots": currSpots })
+    } else {
+        throw new Error("No user logged in")
+    }
 })
+
 
 //create a spot
 router.post('/', requireAuth, async (req,res) => {
@@ -115,39 +127,58 @@ router.post('/', requireAuth, async (req,res) => {
 //Add img to spot based on spotId
 router.post('/:spotId/images', requireAuth, async (req,res) => {
     const id = req.params.spotId
-    const { url, previewImage } = req.body
-    const spot = await Spot.findByPk(id);
-    const newImage = await SpotImage.create({
+    const spot = await Spot.findOne({where: { id }});
+    const { url, preview } = req.body
+
+    if (spot) {
+        const newImage = await SpotImage.create({
+        spotId: id,
         url,
-        previewImage
-    })
+        preview
+        }, {
+            attributes: { exclude: ['spotId', 'createdAt', 'updatedAt']}
+        });
+
     if (newImage) {
-        return res.status(200).json(SpotImage)
+        return res.status(200).json(newImage)
+        }
     }
-    else return res.status(404).json({ "message": "Spot couldn't be found", "statusCode": 404 })
+    else {
+        return res.status(404).json({ "message": "Spot couldn't be found", "statusCode": 404 }
+    )}
 })
 
 //edit a spot
-router.put(':spotId', requireAuth, async(req,res) => {
+router.put('/:spotId', requireAuth, async(req,res) => {
     const id = req.params.spotId
+    const spot = await Spot.findByPk(id)
     const { address, city, state, country, lat, lng, name, description, price } = req.body
-
+    if (!spot || spot.id === null) {
+        return res.json({
+            message: "Spot couldn't be found",
+            statusCode: 404
+        })
+    }
+    await spot.update({
+        address, city, state, country, lat, lng, name, description, price
+    })
+    return res.status(200).json(spot)
 })
 
 //delete a spot
 router.delete('/:spotId', requireAuth, async(req,res) => {
     const id = req.params.spotId
     const spot = await Spot.findByPk(id)
-    if (spot) {
-        await spot.destroy()
-        return res.status(200).json({
-            "message": "Successfully deleted",
-            "statusCode": 200
+    if (!spot) {
+        res.status(404).json({
+            "message": "Spot couldn't be found",
+            "statusCode": 404
         })
     }
-    res.status(404).json({
-        "message": "Spot couldn't be found",
-        "statusCode": 404
+    await spot.destroy()
+    return res.status(200).json({
+        "message": "Successfully deleted",
+        "statusCode": 200
     })
 })
 

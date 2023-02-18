@@ -25,12 +25,27 @@ const validateLogin = [
 // Log in
 router.post(
     '/',
-    validateLogin,
+
     async (req, res, next) => {
       const { credential, password } = req.body;
-
+      //validateLogin,
       const user = await User.login({ credential, password });
 
+      const bodyValErr = {
+        "message": "Validation error",
+        "statusCode": 400,
+        "errors": {}
+      }
+
+      if (!credential || credential === "") {
+        bodyValErr.errors = { "credential": "Email or username is required" }
+        return res.json({bodyValErr})
+      }
+
+      if (!password || password === "") {
+        bodyValErr.errors = { "password": "Password is required" }
+        return res.json({bodyValErr})
+      }
       // if (!user) {
       //   const err = new Error('Login failed');
       //   err.status = 401;
