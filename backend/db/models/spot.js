@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model, Sequelize } = require('sequelize');
+const { Review } = require('./review')
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
@@ -11,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Spot.belongsTo(models.User, { foreignKey: 'ownerId' })
+      Spot.belongsTo(models.User, { as: 'Owner', foreignKey: 'ownerId' })
       Spot.hasMany(models.SpotImage, { foreignKey: 'spotId' })
       Spot.hasMany(models.Review, { foreignKey: 'spotId' })
       Spot.hasMany(models.Booking, { foreignKey: 'spotId' })
@@ -20,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Spot.init({
     ownerId: {
       type: DataTypes.INTEGER,
+      allowNull: false
     },
     address: {
       type: DataTypes.STRING,
@@ -72,6 +72,17 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Spot',
+    // defaultScope: {
+    //   include: [
+    //     { association: 'Reviews', attributes: []},
+    //     { association: 'SpotImages', where: { preview: true }, attributes: []},
+    //   ],
+    //   attributes: [
+    //     'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
+    //     [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+    //     [Sequelize.col('SpotImages.url'), 'preview']
+    //   ]
+    // }
   });
   return Spot;
 };
