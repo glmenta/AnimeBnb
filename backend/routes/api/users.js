@@ -14,7 +14,13 @@ const validateSignup = [
       .exists({ checkFalsy: true })
       .isEmail()
       .withMessage('Please provide a valid email.'),
-    check('username', 'Validation Error')
+    check('firstName')
+      .exists({ checkFalsy: true })
+      .withMessage('First name is required'),
+    check('lastName')
+      .exists({ checkFalsy: true })
+      .withMessage('Last name is required'),
+    check('username')
     //req.body.username is a minimum length of 4 and is not an email,
       .exists({ checkFalsy: true })
       .isLength({ min: 4 })
@@ -38,7 +44,6 @@ const validateSignup = [
 const router = express.Router();
 // Sign up
 router.post('/', validateSignup, async (req, res) => {
-    console.log("Look over here!")
     const { email, password, username, firstName, lastName } = req.body;
     const emailCheck = await User.findOne({
       where: {email: email}

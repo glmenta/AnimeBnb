@@ -24,7 +24,7 @@ module.exports = {
       {
         spotId: 3,
         url: 'https://www.davisapartmentsforrent.com/fountaincircle/wp-content/uploads/sites/4/2018/01/fountain-circle-pool-area-4.jpg',
-        preview: false
+        preview: true
       }
     ], {});
   },
