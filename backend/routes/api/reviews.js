@@ -40,13 +40,13 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
     }
 })
 
-
-
 //add img to review based on review id
-router.post('/:reviewId/images', requireAuth, async(req,res) => {
+router.post('/:reviewId/images', restoreUser, requireAuth, async(req,res) => {
     const reviewId = req.params.reviewId
-    const review = await Review.findOne({ where: { id: reviewId }})
+    const userId = req.user.id
     const { url } = req.body
+
+    const review = await Review.findOne({ where: { id: reviewId }})
 
     if (!review) {
         return res.status(404).json({
@@ -54,19 +54,61 @@ router.post('/:reviewId/images', requireAuth, async(req,res) => {
             "statusCode": 404
           })
     }
-
-    const revImage = await ReviewImage.create({
-        reviewId: parseInt(reviewId),
-        url
-    })
-
-    if (revImage) {
-        res.status(200).json({revImage})
+    console.log(review.userId)
+    if (userId === review.userId) {
+        const revImage = await ReviewImage.create({
+            reviewId: parseInt(reviewId),
+            url
+        })
+        if (revImage) {
+            res.status(200).json({revImage})
+        }
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
     }
 })
 //edit review
+router.put('/:reviewId', restoreUser, requireAuth, validateReview, async(req,res) => {
+    const reviewId = req.params.reviewId
+    const userId = req.user.id
+    const checkReview = await Review.findByPk(reviewId)
+    const { review, stars } = req.body
+
+    if(!checkReview) {
+        res.status(404).json({
+            "message": "Review couldn't be found",
+            "statusCode": 404
+          })
+    }
+
+    if (userId === checkReview.userId) {
+        await checkReview.update({review, stars})
+        return res.status(200).json(checkReview)
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
+    }
+})
 
 //delete review
-
+router.delete('/:reviewId', restoreUser, requireAuth, async(req,res) => {
+    const reviewId = req.params.reviewId
+    const userId = req.user.id
+    const checkReview = await Review.findByPk(reviewId)
+    if (!checkReview) {
+        res.status(404).json({
+            "message": "Review couldn't be found",
+            "statusCode": 404
+        })
+    }
+    if (userId === checkReview.userId) {
+        await checkReview.destroy()
+        return res.status(200).json({
+            "message": "Successfully deleted",
+            "statusCode": 200
+        })
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
+    }
+})
 
 module.exports = router;

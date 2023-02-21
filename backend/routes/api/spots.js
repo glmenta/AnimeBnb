@@ -74,7 +74,7 @@ router.get('/', async (req,res) => {
             { model: Review, attributes: []},
             { model: SpotImage, attributes: []},
         ],
-        group:'Reviews.spotId'
+        group:['Spot.id', 'SpotImages.url']
     })
     res.status(200).json({ "Spots": spots })
 })
@@ -128,7 +128,8 @@ router.get('/:spotId', async (req,res) => {
     }
 })
 //create a spot
-router.post('/', requireAuth, async (req,res) => {
+//confused if the usual middleware response is valid or do I need to make my own
+router.post('/', restoreUser, requireAuth, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
     const requiredInputErrors = {
@@ -200,12 +201,18 @@ router.post('/', requireAuth, async (req,res) => {
 })
 
 //Add img to spot based on spotId
-router.post('/:spotId/images', requireAuth, async (req,res) => {
+router.post('/:spotId/images', restoreUser, requireAuth, async (req,res) => {
     const id = req.params.spotId
-    const spot = await Spot.findOne({where: { id }});
+    const userId = req.user.id
     const { url, preview } = req.body
 
-    if (spot) {
+    const spot = await Spot.findOne({where: { id }});
+
+    if (!spot) {
+        return res.status(404).json({ "message": "Spot couldn't be found", "statusCode": 404 })
+    }
+
+    if (userId === spot.ownerId) {
         const newImage = await SpotImage.create({
         spotId: id,
         url,
@@ -213,19 +220,19 @@ router.post('/:spotId/images', requireAuth, async (req,res) => {
         }, {
             attributes: { exclude: ['spotId', 'createdAt', 'updatedAt']}
         });
-
-    if (newImage) {
-        return res.status(200).json(newImage)
+        const spotImg = await SpotImage.findByPk(newImage.id)
+        if (spotImg) {
+            return res.status(200).json(spotImg)
         }
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
     }
-    else {
-        return res.status(404).json({ "message": "Spot couldn't be found", "statusCode": 404 }
-    )}
 })
 
 //edit a spot
 router.put('/:spotId', requireAuth, validateSpots, async(req,res) => {
     const id = req.params.spotId
+    const userId = req.user.id
     const spot = await Spot.findByPk(id)
     const { address, city, state, country, lat, lng, name, description, price } = req.body
     if (!spot || spot.id === null) {
@@ -234,15 +241,21 @@ router.put('/:spotId', requireAuth, validateSpots, async(req,res) => {
             statusCode: 404
         })
     }
-    await spot.update({
-        address, city, state, country, lat, lng, name, description, price
-    })
-    return res.status(200).json(spot)
+
+    if (userId === spot.ownerId) {
+        await spot.update({
+            address, city, state, country, lat, lng, name, description, price
+        })
+        return res.status(200).json(spot)
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
+    }
 })
 
 //delete a spot
-router.delete('/:spotId', requireAuth, async(req,res) => {
+router.delete('/:spotId', restoreUser, requireAuth, async(req,res) => {
     const id = req.params.spotId
+    const userId = req.user.id
     const spot = await Spot.findByPk(id)
     if (!spot) {
         res.status(404).json({
@@ -250,11 +263,15 @@ router.delete('/:spotId', requireAuth, async(req,res) => {
             "statusCode": 404
         })
     }
-    await spot.destroy()
-    return res.status(200).json({
-        "message": "Successfully deleted",
-        "statusCode": 200
-    })
+    if (userId === spot.ownerId) {
+        await spot.destroy()
+        return res.status(200).json({
+            "message": "Successfully deleted",
+            "statusCode": 200
+        })
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
+    }
 })
 
 //get all reviews by spot id
@@ -277,8 +294,9 @@ router.get('/:spotId/reviews', async(req,res) => {
         return res.status(200).json({'Reviews': reviews })
     }
 })
+
 //create review for spot based on spot id
-router.post('/:spotId/reviews', requireAuth, validateReview, async(req,res) => {
+router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(req,res) => {
     const userId = req.user.id
     const spotId = req.params.spotId
     const spot = await Spot.findByPk(spotId)
@@ -306,8 +324,6 @@ router.post('/:spotId/reviews', requireAuth, validateReview, async(req,res) => {
             "statusCode": 404
           })
     }
-
-
 })
 
 module.exports = router;
