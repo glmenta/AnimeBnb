@@ -26,12 +26,12 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
             attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'],
             include: [
                 { model: User, attributes: ['id', 'firstName', 'lastName']},
-                { model: Spot, attributes: ['id', 'ownerId', 'address', 'city',
-                'state', 'country', 'lat', 'lng', 'name', 'price',
-                //  [Sequelize.col('SpotImages.url'), 'preview']],
-            ], include: { model: SpotImage, attributes: [[Sequelize.col('url'), 'preview']]}},
+                { model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
+                //[Sequelize.col('SpotImages.url'), 'preview']],
+                include: [
+                    { model: SpotImage, attributes: ['url']}
+                ]},
                 { model: ReviewImage, attributes: ['id', 'url']},
-                { model: SpotImage, attributes: []}
             ],
             group: ['Review.id']
         })
@@ -39,7 +39,7 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
         return res.json({'Reviews': allReviews })
     }
 })
-
+               //  [Sequelize.col('SpotImages.url'), 'preview']],
 //add img to review based on review id
 router.post('/:reviewId/images', restoreUser, requireAuth, async(req,res) => {
     const reviewId = req.params.reviewId

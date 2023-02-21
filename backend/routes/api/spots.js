@@ -326,4 +326,13 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
     }
 })
 
+//get all bookings of spot by spotid
+router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
+
+})
+//create booking based on spotid
+router.post('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
+
+})
+
 module.exports = router;
