@@ -59,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.hasMany(models.Spot, { foreignKey: 'ownerId' })
       User.hasMany(models.Booking, { foreignKey: 'userId'})
+      User.hasMany(models.Review, {as: 'Owner', foreignKey: 'userId'})
     }
   }
   User.init({
@@ -74,13 +75,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      notEmpty: true,
       validate: {
         len: [4, 30],
         isNotEmail(value) {
           if (Validator.isEmail(value)) {
             throw new Error("Cannot be an email.");
           }
-        }
+        },
       }
     },
     email: {
@@ -89,7 +91,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         len: [3, 256],
-        isEmail: true,
+        isEmail: true
       }
     },
     hashedPassword: {

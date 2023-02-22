@@ -13,14 +13,14 @@ module.exports = {
     return queryInterface.bulkInsert(options,  [
       {
         ownerId: 1,
-        address: "123 Disney Lane",
-        city: "San Francisco",
+        address: "675 Sartoga Ave",
+        city: "San Jose",
         state: "California",
         country: "United States of America",
-        lat: 37.7645358,
-        lng: -122.4730327,
-        name: "App Academy",
-        description: "Place where web developers are created",
+        lat: 17.7645358,
+        lng: -32.4730231,
+        name: "Mitsuwa",
+        description: "Japanese Market",
         price: 123,
       },
       {
