@@ -6,7 +6,13 @@ const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
 
 const validateBooking = [
-
+    check('endDate')
+        .exists({ checkFalsy: true })
+        .notEmpty()
+        .isDate()
+        .isAfter()
+        .withMessage('endDate cannot come before StartDate'),
+    handleValidationErrors
 ]
 
 //get all current bookings
@@ -61,14 +67,33 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
 
 })
 //edit booking
-router.put('/:bookingId', restoreUser, requireAuth, async (req,res) => {
+router.put('/:bookingId', restoreUser, requireAuth, validateBooking, async (req,res) => {
     const bookingId = req.params.bookingId
     const userId = req.user.id
-    const spot = await Spot.findByPk()
+    //const spot = await Spot.findByPk()
     const checkBooking = await Booking.findByPk(bookingId)
 
     const { spotId, startDate, endDate } = req.body
 
+    if (!checkBooking) {
+        return res.status(404).json({
+            "message": "Booking couldn't be found",
+            "statusCode": 404
+        })
+    }
+
+    if (userId === Booking.userId) {
+        const editBooking = await Booking.update({
+            startDate,
+            endDate
+        })
+        return res.status(200).json(editBooking)
+    } else {
+        return res.status(403).json({
+                "message": "User not authorized",
+                "statusCode": 403
+        })
+    }
 })
 //delete booking
 

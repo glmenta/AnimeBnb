@@ -54,19 +54,33 @@ router.post('/:reviewId/images', restoreUser, requireAuth, async(req,res) => {
             "statusCode": 404
           })
     }
-    console.log(review.userId)
+
+    const maxImgsCheck = await ReviewImage.findAll({ where: { reviewId }})
+
+    if (maxImgsCheck.length >= 10) {
+        return res.status(403).json({
+            "message": "Maximum number of images for this resource was reached",
+            "statusCode": 403
+          })
+    }
     if (userId === review.userId) {
-        const revImage = await ReviewImage.create({
+        const reviewImage = await ReviewImage.create({
             reviewId: parseInt(reviewId),
             url
         })
-        if (revImage) {
-            res.status(200).json({revImage})
-        }
+        return res.status(200).json({
+            id: reviewImage.id,
+            url: reviewImage.url
+        })
+        //const scopedImage = await ReviewImage.findByPk(revImage.id)
+        // if (scopedImage) {
+        //     res.status(200).json({scopedImage})
+        // }
     } else {
         return res.status(403).json({ 'Message':'User is not authorized' })
     }
 })
+
 //edit review
 router.put('/:reviewId', restoreUser, requireAuth, validateReview, async(req,res) => {
     const reviewId = req.params.reviewId

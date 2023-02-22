@@ -1,6 +1,6 @@
 const express = require('express')
 const { restoreUser, requireAuth } = require('../../utils/auth');
-const { Spot, SpotImage, Review, User, Sequelize, ReviewImage } = require('../../db/models');
+const { Spot, SpotImage, Review, User, Sequelize, ReviewImage, Booking } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const { Session } = require('./session');
@@ -309,7 +309,7 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
           })
     }
     if (spot) {
-        const newReview = await Review.create({
+        const newReview = await Review.scope('customReview').create({
             userId,
             spotId: parseInt(spotId),
             review,
@@ -328,7 +328,55 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
 
 //get all bookings of spot by spotid
 router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
+    const spotId = req.params.spotId
+    const userId = req.user.id
+    const spot = await Spot.findByPk(spotId)
+    const bookings = await Booking.findAll({ where: { spotId }})
+    const ownedSpotBookings = await Booking.findAll({ where: { spotId },
+    include: [
+        { model: User, attributes: ['id', 'firstName', 'lastName']}
+    ],
+    attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
+    })
+    if (!spot) {
+        res.status(404).json({
+            "message": "Spot couldn't be found",
+            "statusCode": 404
+        })
+    }
+    //if you are the owner
+    if (userId === spot.ownerId) {
+        //res.status(200).json({ 'Bookings': ownedSpotBookings })
+        const ownerBookings = ownedSpotBookings.map((booking) => {
+            const { id, spotId, userId, startDate, endDate, createdAt, updatedAt, User } = booking
+            return {
+                User: {
+                    id: User.id,
+                    firstName: User.firstName,
+                    lastName: User.lastName
+                },
+                id,
+                spotId,
+                userId,
+                startDate,
+                endDate,
+                createdAt,
+                updatedAt
+            }
+        })
+        return res.status(200).json({ 'Bookings': ownerBookings })
 
+    } else { //if you are not the owner
+        const notOwnedBookings = bookings.map((booking) => {
+            const { spotId, startDate, endDate } = booking
+            return {
+                spotId,
+                startDate,
+                endDate
+            }
+        })
+        return res.status(200).json({'Bookings': notOwnedBookings })
+    }
 })
 //create booking based on spotid
 router.post('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {

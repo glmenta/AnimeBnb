@@ -87,6 +87,7 @@ router.post('/', validateSignup, async (req, res) => {
     }
   }
 );
+module.exports = router;
 // router.post( '/', validateSignup, async (req, res) => {
 //     const { email, firstName, lastName, username, password } = req.body;
 //     const existingEmail = await User.findOne({ where: { email: email } })
@@ -189,4 +190,3 @@ router.post('/', validateSignup, async (req, res) => {
 //       });
 //     }
 //   );
-module.exports = router;
