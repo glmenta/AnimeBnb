@@ -72,6 +72,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Spot',
+    defaultScope: {
+      attributes: {
+        exclude: ['preview']
+      }
+    },
     // defaultScope: {
     //   include: [
     //     { association: 'Reviews', attributes: []},

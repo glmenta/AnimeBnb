@@ -111,7 +111,8 @@ router.get('/:spotId', async (req,res) => {
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 'numReviews'],
             [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-            [Sequelize.col('SpotImages.url'), 'preview']],
+            // [Sequelize.col('SpotImages.url'), 'preview']],
+            ],
             include: [
                 { model: Review, attributes: []},
                 { model: SpotImage, attributes: ['id', 'url', 'preview']},
