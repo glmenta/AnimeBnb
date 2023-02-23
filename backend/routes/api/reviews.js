@@ -72,10 +72,6 @@ router.post('/:reviewId/images', restoreUser, requireAuth, async(req,res) => {
             id: reviewImage.id,
             url: reviewImage.url
         })
-        //const scopedImage = await ReviewImage.findByPk(revImage.id)
-        // if (scopedImage) {
-        //     res.status(200).json({scopedImage})
-        // }
     } else {
         return res.status(403).json({ 'Message':'User is not authorized' })
     }
