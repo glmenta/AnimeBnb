@@ -14,20 +14,20 @@ module.exports = {
       {
         userId: 1,
         spotId: 1,
-        review: 'I learned stuff',
-        stars: 4.5,
+        review: 'Pretty amazing ramen',
+        stars: 4,
       },
       {
         userId: 2,
         spotId: 2,
-        review: 'I ate rly good but they forgot my karaage',
-        stars: 4,
+        review: 'The captains were too loud arguing and the spiritual pressure kept me awake',
+        stars: 2,
       },
       {
         userId: 3,
         spotId: 3,
-        review: 'I paid too much for this',
-        stars: 2,
+        review: 'I know now about the truth of the world',
+        stars: 5,
       }
     ], {});
 
