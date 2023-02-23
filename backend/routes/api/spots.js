@@ -3,7 +3,7 @@ const { restoreUser, requireAuth } = require('../../utils/auth');
 const { Spot, SpotImage, Review, User, Sequelize, ReviewImage, Booking } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const { Session } = require('./session');
+const { Op } = require('sequelize')
 const router = express.Router();
 
 const validateSpots = [
@@ -326,6 +326,8 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
     }
 })
 
+
+
 //get all bookings of spot by spotid
 router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
     const spotId = req.params.spotId
@@ -378,9 +380,79 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
         return res.status(200).json({'Bookings': notOwnedBookings })
     }
 })
+
 //create booking based on spotid
 router.post('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
+    const userId = req.user.id
+    const spotId = req.params.spotId
+    const spot = await Spot.findByPk(spotId)
+
+    const { startDate, endDate } = req.body;
+
+    if(!spot) {
+        res.status(404).json({
+            message: "Spot couldn't be found",
+            statusCode: 404
+
+        })
+    }
+
+    if(spot.ownerId === userId) {
+        res.status(403).json({
+            message: "Cannot book on owned spot",
+            statusCode: 403
+        })
+    }
+
+    const invalidBookings = await Booking.findAll({
+        where: {
+            spotId,
+            [Op.or]: [
+                {
+                    startDate: { [Op.lte]: startDate },
+                    endDate: { [Op.gte]: startDate },
+                },
+                {
+                    startDate: { [Op.lte]: endDate },
+                    endDate: { [Op.gte]: endDate },
+                },
+                {
+                    startDate: { [Op.gte]: startDate },
+                    endDate: { [Op.lte]: endDate },
+                },
+            ]
+        }
+    })
+
+    if (invalidBookings.length) {
+        return res.status(403).json({
+            "message": "Sorry, this spot is already booked for the specified dates",
+            "statusCode": 403,
+            "errors": {
+              "startDate": "Start date conflicts with an existing booking",
+              "endDate": "End date conflicts with an existing booking"
+            }
+        })
+    }
+
+    const newBooking = await Booking.create({
+        spotId: parseInt(spotId),
+        userId,
+        startDate,
+        endDate
+    })
+
+    if(newBooking) {
+        return res.status(200).json({
+            id: newBooking.id,
+            spotId: newBooking.spotId,
+            userId: newBooking.userId,
+            startDate: newBooking.startDate,
+            endDate: newBooking.endDate,
+            createdAt: newBooking.createdAt,
+            updatedAt: newBooking.updatedAt,
+        })
+    }
 
 })
-
 module.exports = router;

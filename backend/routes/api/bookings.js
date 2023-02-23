@@ -38,7 +38,10 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                 'state', 'country', 'lat', 'lng', 'name', 'description',
                 'price', 'createdAt', 'updatedAt'],
                 include: [
-                    { model: SpotImage, attributes: ['url']}
+                    {
+                        model: SpotImage, attributes: ['url'],
+                        where: { preview: true }
+                    }
                 ]},
                 ],
             attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
@@ -47,6 +50,15 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
         if (currentBookings) {
             const bookings = currentBookings.map((booking) => {
                 const { id, spotId, userId, startDate, endDate, createdAt, updatedAt, Spot } = booking
+
+                let previewImage;
+
+                if (Spot.SpotImages.length > 0) {
+                    previewImage = Spot.SpotImages[0].url
+                } else {
+                    previewImage = null;
+                }
+
                 return {
                     id,
                     spotId,
@@ -60,7 +72,8 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                         lat: Spot.lat,
                         lng: Spot.lng,
                         name: Spot.name,
-                        price: Spot.price
+                        price: Spot.price,
+                        previewImage
                     },
                     userId,
                     startDate,

@@ -47,16 +47,16 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Review',
-    defaultScope: {
-      attributes: {
-        exclude: ['updatedAt', 'createdAt']
-      }
-    },
-    scopes: {
-      customReview: {
-        exclude: ['updatedAt', 'createdAt']
-      }
-    }
+    // defaultScope: {
+    //   attributes: {
+    //     exclude: ['updatedAt', 'createdAt']
+    //   }
+    // },
+    // scopes: {
+    //   customReview: {
+    //     exclude: ['updatedAt', 'createdAt']
+    //   }
+    //}
   });
   return Review;
 };
