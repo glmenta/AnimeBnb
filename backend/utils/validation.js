@@ -12,11 +12,11 @@ const handleValidationErrors = (req, _res, next) => {
       .array()
       .forEach(error => errors[error.param] = error.msg);
 //if there are validation errors, create an error with all the validation error messages and invoke the next error-handling middleware.
-    const err = Error("Bad request.");
+    const err = Error("Validation error");
     err.errors = errors;
     err.message = 'Validation error'
     err.status = 400;
-    err.title = "Bad request.";
+    // err.title = "Bad request.";
     next(err);
   }
   //If there are no validation errors returned from the validationResult function, invoke the next middleware.

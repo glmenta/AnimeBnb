@@ -28,8 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     preview: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false
+      type: DataTypes.BOOLEAN
     }
   }, {
     sequelize,
@@ -39,11 +38,6 @@ module.exports = (sequelize, DataTypes) => {
         exclude: ['spotId', 'updatedAt', 'createdAt']
       }
     },
-    scopes: {
-      customReview: {
-        exclude: ['updatedAt', 'createdAt']
-      }
-    }
   });
   return SpotImage;
 };

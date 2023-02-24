@@ -13,17 +13,17 @@ module.exports = {
     return queryInterface.bulkInsert(options, [
       {
         spotId: 1,
-        url: 'https://cdn.abcotvs.com/dip/images/5488414_082319-wls-hound-mitsuwa-marketplace-11a-vid.jpg?w=1600',
+        url: 'https://imgcp.aacdn.jp/img-a/1720/auto/global-aaj-front/article/2016/08/57bdcc9f0d5fc_57bdcc8e0c067_930312360.jpg',
         preview: true
       },
       {
         spotId: 2,
-        url: 'https://ramenclub.net/wp-content/uploads/2019/11/IMG_6052-e1573705972490-1024x768.jpg',
+        url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
         preview: true
       },
       {
         spotId: 3,
-        url: 'https://www.davisapartmentsforrent.com/fountaincircle/wp-content/uploads/sites/4/2018/01/fountain-circle-pool-area-4.jpg',
+        url: 'https://staticg.sportskeeda.com/editor/2022/03/37539-16460998057017-1920.jpg',
         preview: true
       }
     ], {});
@@ -33,10 +33,8 @@ module.exports = {
     options.tableName = 'SpotImages';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      url: { [Op.in]:
-      ['https://cdn.abcotvs.com/dip/images/5488414_082319-wls-hound-mitsuwa-marketplace-11a-vid.jpg?w=1600',
-      'https://ramenclub.net/wp-content/uploads/2019/11/IMG_6052-e1573705972490-1024x768.jpg',
-      'https://www.davisapartmentsforrent.com/fountaincircle/wp-content/uploads/sites/4/2018/01/fountain-circle-pool-area-4.jpg']
+      spotId: {
+        [Op.in]: [1,2,3]
       }
     }, {});
   }

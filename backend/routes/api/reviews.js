@@ -17,29 +17,82 @@ const validateReview = [
         .withMessage("Stars must be an integer from 1 to 5"),
     handleValidationErrors
 ]
-//get all reviews of current user
+//get all reviews of current use
 router.get('/current', restoreUser, requireAuth, async (req,res) => {
     const userId = req.user.id
-    const userReviews = await Review.findByPk(userId)
-    if(userReviews) {
-        allReviews = await Review.findAll( { where: { userId: userId },
-            attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'],
-            include: [
-                { model: User, attributes: ['id', 'firstName', 'lastName']},
-                { model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
-                //[Sequelize.col('SpotImages.url'), 'preview']],
-                include: [
-                    { model: SpotImage, attributes: ['url']}
-                ]},
-                { model: ReviewImage, attributes: ['id', 'url']},
-            ],
-            group: ['Review.id']
+
+    const currentReviews = await Review.findAll( { where: { userId: userId },
+        attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'],
+        include: [
+             { model: User, attributes: ['id', 'firstName', 'lastName']},
+             { model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
+               include: [
+                { model: SpotImage, attributes: ['url'], where: { preview: true }}
+            ]},
+            { model: ReviewImage, attributes: ['id', 'url']},
+        ],
+    })
+
+    if (currentReviews.length === 0) {
+        res.status(404).json({
+            message: "User has no reviews",
+            statusCode: 404
         })
-        res.status(200)
-        return res.json({'Reviews': allReviews })
     }
+
+    if (currentReviews) {
+        const currentReviewData = currentReviews.map((review) => {
+            const {
+                id,
+                userId,
+                spotId,
+                review: userReview,
+                stars,
+                createdAt,
+                updatedAt,
+                User,
+                Spot,
+                ReviewImages,
+            } = review;
+
+                let previewImage;
+
+                if (Spot.SpotImages.length > 0) {
+                    previewImage = Spot.SpotImages[0].url
+                } else {
+                    previewImage = null;
+                }
+
+                return {
+                    id,
+                    userId,
+                    spotId,
+                    review: userReview,
+                    stars,
+                    createdAt,
+                    updatedAt,
+                    User,
+                    Spot: {
+                        id: Spot.id,
+                        ownerId: Spot.ownerId,
+                        address: Spot.address,
+                        city: Spot.city,
+                        state: Spot.state,
+                        country: Spot.country,
+                        lat: Spot.lat,
+                        lng: Spot.lng,
+                        name: Spot.name,
+                        price: Spot.price,
+                        previewImage,
+                    },
+                    ReviewImages,
+                };
+            });
+    return res.status(200).json({ Reviews: currentReviewData });
+    }
+
 })
-               //  [Sequelize.col('SpotImages.url'), 'preview']],
+
 //add img to review based on review id
 router.post('/:reviewId/images', restoreUser, requireAuth, async(req,res) => {
     const reviewId = req.params.reviewId

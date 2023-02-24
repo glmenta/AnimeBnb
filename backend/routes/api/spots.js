@@ -310,7 +310,7 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
           })
     }
     if (spot) {
-        const newReview = await Review.scope('customReview').create({
+        const newReview = await Review.create({
             userId,
             spotId: parseInt(spotId),
             review,
