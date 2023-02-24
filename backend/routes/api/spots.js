@@ -62,21 +62,91 @@ const validateReview = [
     handleValidationErrors
 ]
 
+const validateQueryParams = [
+    check('page')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage("Page must be greater than or equal to 1"),
+    check('size')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage("Size must be greater than or equal to 1"),
+    check('maxLat')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage("maximum latitude is invalid"),
+    check('minLat')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage("minimum latitude is invalid"),
+    check('maxLng')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage("maximum longitude is invalid"),
+    check('minLng')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 1 })
+        .withMessage("minimum longitude is invalid"),
+    check('minPrice')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 0 })
+        .withMessage("Maximum price must be greater than or equal to 0"),
+    check('maxPrice')
+        .exists({ checkFalsy: true})
+        .notEmpty()
+        .isInt({ min: 0 })
+        .withMessage("Minimum price must be greater than or equal to 0"),
+]
 //get all spots
-router.get('/', async (req,res) => {
-    const spots = await Spot.findAll({
-        attributes: ['id', 'ownerId', 'address', 'city',
-        'state', 'country', 'lat', 'lng', 'name', 'description',
-        'price', 'createdAt', 'updatedAt',
-        [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-        [Sequelize.col('SpotImages.url'), 'preview']],
-        include: [
-            { model: Review, attributes: []},
-            { model: SpotImage, attributes: []},
-        ],
-        group:['Spot.id', 'SpotImages.url']
+
+router.get('/', requireAuth, validateQueryParams, async (req,res) => {
+//  const spots = await Spot.findAll({
+//         attributes: ['id', 'ownerId', 'address', 'city',
+//         'state', 'country', 'lat', 'lng', 'name', 'description',
+//         'price', 'createdAt', 'updatedAt',
+//         [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+//         [Sequelize.col('SpotImages.url'), 'preview']],
+//         include: [
+//             { model: Review, as: 'Reviews', attributes: []},
+//             { model: SpotImage, attributes: []},
+//         ],
+//         group:['Spot.id', 'SpotImages.url']
+//     })
+//     res.status(200).json({ "Spots": spots })
+const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
+const limit = Math.min(parseInt(size), 20);
+const offset = (parseInt(page) - 1) * limit;
+const filters = {
+  ...(minLat && { lat: { [Op.gte]: minLat } }),
+  ...(maxLat && { lat: { [Op.lte]: maxLat } }),
+  ...(minLng && { lng: { [Op.gte]: minLng } }),
+  ...(maxLng && { lng: { [Op.lte]: maxLng } }),
+  ...(minPrice && { price: { [Op.gte]: minPrice } }),
+  ...(maxPrice && { price: { [Op.lte]: maxPrice } })
+};
+const spots = await Spot.scope({ method: ['queryFilter'] }).findAll({
+    where: filters,
+    limit: limit,
+    offset: offset,
+})
+
+if (!spots) {
+    return res.status(404).json({
+        message: "Spots do not exist",
+        statusCode: 404
     })
-    res.status(200).json({ "Spots": spots })
+}
+
+if (spots) {
+    return res.status(200).json({ Spots: spots })
+}
 })
 
 //get all spots by current user

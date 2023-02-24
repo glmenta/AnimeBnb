@@ -5,11 +5,19 @@ const router = express.Router();
 
 router.delete('/:imageId', restoreUser, requireAuth, async (req, res) => {
     const userId = req.user.id
-    const reviewImage = await ReviewImage.findByPk(req.params.imageId, {
+    const revImageId = req.params.imageId
+    const reviewImage = await ReviewImage.findByPk(revImageId, {
         include: {
             model: Review
         }
     })
+
+    if(!reviewImage) {
+        res.status(404).json({
+            message: "Review Image couldn't be found",
+            statusCode: 404
+        })
+    }
 
     if(reviewImage.Review.userId !== userId) {
         res.status(403).json({
@@ -18,12 +26,6 @@ router.delete('/:imageId', restoreUser, requireAuth, async (req, res) => {
         })
     }
 
-    if(!reviewImage) {
-        res.status(404).json({
-            message: "Review Image couldn't be found",
-            statusCode: 404
-        })
-    }
 
     await reviewImage.destroy()
     res.status(200).json({
