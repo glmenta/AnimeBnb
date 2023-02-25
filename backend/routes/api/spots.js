@@ -62,64 +62,8 @@ const validateReview = [
     handleValidationErrors
 ]
 
-const validateQueryParams = [
-    check('page')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt({ min: 1, max: 100})
-        .withMessage("Page must be greater than or equal to 1"),
-    check('size')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt({ min: 1 })
-        .withMessage("Size must be greater than or equal to 1"),
-    check('maxLat')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt()
-        .withMessage("maximum latitude is invalid"),
-    check('minLat')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt()
-        .withMessage("minimum latitude is invalid"),
-    check('maxLng')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt()
-        .withMessage("maximum longitude is invalid"),
-    check('minLng')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt()
-        .withMessage("minimum longitude is invalid"),
-    check('minPrice')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt({ min: 0 })
-        .withMessage("Maximum price must be greater than or equal to 0"),
-    check('maxPrice')
-        .exists({ checkFalsy: true})
-        .notEmpty()
-        .isInt({ min: 0 })
-        .withMessage("Minimum price must be greater than or equal to 0"),
-]
 //get all spots
-//  const spots = await Spot.findAll({
-//         attributes: ['id', 'ownerId', 'address', 'city',
-//         'state', 'country', 'lat', 'lng', 'name', 'description',
-//         'price', 'createdAt', 'updatedAt',
-//         [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-//         [Sequelize.col('SpotImages.url'), 'preview']],
-//         include: [
-//             { model: Review, as: 'Reviews', attributes: []},
-//             { model: SpotImage, attributes: []},
-//         ],
-//         group:['Spot.id', 'SpotImages.url']
-//     })
-//     res.status(200).json({ "Spots": spots })
-router.get('/', requireAuth, validateQueryParams, async (req,res) => {
-
+router.get('/', async (req,res) => {
     const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
 
     const limit = Math.min(parseInt(size), 20);
@@ -133,7 +77,7 @@ router.get('/', requireAuth, validateQueryParams, async (req,res) => {
     ...(maxPrice && { price: { [Op.lte]: maxPrice } })
     };
 
-    const spots = await Spot.scope({ method: ['queryFilter'] }).findAll({
+    const spots = await Spot.scope({ method: ['getAllSpotsQF'] }).findAll({
         where: filters,
         limit: limit,
         offset: offset,
@@ -147,62 +91,83 @@ router.get('/', requireAuth, validateQueryParams, async (req,res) => {
     }
     if (page <= 0) {
         return res.status(400).json({
-            'message': "Page must be greater than or equal to 1",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'page': "Page must be greater than or equal to 1"
+            }
         })
     } else if (size < 1) {
         return res.status(400).json({
-            'message': "Size must be greater than or equal to 1",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'size': "Size must be greater than or equal to 1"
+            }
         })
     } else if (minLat < -90) {
         return res.status(400).json({
-            'message': "Minimum latitude is invalid",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'minLat': "Minimum latitude is invalid"
+            }
         })
     } else if (maxLat > 90) {
         return res.status(400).json({
-            'message': "Maximum latitude is invalid",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'maxLat': "Maximum latitude is invalid"
+            }
         })
-    } else if (minLng < -180) {
+    } else if (minLng < -180 ) {
         return res.status(400).json({
-            'message': "Minimum longitude is invalid",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'minLng': "Minimum longitude is invalid"
+            }
         })
     } else if (maxLng > 180) {
         return res.status(400).json({
-            'message': "Maximum longitude is invalid",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'maxLng': "Maximum longitude is invalid"
+            }
         })
-    } else if (minPrice && minPrice < 0) {
+    } else if (minPrice && minPrice <= 0) {
         return res.status(400).json({
-            'message': "Minimum price must be greater than or equal to 1",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'minPrice': "Minimum price must be greater than or equal to 1"
+            }
         })
-    } else if (maxPrice && maxPrice < 0) {
+    } else if (maxPrice && maxPrice <= 0) {
         return res.status(400).json({
-            'message': "Maximum price must be greater than or equal to 1",
-            "statusCode": 400
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'maxPrice': "Maximum price must be greater than or equal to 1"
+            }
         })
     } else {
         if (spots.length === 0) {
             return res.status(404).json({
-                'message': "There are no spots are not within parameters",
+                'message':  "There are no spots within given parameters",
                 'statusCode': 404
             })
         }
         return res.status(200).json({ Spots: spots, page, size })
     }
-
 })
 
 //get all spots by current user
-router.get('/current', restoreUser, requireAuth, async (req,res) => {
+router.get('/current', requireAuth, async (req,res) => {
     const userId = req.user.id
-    const userSpots = await Spot.findByPk(userId);
-    if (userSpots) {
-        currSpots = await Spot.findAll({ where: { ownerId: userId },
+    const currSpots = await Spot.findAll({ where: { ownerId: userId },
             attributes: ['id', 'ownerId', 'address', 'city',
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
@@ -215,7 +180,13 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
             group:['Spot.id', 'Spotimages.url']
         })
         res.status(200)
+    if (currSpots) {
         return res.json({ "Spots": currSpots })
+    } else {
+        res.status(400).json({
+            "message": 'Current user has no spots',
+            'statusCode': 404
+        })
     }
 })
 
@@ -251,55 +222,105 @@ router.get('/:spotId', async (req,res) => {
 router.post('/', restoreUser, requireAuth, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
-    const requiredInputErrors = {
-        "message": "Validation Error",
-        "statusCode": 400,
-        "errors": {}
-    }
 
     if (!address || address === "") {
-        requiredInputErrors.errors = { "address": "Street address is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "address": "Street address is required"
+            }
+        })
     }
 
     if (!city || city === "") {
-        requiredInputErrors.errors = { "city": "City is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "city": "City is required"
+            }
+        })
     }
 
     if (!state || state === "") {
-        requiredInputErrors.errors = { "state": "State is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "state": "State is required"
+            }
+        })
     }
 
     if (!country || country === "") {
-        requiredInputErrors.errors = { "country": "Country is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "country": "Country is required"
+            }
+        })
     }
 
     if (!lat || lat === "") {
-        requiredInputErrors.errors = { "lat": "Latitude is not valid" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "lat": "Latitude is not valid"
+            }
+        })
     }
 
     if (!lng || lng === "") {
-        requiredInputErrors.errors = { "lng": "Longitude is not valid" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "lng": "Longitude is not valid"
+            }
+        })
     }
 
     if (!name || name === "") {
-        requiredInputErrors.errors = { "name": "Name must be less than 50 characters" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "name": "Please enter a name for your spot"
+            }
+        })
+    }
+
+    if (name.length > 50) {
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "name": "Name must be less than 50 characters"
+            }
+        })
     }
 
     if (!description || !description === "") {
-        requiredInputErrors.errors = { "description": "Description is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "description": "Description is required"
+            }
+        })
     }
 
     if (!price || price === "") {
-        requiredInputErrors.errors = { "price": "Price per day is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "price": "Price per day is required"
+            }
+        })
     }
 
     const newSpot = await Spot.create({

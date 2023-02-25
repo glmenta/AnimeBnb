@@ -22,9 +22,9 @@ const validateBooking = [
 //get all current bookings
 router.get('/current', restoreUser, requireAuth, async(req,res) => {
     const userId = req.user.id
-    const userBookings = await Booking.findByPk(userId)
-    if (userBookings) {
-        currentBookings = await Booking.findAll({ where:{ userId },
+    // const userBookings = await Booking.findByPk(userId)
+    // if (userBookings) {
+    const currentBookings = await Booking.findAll({ where:{ userId },
             include: [
                 { model: Spot, attributes: ['id', 'ownerId', 'address', 'city',
                 'state', 'country', 'lat', 'lng', 'name', 'description',
@@ -39,6 +39,7 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
             attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
             group: ['Booking.id']
         });
+
         if (currentBookings) {
             const bookings = currentBookings.map((booking) => {
                 const { id, spotId, userId, startDate, endDate, createdAt, updatedAt, Spot } = booking
@@ -79,10 +80,9 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
         return res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
-          })
-    }
-
+    })
 })
+
 //edit booking
 router.put('/:bookingId', requireAuth, async (req,res) => {
     const bookingId = req.params.bookingId
