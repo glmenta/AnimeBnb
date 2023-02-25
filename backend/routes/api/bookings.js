@@ -36,7 +36,6 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                 ]},
                 ],
             attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
-            // group: ['Booking.id']
         });
 
 
@@ -85,36 +84,9 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
 //edit booking
 router.put('/:bookingId', requireAuth, async (req,res) => {
     const bookingId = req.params.bookingId
-    const userId = req.user.id
     const { startDate, endDate } = req.body
     const booking = await Booking.findByPk(bookingId)
-    // if (!booking) {
-    //     return res.status(404).json({
-    //         "message": "Booking couldn't be found",
-    //         "statusCode": 404
-    //     })
-    // }
-    // if (booking.userId !== userId) {
-    //     return res.status(403).json({
-    //         message: "User not authorized",
-    //         statusCode: 403
-    //     })
-    // } else {
-    //     if (new Date(endDate) < new Date(startDate)) {
-    //         return res.status(400).json({
-    //             "message": "Validation error",
-    //             "statusCode": 400,
-    //             "errors": {
-    //                 "endDate": "endDate cannot come before startDate"
-    //             }
-    //         })
-    //     }
-    //     if (new Date() > new Date(endDate)) {
-    //         return res.status(403).json({
-    //             "message": "Past bookings can't be modified",
-    //             "statusCode": 403
-    //         })
-    //     }
+
     if (!booking) {
         return res.status(404).json({
             "message": "Booking couldn't be found",
