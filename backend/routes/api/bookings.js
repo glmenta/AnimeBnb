@@ -10,21 +10,12 @@ const validateBooking = [
     check('startDate')
         .exists({ checkFalsy: true})
         .isDate()
-        .withMessage(),
+        .withMessage('startDate is not valid'),
     check('endDate')
         .exists({ checkFalsy: true })
         .notEmpty()
         .isDate()
-        .custom((endDate, { req }) => {
-            const startDate = req.body.startDate
-            if (endDate && startDate) {
-                if (new Date(startDate) >= new Date (endDate)) {
-                    throw new Error ('endDate cannot be on or before startDate')
-                }
-            }
-            return true
-        })
-        .withMessage('endDate cannot come before StartDate'),
+        .withMessage('endDate is not valid'),
     handleValidationErrors
 ]
 
@@ -93,82 +84,101 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
 
 })
 //edit booking
-router.put('/:bookingId', restoreUser, requireAuth, validateBooking, async (req,res) => {
+router.put('/:bookingId', requireAuth, async (req,res) => {
     const bookingId = req.params.bookingId
     const userId = req.user.id
     const { startDate, endDate } = req.body
-
-    const checkBooking = await Booking.findByPk(bookingId)
-
-    if (!checkBooking) {
+    const booking = await Booking.findByPk(bookingId)
+    // if (!booking) {
+    //     return res.status(404).json({
+    //         "message": "Booking couldn't be found",
+    //         "statusCode": 404
+    //     })
+    // }
+    // if (booking.userId !== userId) {
+    //     return res.status(403).json({
+    //         message: "User not authorized",
+    //         statusCode: 403
+    //     })
+    // } else {
+    //     if (new Date(endDate) < new Date(startDate)) {
+    //         return res.status(400).json({
+    //             "message": "Validation error",
+    //             "statusCode": 400,
+    //             "errors": {
+    //                 "endDate": "endDate cannot come before startDate"
+    //             }
+    //         })
+    //     }
+    //     if (new Date() > new Date(endDate)) {
+    //         return res.status(403).json({
+    //             "message": "Past bookings can't be modified",
+    //             "statusCode": 403
+    //         })
+    //     }
+    if (!booking) {
         return res.status(404).json({
             "message": "Booking couldn't be found",
             "statusCode": 404
         })
     }
 
-    if (checkBooking.userId !== userId) {
+    if (booking.userId !== req.user.id) {
         return res.status(403).json({
             "message": "User not authorized",
             "statusCode": 403
         })
     }
 
-    if (new Date(endDate) <= new Date (startDate)) {
+
+    if (new Date(endDate) < new Date (startDate)) {
         return res.status(400).json({
             message: "endDate cannot come before startDate",
             statusCode: 400
         })
     }
 
-    const alreadyBooked = await Booking.findOne({
-        where: {
-            spotId: checkBooking.spotId,
-            endDate: {
-                [Op.gte]: new Date (startDate)
-            },
-            startDate: {
-                [Op.lte]: new Date (endDate)
-            },
-            id: {
-                [Op.not]: checkBooking.id
-            }
-        }
-    });
-
-    if (alreadyBooked) {
-        return res.status(403).json(
-            {
-                "message": "Sorry, this spot is already booked for the specified dates",
-                "statusCode": 403,
-                "errors": {
-                    "startDate": "Start date conflicts with an existing booking",
-                    "endDate": "End date conflicts with an existing booking"
-                }
-            }
-
-        )
-    }
     const checkDate = new Date();
-    const lastDayOfBooking = new Date(checkBooking.endDate)
+    const lastDayOfBooking = new Date(booking.endDate)
 
     if (lastDayOfBooking < checkDate) {
         return res.status(400).json({
             "message": "Past bookings can't be modified",
             "statusCode": 403
         })
-    } else if (checkDate.startDate === checkBooking.endDate) {
-        return res.status(400).json({
-            message: "Cannot book and end on the same date",
-            statusCode: 400
-        })
     }
 
-    const editBooking = await checkBooking.update({
-        startDate: new Date (startDate),
-        endDate: new Date (endDate)
-    })
-    return res.status(200).json(editBooking)
+    const checkConflict = await Booking.findOne({
+        where: {
+            spotId: booking.spotId,
+            [Op.and]: [
+                {
+                    startDate: { [Op.lt]: endDate },
+                },
+                {
+                    endDate: { [Op.gt]: startDate },
+                },
+            ],
+        },
+    });
+
+
+    if (!checkConflict) {
+        const updateBooking = await booking.update({
+            startDate: startDate,
+            endDate: endDate
+        })
+        return res.status(200).json(updateBooking)
+    } else {
+        return res.status(403).json({
+            "message": "Sorry, this spot is already booked for the specified dates",
+            "statusCode": 403,
+            "errors": {
+                "startDate": "Start date conflicts with an existing booking",
+                "endDate": "End date conflicts with an existing booking"
+            }
+        })
+    }
 })
 
 //delete booking

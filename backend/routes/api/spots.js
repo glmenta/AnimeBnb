@@ -66,7 +66,7 @@ const validateQueryParams = [
     check('page')
         .exists({ checkFalsy: true})
         .notEmpty()
-        .isInt({ min: 1 })
+        .isInt({ min: 1, max: 100})
         .withMessage("Page must be greater than or equal to 1"),
     check('size')
         .exists({ checkFalsy: true})
@@ -76,22 +76,22 @@ const validateQueryParams = [
     check('maxLat')
         .exists({ checkFalsy: true})
         .notEmpty()
-        .isInt({ min: 1 })
+        .isInt()
         .withMessage("maximum latitude is invalid"),
     check('minLat')
         .exists({ checkFalsy: true})
         .notEmpty()
-        .isInt({ min: 1 })
+        .isInt()
         .withMessage("minimum latitude is invalid"),
     check('maxLng')
         .exists({ checkFalsy: true})
         .notEmpty()
-        .isInt({ min: 1 })
+        .isInt()
         .withMessage("maximum longitude is invalid"),
     check('minLng')
         .exists({ checkFalsy: true})
         .notEmpty()
-        .isInt({ min: 1 })
+        .isInt()
         .withMessage("minimum longitude is invalid"),
     check('minPrice')
         .exists({ checkFalsy: true})
@@ -105,8 +105,6 @@ const validateQueryParams = [
         .withMessage("Minimum price must be greater than or equal to 0"),
 ]
 //get all spots
-
-router.get('/', requireAuth, validateQueryParams, async (req,res) => {
 //  const spots = await Spot.findAll({
 //         attributes: ['id', 'ownerId', 'address', 'city',
 //         'state', 'country', 'lat', 'lng', 'name', 'description',
@@ -120,33 +118,83 @@ router.get('/', requireAuth, validateQueryParams, async (req,res) => {
 //         group:['Spot.id', 'SpotImages.url']
 //     })
 //     res.status(200).json({ "Spots": spots })
-const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
-const limit = Math.min(parseInt(size), 20);
-const offset = (parseInt(page) - 1) * limit;
-const filters = {
-  ...(minLat && { lat: { [Op.gte]: minLat } }),
-  ...(maxLat && { lat: { [Op.lte]: maxLat } }),
-  ...(minLng && { lng: { [Op.gte]: minLng } }),
-  ...(maxLng && { lng: { [Op.lte]: maxLng } }),
-  ...(minPrice && { price: { [Op.gte]: minPrice } }),
-  ...(maxPrice && { price: { [Op.lte]: maxPrice } })
-};
-const spots = await Spot.scope({ method: ['queryFilter'] }).findAll({
-    where: filters,
-    limit: limit,
-    offset: offset,
-})
+router.get('/', requireAuth, validateQueryParams, async (req,res) => {
 
-if (!spots) {
-    return res.status(404).json({
-        message: "Spots do not exist",
-        statusCode: 404
+    const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
+
+    const limit = Math.min(parseInt(size), 20);
+    const offset = (parseInt(page) - 1) * limit;
+    const filters = {
+    ...(minLat && { lat: { [Op.gte]: minLat } }),
+    ...(maxLat && { lat: { [Op.lte]: maxLat } }),
+    ...(minLng && { lng: { [Op.gte]: minLng } }),
+    ...(maxLng && { lng: { [Op.lte]: maxLng } }),
+    ...(minPrice && { price: { [Op.gte]: minPrice } }),
+    ...(maxPrice && { price: { [Op.lte]: maxPrice } })
+    };
+
+    const spots = await Spot.scope({ method: ['queryFilter'] }).findAll({
+        where: filters,
+        limit: limit,
+        offset: offset,
     })
-}
 
-if (spots) {
-    return res.status(200).json({ Spots: spots })
-}
+    if (!spots) {
+        return res.status(404).json({
+            message: "Spots do not exist",
+            statusCode: 404
+        })
+    }
+    if (page <= 0) {
+        return res.status(400).json({
+            'message': "Page must be greater than or equal to 1",
+            "statusCode": 400
+        })
+    } else if (size < 1) {
+        return res.status(400).json({
+            'message': "Size must be greater than or equal to 1",
+            "statusCode": 400
+        })
+    } else if (minLat < -90) {
+        return res.status(400).json({
+            'message': "Minimum latitude is invalid",
+            "statusCode": 400
+        })
+    } else if (maxLat > 90) {
+        return res.status(400).json({
+            'message': "Maximum latitude is invalid",
+            "statusCode": 400
+        })
+    } else if (minLng < -180) {
+        return res.status(400).json({
+            'message': "Minimum longitude is invalid",
+            "statusCode": 400
+        })
+    } else if (maxLng > 180) {
+        return res.status(400).json({
+            'message': "Maximum longitude is invalid",
+            "statusCode": 400
+        })
+    } else if (minPrice && minPrice < 0) {
+        return res.status(400).json({
+            'message': "Minimum price must be greater than or equal to 1",
+            "statusCode": 400
+        })
+    } else if (maxPrice && maxPrice < 0) {
+        return res.status(400).json({
+            'message': "Maximum price must be greater than or equal to 1",
+            "statusCode": 400
+        })
+    } else {
+        if (spots.length === 0) {
+            return res.status(404).json({
+                'message': "There are no spots are not within parameters",
+                'statusCode': 404
+            })
+        }
+        return res.status(200).json({ Spots: spots, page, size })
+    }
+
 })
 
 //get all spots by current user
@@ -159,7 +207,7 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-            [Sequelize.col('SpotImages.url'), 'preview']],
+            [Sequelize.col('SpotImages.url'), 'previewImage']],
             include: [
                 { model: Review, attributes: []},
                 { model: SpotImage, attributes: []}
