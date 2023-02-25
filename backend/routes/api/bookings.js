@@ -22,23 +22,23 @@ const validateBooking = [
 //get all current bookings
 router.get('/current', restoreUser, requireAuth, async(req,res) => {
     const userId = req.user.id
-    // const userBookings = await Booking.findByPk(userId)
-    // if (userBookings) {
     const currentBookings = await Booking.findAll({ where:{ userId },
             include: [
                 { model: Spot, attributes: ['id', 'ownerId', 'address', 'city',
                 'state', 'country', 'lat', 'lng', 'name', 'description',
-                'price', 'createdAt', 'updatedAt'],
+                'price'],
                 include: [
                     {
                         model: SpotImage, attributes: ['url'],
-                        where: { preview: true }
+                        where: { preview: true },
+                        required: false
                     }
                 ]},
                 ],
             attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
-            group: ['Booking.id']
+            // group: ['Booking.id']
         });
+
 
         if (currentBookings) {
             const bookings = currentBookings.map((booking) => {
@@ -51,7 +51,6 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                 } else {
                     previewImage = null;
                 }
-
                 return {
                     id,
                     spotId,
@@ -80,7 +79,7 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
         return res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
-    })
+        })
 })
 
 //edit booking
