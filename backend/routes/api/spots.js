@@ -194,6 +194,12 @@ router.get('/current', requireAuth, async (req,res) => {
 router.get('/:spotId', async (req,res) => {
     const id = req.params.spotId
     const checkIfExists = await Spot.findByPk(id)
+    if (!checkIfExists) {
+        res.status(404).json({
+            "message": "Spot couldn't be found",
+            "statusCode": 404
+        })
+    }
     const spot = await Spot.findOne({
         where: { id },
         attributes: ['id', 'ownerId', 'address', 'city',
@@ -211,11 +217,6 @@ router.get('/:spotId', async (req,res) => {
     })
     if (spot.id) {
         res.status(200).json(spot)
-    } else if (!checkIfExists) {
-        res.status(404).json({
-            "message": "Spot couldn't be found",
-            "statusCode": 404
-        })
     }
 })
 //create a spot
