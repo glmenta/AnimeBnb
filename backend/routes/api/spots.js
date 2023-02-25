@@ -177,7 +177,7 @@ router.get('/current', requireAuth, async (req,res) => {
                 { model: Review, attributes: []},
                 { model: SpotImage, attributes: []}
             ],
-            group:['Spot.id', 'Spotimages.url']
+            group:['Spot.id', 'SpotImages.url']
         })
         res.status(200)
     if (currSpots) {
