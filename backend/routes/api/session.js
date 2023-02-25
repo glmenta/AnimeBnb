@@ -23,48 +23,21 @@ const validateLogin = [
   ];
 
 // Log in
-router.post(
-    '/',
-    validateLogin,
-    async (req, res, next) => {
+router.post('/', validateLogin, async (req, res) => {
       const { credential, password } = req.body;
-      //validateLogin,
-      const user = await User.login({ credential, password });
+      const userInfo = await User.login({ credential, password });
 
-      const bodyValErr = {
-        "message": "Validation error",
-        "statusCode": 400,
-        "errors": {}
-      }
-
-      if (!credential || credential === "") {
-        bodyValErr.errors = { "credential": "Email or username is required" }
-        return res.json({bodyValErr})
-      }
-
-      if (!password || password === "") {
-        bodyValErr.errors = { "password": "Password is required" }
-        return res.json({bodyValErr})
-      }
-      // if (!user) {
-      //   const err = new Error('Login failed');
-      //   err.status = 401;
-      //   err.title = 'Login failed';
-      //   err.errors = ['The provided credentials were invalid.'];
-      //   return next(err);
-      // }
-
-      if (!user) {
+      if (!userInfo) {
         res.status(401)
         return res.json({"message": "Invalid credentials",
         "statusCode": 401})
       }
-
-      const userToken = await setTokenCookie(res, user);
-      userInfo = user.toJSON();
-      userInfo.token = userToken
+      let user;
+      const userToken = await setTokenCookie(res, userInfo);
+      user = userInfo.toJSON();
+      user.token = userToken
       return res.json({
-        userInfo
+        user
       });
     }
   );
