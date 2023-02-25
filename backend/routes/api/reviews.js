@@ -27,7 +27,7 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
              { model: User, attributes: ['id', 'firstName', 'lastName']},
              { model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
                include: [
-                { model: SpotImage, attributes: ['url'], where: { preview: true }}
+                { model: SpotImage, attributes: ['url'], where: { preview: true }, required: false }
             ]},
             { model: ReviewImage, attributes: ['id', 'url']},
         ],
