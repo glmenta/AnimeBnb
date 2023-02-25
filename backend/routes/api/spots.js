@@ -206,7 +206,8 @@ router.get('/:spotId', async (req,res) => {
                 { model: Review, attributes: []},
                 { model: SpotImage, attributes: ['id', 'url', 'preview']},
                 { model: User, as: 'Owner', attributes: ['id','firstName','lastName']}
-            ]
+            ],
+            group: ['Spot.id']
     })
     if (spot.id) {
         res.status(200).json(spot)
