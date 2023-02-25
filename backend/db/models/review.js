@@ -14,22 +14,14 @@ module.exports = (sequelize, DataTypes) => {
       Review.belongsTo(models.Spot, { foreignKey: 'spotId' })
       Review.belongsTo(models.User, { foreignKey: 'userId' })
       Review.hasMany(models.ReviewImage, { foreignKey: 'reviewId'})
-      Review.hasMany(models.SpotImage, { foreignKey: 'spotId'})
     }
   }
   Review.init({
     userId:{
       type: DataTypes.INTEGER,
-      allowNull: false
     },
     spotId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: 'Cannot be empty'
-        }
-      }
     },
     review:{
       type: DataTypes.STRING,
@@ -37,27 +29,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     stars: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      // validate: {
-      //   isInt: true,
-      //   min: 1,
-      //   max: 5,
-      //   msg: 'Star rating must be between 1 to 5'
-      // }
+      allowNull: false
     }
   }, {
     sequelize,
     modelName: 'Review',
-    defaultScope: {
-      attributes: {
-        exclude: ['updatedAt', 'createdAt']
-      }
-    },
-    scopes: {
-      customReview: {
-        exclude: ['updatedAt', 'createdAt']
-      }
-    }
   });
   return Review;
 };

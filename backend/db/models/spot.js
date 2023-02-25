@@ -1,6 +1,10 @@
 'use strict';
 const { Model, Sequelize } = require('sequelize');
-const { Review } = require('./review')
+
+let schema;
+if (process.env.NODE_ENV === 'production') {
+  schema = process.env.SCHEMA; // define your schema in options object
+}
 module.exports = (sequelize, DataTypes) => {
   class Spot extends Model {
     /**
@@ -18,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Spot.init({
     ownerId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+      type: DataTypes.INTEGER
     },
     address: {
       type: DataTypes.STRING,
@@ -39,7 +42,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     lat: {
       type: DataTypes.FLOAT,
-      allowNull: false,
       validate: {
         isDecimal: {
           args: true,
@@ -49,7 +51,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     lng: {
       type: DataTypes.FLOAT,
-      allowNull: false,
       validate: {
         isDecimal: {
           args: true,
@@ -72,17 +73,15 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Spot',
-    // defaultScope: {
-    //   include: [
-    //     { association: 'Reviews', attributes: []},
-    //     { association: 'SpotImages', where: { preview: true }, attributes: []},
-    //   ],
-    //   attributes: [
-    //     'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
-    //     [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-    //     [Sequelize.col('SpotImages.url'), 'preview']
-    //   ]
-    // }
+    scopes: {
+      getAllSpotsQF() {
+        return {
+          attributes: [ 'id', 'ownerId', 'address', 'city', 'state', 'country','lat','lng','name','description','price','createdAt','updatedAt',
+            [ Sequelize.literal(`(SELECT ROUND(AVG(stars), 1) FROM ${schema ? `"${schema}"."Reviews"` : 'Reviews'} WHERE "Reviews"."spotId" = "Spot"."id")`),'avgRating',],
+            [ Sequelize.literal(`(SELECT url FROM ${schema ? `"${schema}"."SpotImages"` : 'SpotImages'} WHERE "SpotImages"."spotId" = "Spot"."id" AND "SpotImages"."preview" = true LIMIT 1)`),'previewImage',],
+          ],
+        };
+      }}
   });
   return Spot;
 };

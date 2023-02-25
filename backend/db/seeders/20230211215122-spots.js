@@ -13,39 +13,39 @@ module.exports = {
     return queryInterface.bulkInsert(options,  [
       {
         ownerId: 1,
-        address: "675 Sartoga Ave",
-        city: "San Jose",
-        state: "California",
-        country: "United States of America",
+        address: "123 Ichiraku Ramen",
+        city: "Hidden Leaf",
+        state: "Ninja Town",
+        country: "Japan",
         lat: 17.7645358,
         lng: -32.4730231,
-        name: "Mitsuwa",
-        description: "Japanese Market",
-        price: 123,
+        name: "Ichiraku",
+        description: "Ramen Spot",
+        price: 11,
       },
       {
         ownerId: 2,
-        address: "541 Bryant Street",
-        city: "Palo Alto",
-        state: "California",
-        country: "United States of America",
+        address: "6969 Soul Street",
+        city: "Seireitei",
+        state: "Soul Society",
+        country: "Other Realm",
         lat: 40.7645358,
-        lng: -12.4730327,
-        name: "Ramen Nagi",
-        description: "really good ramen",
-        price: 10,
+        lng: 12.4730327,
+        name: "Shinigami Headquarters",
+        description: "Where the captains meet",
+        price: 10000,
       },
       {
         ownerId: 3,
-        address: "1213 Alvarado Avenue",
-        city: "Davis",
-        state: "California",
-        country: "United States of America",
+        address: "xxxxxx hidden in an island",
+        city: "Unknown somewhere",
+        state: "Laugh Tale",
+        country: "Grand Line",
         lat: 50.7645358,
-        lng: -237.4730327,
-        name: "Fountain Circle",
-        description: "good ol davis",
-        price: 50,
+        lng: 237.4730327,
+        name: "One Piece",
+        description: "The Treasure",
+        price: 5000000000,
       }
     ], {})
   },
@@ -54,7 +54,7 @@ module.exports = {
     options.tableName = 'Spots';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      name: { [Op.in]: ['App Academy', 'Ramen Nagi', 'Fountain Circle'] }
+      name: { [Op.in]: ['Ichiraku', 'Shinigami Headquarters', 'One Piece'] }
     }, {});
   }
 };

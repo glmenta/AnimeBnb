@@ -3,7 +3,7 @@ const { restoreUser, requireAuth } = require('../../utils/auth');
 const { Spot, SpotImage, Review, User, Sequelize, ReviewImage, Booking } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const { Session } = require('./session');
+const { Op } = require('sequelize')
 const router = express.Router();
 
 const validateSpots = [
@@ -64,32 +64,115 @@ const validateReview = [
 
 //get all spots
 router.get('/', async (req,res) => {
-    const spots = await Spot.findAll({
-        attributes: ['id', 'ownerId', 'address', 'city',
-        'state', 'country', 'lat', 'lng', 'name', 'description',
-        'price', 'createdAt', 'updatedAt',
-        [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-        [Sequelize.col('SpotImages.url'), 'preview']],
-        include: [
-            { model: Review, attributes: []},
-            { model: SpotImage, attributes: []},
-        ],
-        group:['Spot.id', 'SpotImages.url']
+    const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
+
+    const limit = Math.min(parseInt(size), 20);
+    const offset = (parseInt(page) - 1) * limit;
+    const filters = {
+    ...(minLat && { lat: { [Op.gte]: minLat } }),
+    ...(maxLat && { lat: { [Op.lte]: maxLat } }),
+    ...(minLng && { lng: { [Op.gte]: minLng } }),
+    ...(maxLng && { lng: { [Op.lte]: maxLng } }),
+    ...(minPrice && { price: { [Op.gte]: minPrice } }),
+    ...(maxPrice && { price: { [Op.lte]: maxPrice } })
+    };
+
+    const spots = await Spot.scope({ method: ['getAllSpotsQF'] }).findAll({
+        where: filters,
+        limit: limit,
+        offset: offset,
     })
-    res.status(200).json({ "Spots": spots })
+
+    if (!spots) {
+        return res.status(404).json({
+            message: "Spots do not exist",
+            statusCode: 404
+        })
+    }
+    if (page <= 0) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'page': "Page must be greater than or equal to 1"
+            }
+        })
+    } else if (size < 1) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'size': "Size must be greater than or equal to 1"
+            }
+        })
+    } else if (minLat < -90) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'minLat': "Minimum latitude is invalid"
+            }
+        })
+    } else if (maxLat > 90) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'maxLat': "Maximum latitude is invalid"
+            }
+        })
+    } else if (minLng < -180 ) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'minLng': "Minimum longitude is invalid"
+            }
+        })
+    } else if (maxLng > 180) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+                'maxLng': "Maximum longitude is invalid"
+            }
+        })
+    } else if (minPrice && minPrice <= 0) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'minPrice': "Minimum price must be greater than or equal to 1"
+            }
+        })
+    } else if (maxPrice && maxPrice <= 0) {
+        return res.status(400).json({
+            'message': 'Validation Error',
+            "statusCode": 400,
+            'errors': {
+               'maxPrice': "Maximum price must be greater than or equal to 1"
+            }
+        })
+    } else {
+        if (spots.length === 0) {
+            return res.status(404).json({
+                'message':  "There are no spots within given parameters",
+                'statusCode': 404
+            })
+        }
+        return res.status(200).json({ Spots: spots, page, size })
+    }
 })
 
 //get all spots by current user
-router.get('/current', restoreUser, requireAuth, async (req,res) => {
+router.get('/current', requireAuth, async (req,res) => {
     const userId = req.user.id
-    const userSpots = await Spot.findByPk(userId);
-    if (userSpots) {
-        currSpots = await Spot.findAll({ where: { ownerId: userId },
+    const currSpots = await Spot.findAll({ where: { ownerId: userId },
             attributes: ['id', 'ownerId', 'address', 'city',
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-            [Sequelize.col('SpotImages.url'), 'preview']],
+            [Sequelize.col('SpotImages.url'), 'previewImage']],
             include: [
                 { model: Review, attributes: []},
                 { model: SpotImage, attributes: []}
@@ -97,7 +180,13 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
             group:['Spot.id', 'Spotimages.url']
         })
         res.status(200)
+    if (currSpots) {
         return res.json({ "Spots": currSpots })
+    } else {
+        res.status(400).json({
+            "message": 'Current user has no spots',
+            'statusCode': 404
+        })
     }
 })
 
@@ -111,7 +200,8 @@ router.get('/:spotId', async (req,res) => {
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 'numReviews'],
             [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-            [Sequelize.col('SpotImages.url'), 'preview']],
+            // [Sequelize.col('SpotImages.url'), 'preview']],
+            ],
             include: [
                 { model: Review, attributes: []},
                 { model: SpotImage, attributes: ['id', 'url', 'preview']},
@@ -132,55 +222,105 @@ router.get('/:spotId', async (req,res) => {
 router.post('/', restoreUser, requireAuth, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
-    const requiredInputErrors = {
-        "message": "Validation Error",
-        "statusCode": 400,
-        "errors": {}
-    }
 
     if (!address || address === "") {
-        requiredInputErrors.errors = { "address": "Street address is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "address": "Street address is required"
+            }
+        })
     }
 
     if (!city || city === "") {
-        requiredInputErrors.errors = { "city": "City is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "city": "City is required"
+            }
+        })
     }
 
     if (!state || state === "") {
-        requiredInputErrors.errors = { "state": "State is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "state": "State is required"
+            }
+        })
     }
 
     if (!country || country === "") {
-        requiredInputErrors.errors = { "country": "Country is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "country": "Country is required"
+            }
+        })
     }
 
     if (!lat || lat === "") {
-        requiredInputErrors.errors = { "lat": "Latitude is not valid" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "lat": "Latitude is not valid"
+            }
+        })
     }
 
     if (!lng || lng === "") {
-        requiredInputErrors.errors = { "lng": "Longitude is not valid" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "lng": "Longitude is not valid"
+            }
+        })
     }
 
     if (!name || name === "") {
-        requiredInputErrors.errors = { "name": "Name must be less than 50 characters" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "name": "Please enter a name for your spot"
+            }
+        })
+    }
+
+    if (name.length > 50) {
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "name": "Name must be less than 50 characters"
+            }
+        })
     }
 
     if (!description || !description === "") {
-        requiredInputErrors.errors = { "description": "Description is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "description": "Description is required"
+            }
+        })
     }
 
     if (!price || price === "") {
-        requiredInputErrors.errors = { "price": "Price per day is required" }
-        return res.json({requiredInputErrors})
+        return res.status(400).json({
+            "message": "Validation Error",
+            "statusCode": 400,
+            "errors": {
+                "price": "Price per day is required"
+            }
+        })
     }
 
     const newSpot = await Spot.create({
@@ -309,7 +449,7 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
           })
     }
     if (spot) {
-        const newReview = await Review.scope('customReview').create({
+        const newReview = await Review.create({
             userId,
             spotId: parseInt(spotId),
             review,
@@ -325,6 +465,8 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
           })
     }
 })
+
+
 
 //get all bookings of spot by spotid
 router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
@@ -378,9 +520,79 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
         return res.status(200).json({'Bookings': notOwnedBookings })
     }
 })
+
 //create booking based on spotid
 router.post('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
+    const userId = req.user.id
+    const spotId = req.params.spotId
+    const spot = await Spot.findByPk(spotId)
+
+    const { startDate, endDate } = req.body;
+
+    if(!spot) {
+        res.status(404).json({
+            message: "Spot couldn't be found",
+            statusCode: 404
+
+        })
+    }
+
+    if(spot.ownerId === userId) {
+        res.status(403).json({
+            message: "Cannot book on owned spot",
+            statusCode: 403
+        })
+    }
+
+    const invalidBookings = await Booking.findAll({
+        where: {
+            spotId,
+            [Op.or]: [
+                {
+                    startDate: { [Op.lte]: startDate },
+                    endDate: { [Op.gte]: startDate },
+                },
+                {
+                    startDate: { [Op.lte]: endDate },
+                    endDate: { [Op.gte]: endDate },
+                },
+                {
+                    startDate: { [Op.gte]: startDate },
+                    endDate: { [Op.lte]: endDate },
+                },
+            ]
+        }
+    })
+
+    if (invalidBookings.length) {
+        return res.status(403).json({
+            "message": "Sorry, this spot is already booked for the specified dates",
+            "statusCode": 403,
+            "errors": {
+              "startDate": "Start date conflicts with an existing booking",
+              "endDate": "End date conflicts with an existing booking"
+            }
+        })
+    }
+
+    const newBooking = await Booking.create({
+        spotId: parseInt(spotId),
+        userId,
+        startDate,
+        endDate
+    })
+
+    if(newBooking) {
+        return res.status(200).json({
+            id: newBooking.id,
+            spotId: newBooking.spotId,
+            userId: newBooking.userId,
+            startDate: newBooking.startDate,
+            endDate: newBooking.endDate,
+            createdAt: newBooking.createdAt,
+            updatedAt: newBooking.updatedAt,
+        })
+    }
 
 })
-
 module.exports = router;
