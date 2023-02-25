@@ -171,7 +171,8 @@ router.get('/current', requireAuth, async (req,res) => {
             attributes: ['id', 'ownerId', 'address', 'city',
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
-            [Sequelize.fn('ROUND', Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 2), 'avgRating'],
+            //[Sequelize.fn('ROUND', Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 2), 'avgRating'],
+            [ Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
             [Sequelize.col('SpotImages.url'), 'previewImage']],
             include: [
                 { model: Review, attributes: []},
@@ -206,7 +207,8 @@ router.get('/:spotId', async (req,res) => {
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 'numReviews'],
-            [Sequelize.fn('ROUND', Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 2), 'avgRating'],
+            // [Sequelize.fn('ROUND', Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 2), 'avgRating'],
+            [ Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
             ],
             include: [
                 { model: Review, attributes: []},
