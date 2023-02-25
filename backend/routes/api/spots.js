@@ -193,6 +193,7 @@ router.get('/current', requireAuth, async (req,res) => {
 //get details of a spot by spotId
 router.get('/:spotId', async (req,res) => {
     const id = req.params.spotId
+    const checkIfExists = await Spot.findByPk(id)
     const spot = await Spot.findOne({
         where: { id },
         attributes: ['id', 'ownerId', 'address', 'city',
@@ -200,7 +201,6 @@ router.get('/:spotId', async (req,res) => {
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 'numReviews'],
             [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-            // [Sequelize.col('SpotImages.url'), 'preview']],
             ],
             include: [
                 { model: Review, attributes: []},
@@ -211,7 +211,7 @@ router.get('/:spotId', async (req,res) => {
     })
     if (spot.id) {
         res.status(200).json(spot)
-    } else {
+    } else if (!checkIfExists) {
         res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
