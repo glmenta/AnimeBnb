@@ -171,7 +171,7 @@ router.get('/current', requireAuth, async (req,res) => {
             attributes: ['id', 'ownerId', 'address', 'city',
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
-            [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+            [Sequelize.fn('ROUND', Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 2), 'avgRating'],
             [Sequelize.col('SpotImages.url'), 'previewImage']],
             include: [
                 { model: Review, attributes: []},
@@ -206,7 +206,7 @@ router.get('/:spotId', async (req,res) => {
             'state', 'country', 'lat', 'lng', 'name', 'description',
             'price', 'createdAt', 'updatedAt',
             [Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 'numReviews'],
-            [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+            [Sequelize.fn('ROUND', Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 2), 'avgRating'],
             ],
             include: [
                 { model: Review, attributes: []},
@@ -482,7 +482,7 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
     ],
     attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
     })
-    if (!spot) {
+    if (!spot || bookings.length < 1) {
         res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
@@ -490,7 +490,6 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
     }
     //if you are the owner
     if (userId === spot.ownerId) {
-        //res.status(200).json({ 'Bookings': ownedSpotBookings })
         const ownerBookings = ownedSpotBookings.map((booking) => {
             const { id, spotId, userId, startDate, endDate, createdAt, updatedAt, User } = booking
             return {
