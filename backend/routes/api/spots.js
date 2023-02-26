@@ -80,8 +80,8 @@ router.get('/', async (req,res) => {
         ...(minPrice && { price: { [Op.gte]: minPrice } }),
         ...(maxPrice && { price: { [Op.lte]: maxPrice } })
     };
-
-    const spots = await Spot.scope({ method: ['getAllSpotsQF'] }).findAll({
+    //.scope({ method: ['getAllSpotsQF'] })
+    const spots = await Spot.scope('spotInfo').findAll({
         // attributes: ['id', 'ownerId', 'address', 'city',
         //     'state', 'country', 'lat', 'lng', 'name', 'description',
         //     'price', 'createdAt', 'updatedAt',
