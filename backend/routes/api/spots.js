@@ -5,7 +5,7 @@ const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize')
 const router = express.Router();
-
+let schema;
 const validateSpots = [
     check('address')
         .exists({ checkFalsy: true})
@@ -63,33 +63,60 @@ const validateReview = [
 ]
 
 //get all spots
+// [ Sequelize.literal(`(SELECT ROUND(AVG(stars), 1) FROM ${schema ? `"${schema}"."Reviews"` : 'Reviews'}
+// WHERE "Reviews"."spotId" = "Spot"."id")`),'avgRating'],
+// [ Sequelize.literal(`(SELECT url FROM ${schema ? `"${schema}"."SpotImages"` : 'SpotImages'}
+// WHERE "SpotImages"."spotId" = "Spot"."id" AND "SpotImages"."preview" = true LIMIT 1)`),'previewImage']],
 router.get('/', async (req,res) => {
     const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
 
     const limit = Math.min(parseInt(size), 20);
     const offset = (parseInt(page) - 1) * limit;
     const filters = {
-    ...(minLat && { lat: { [Op.gte]: minLat } }),
-    ...(maxLat && { lat: { [Op.lte]: maxLat } }),
-    ...(minLng && { lng: { [Op.gte]: minLng } }),
-    ...(maxLng && { lng: { [Op.lte]: maxLng } }),
-    ...(minPrice && { price: { [Op.gte]: minPrice } }),
-    ...(maxPrice && { price: { [Op.lte]: maxPrice } })
+        ...(minLat && { lat: { [Op.gte]: minLat } }),
+        ...(maxLat && { lat: { [Op.lte]: maxLat } }),
+        ...(minLng && { lng: { [Op.gte]: minLng } }),
+        ...(maxLng && { lng: { [Op.lte]: maxLng } }),
+        ...(minPrice && { price: { [Op.gte]: minPrice } }),
+        ...(maxPrice && { price: { [Op.lte]: maxPrice } })
     };
 
     const spots = await Spot.scope({ method: ['getAllSpotsQF'] }).findAll({
-        where: filters,
-        limit: limit,
-        offset: offset,
-    })
-
-    if (!spots) {
-        return res.status(404).json({
-            message: "Spots do not exist",
-            statusCode: 404
+        // attributes: ['id', 'ownerId', 'address', 'city',
+        //     'state', 'country', 'lat', 'lng', 'name', 'description',
+        //     'price', 'createdAt', 'updatedAt',
+        //     [Sequelize.col('SpotImages.url'), 'preview']],
+            include: [
+                { model: Review },
+                { model: SpotImage },
+            ],
+        //     group:['Spot.id', 'SpotImages.url'],
+            where: filters,
+            limit: limit,
+            offset: offset,
         })
-    }
-    if (page <= 0) {
+        // const spots = await Spot.findAll({
+        //     attributes: ['id', 'ownerId', 'address', 'city',
+        //     'state', 'country', 'lat', 'lng', 'name', 'description',
+        //     'price', 'createdAt', 'updatedAt',
+        //     // [Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+        //     [Sequelize.col('SpotImages.url'), 'preview']],
+        //     include: [
+        //         { model: Review, as: 'Reviews', attributes: []},
+        //         { model: SpotImage, attributes: []},
+        //     ],
+        //     group:['Spot.id', 'SpotImages.url'],
+        //     where: filters,
+        //     limit: limit,
+        //     offset: offset,
+        // })
+        if (!spots || spots.length === 0) {
+            return res.status(404).json({
+                message: "Spots do not exist",
+                statusCode: 404
+            })
+        }
+        if (page <= 0) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -160,6 +187,63 @@ router.get('/', async (req,res) => {
                 'statusCode': 404
             })
         }
+
+    // if (spots) {
+    //     const allSpots = spots.map((spot) => {
+    //         const {
+    //             id,
+    //             ownerId,
+    //             address,
+    //             city,
+    //             state,
+    //             country,
+    //             lat,
+    //             lng,
+    //             name,
+    //             description,
+    //             price,
+    //             createdAt,
+    //             updatedAt
+    //         } = spot;
+    //         return {
+    //             id,
+    //             ownerId,
+    //             address,
+    //             city,
+    //             state,
+    //             country,
+    //             lat,
+    //             lng,
+    //             name,
+    //             description,
+    //             price,
+    //             createdAt,
+    //             updatedAt,
+    //             previewImage
+    //         }
+    //     })
+    for ( let spot of spots ) {
+        for ( let image of spot.SpotImages ) {
+              if ( image.dataValues.preview ) {
+                    spot.dataValues.previewImage = image.url;
+              }
+            //   if ( !spot.dataValues.previewImage) {
+            //       spot.dataValues.previewImage = "No preview image";
+            //   }
+        delete spot.dataValues.SpotImages;
+        };
+
+        let average = 0;
+        for ( let review of spot.Reviews ) {
+              average += review.dataValues.stars;
+        };
+        average = average / spot.Reviews.length;
+        spot.dataValues.avgRating = average;
+        if ( !spot.dataValues.avgRating ) {
+              spot.dataValues.avgRating = "No reviews yet"
+        }
+        delete spot.dataValues.Reviews;
+  }
         return res.status(200).json({ Spots: spots, page, size })
     }
 })
@@ -180,9 +264,8 @@ router.get('/current', requireAuth, async (req,res) => {
             ],
             group:['Spot.id', 'SpotImages.url']
         })
-        res.status(200)
     if (currSpots) {
-        return res.json({ "Spots": currSpots })
+        return res.status(200).json({ "Spots": currSpots })
     } else {
         res.status(400).json({
             "message": 'Current user has no spots',
