@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   Spot.init({
     ownerId: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
     address: {
       type: DataTypes.STRING,
@@ -42,9 +43,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     lat: {
       type: DataTypes.DECIMAL,
+      allowNull: false
       },
     lng: {
       type: DataTypes.DECIMAL,
+      allowNull: false
       },
     name: {
       type: DataTypes.STRING,
@@ -61,16 +64,81 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Spot',
+    defaultScope: {
+      include: [
+        { association: 'Reviews',
+          required: false,
+          attributes: []
+      },
+      {
+        association: 'SpotImages',
+        required: false,
+        where: { preview: true },
+        attributes: []
+      }
+      ],
+      attributes: [
+        "id",
+        "ownerId",
+        "address",
+        "city",
+        "state",
+        "country",
+        "lat",
+        "lng",
+        "name",
+        "description",
+        "price",
+        "createdAt",
+        "updatedAt",
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("AVG", sequelize.col("Reviews.stars")),
+            0
+          ),
+          "avgRating",
+        ],
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.col("SpotImages.url"),
+            sequelize.literal("'image preview unavailable'")
+          ),
+          "previewImage",
+        ],
+      ],
+      group: ["Spot.id", "SpotImages.url"],
+    },
     scopes: {
-      getAllSpotsQF() {
-        return {
-          attributes: [ 'id', 'ownerId', 'address', 'city', 'state', 'country','lat','lng','name','description','price','createdAt','updatedAt',
-            [ Sequelize.literal(`(SELECT ROUND(AVG(stars), 1) FROM ${schema ? `"${schema}"."Reviews"` : 'Reviews'} WHERE "Reviews"."spotId" = "Spot"."id")`),'avgRating',],
-            // [ Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-            [ Sequelize.literal(`(SELECT url FROM ${schema ? `"${schema}"."SpotImages"` : 'SpotImages'} WHERE "SpotImages"."spotId" = "Spot"."id" AND "SpotImages"."preview" = true LIMIT 1)`),'previewImage'],
-          ],
-        };
-      }}
+      // getAllSpotsQF() {
+      //   return {
+      //     attributes: [ 'id', 'ownerId', 'address', 'city', 'state', 'country','lat','lng','name','description','price','createdAt','updatedAt',
+      //       // [ Sequelize.literal(`(SELECT ROUND(AVG(stars), 1) FROM ${schema ? `"${schema}"."Reviews"` : 'Reviews'} WHERE "Reviews"."spotId" = "Spot"."id")`),'avgRating',],
+      //       [ Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
+      //       [ Sequelize.literal(`(SELECT url FROM ${schema ? `"${schema}"."SpotImages"` : 'SpotImages'} WHERE "SpotImages"."spotId" = "Spot"."id" AND "SpotImages"."preview" = true LIMIT 1)`),'previewImage'],
+          //],
+        //};
+     // }}
+      spotInfo: {
+        attributes: [
+          "id",
+          "ownerId",
+          "address",
+          "city",
+          "state",
+          "country",
+          "lat",
+          "lng",
+          "name",
+          "description",
+          "price",
+          "createdAt",
+          "updatedAt",
+        ],
+        group: ["Spot.id"],
+      },
+    },
   });
   return Spot;
 };
