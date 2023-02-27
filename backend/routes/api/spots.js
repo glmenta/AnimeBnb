@@ -64,10 +64,10 @@ const validateReview = [
 
 //get all spots
 router.get('/', async (req,res) => {
-    const { unpage = 1, unsize = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
+    let { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
 
-    const limit = Math.min(parseInt(unsize), 20);
-    const offset = (parseInt(unpage) - 1) * limit;
+    const limit = Math.min(parseInt(size), 20);
+    const offset = (parseInt(page) - 1) * limit;
     const filters = {
         ...(minLat && { lat: { [Op.gte]: minLat } }),
         ...(maxLat && { lat: { [Op.lte]: maxLat } }),
@@ -94,7 +94,7 @@ router.get('/', async (req,res) => {
             })
         }
     let errors = {}
-        if (unpage <= 0) {
+        if (page <= 0) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -102,7 +102,7 @@ router.get('/', async (req,res) => {
                'page': "Page must be greater than or equal to 1"
             }
         })
-    } else if (unsize < 1) {
+    } else if (size < 1) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -166,35 +166,6 @@ router.get('/', async (req,res) => {
             })
         }
 
-
-    // for ( let spot of spots ) {
-    //     const Images = spot.SpotImages
-
-    //     for ( let image of Images ) {
-    //           if ( image.dataValues.preview ) {
-    //                 spot.dataValues.previewImage = image.url;
-    //           }
-    //         delete spot.dataValues.SpotImages;
-    //     }
-
-    //     if (!Images.length) {
-    //         spot.dataValues.previewImage = 'No images'
-    //         delete spot.dataValues.SpotImages;
-    //     }
-
-    //     let avg = 0;
-
-    //     for ( let review of spot.Reviews ) {
-    //           avg += review.dataValues.stars
-    //     }
-
-    //     avg = avg / spot.Reviews.length
-    //     spot.dataValues.avgRating = avg;
-    //     if ( !spot.dataValues.avgRating ) {
-    //           spot.dataValues.avgRating = "No reviews"
-    //     }
-    //     delete spot.dataValues.Reviews;
-    // }
     for (let spot of spots) {
         const images = spot.SpotImages;
         let previewImage = 'No images';
@@ -251,8 +222,8 @@ router.get('/', async (req,res) => {
                     previewImage: spot.previewImage
                 }
             })
-            let page = parseFloat(unpage)
-            let size = parseFloat(unsize)
+            page = parseFloat(page)
+            size = parseFloat(size)
             return res.status(200).json({ Spots: allSpots, page, size })
         }
     }
