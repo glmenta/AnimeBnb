@@ -41,15 +41,6 @@ module.exports = (sequelize, DataTypes) => {
         ]
       }
     },
-    scopes: {
-      spotReview: {
-        include:
-        [
-          { association: "User", attributes: ['id', 'firstName', 'lastName'], required: false},
-          { association: "ReviewImage", attributes: ['id', 'url'], required: false}
-        ]
-      }
-    }
   });
   return Review;
 };

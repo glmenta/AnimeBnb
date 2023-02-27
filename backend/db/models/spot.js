@@ -91,35 +91,12 @@ module.exports = (sequelize, DataTypes) => {
         "price",
         "createdAt",
         "updatedAt",
-        [
-          sequelize.fn(
-            "COALESCE",
-            sequelize.fn("AVG", sequelize.col("Reviews.stars")),
-            0
-          ),
-          "avgRating",
-        ],
-        [
-          sequelize.fn(
-            "COALESCE",
-            sequelize.col("SpotImages.url"),
-            sequelize.literal("'image preview unavailable'")
-          ),
-          "previewImage",
-        ],
+        [ Sequelize.fn("COALESCE", Sequelize.fn("AVG", Sequelize.col("Reviews.stars")), 'No Reviews'), "avgRating"],
+        [ Sequelize.fn("COALESCE", Sequelize.col("SpotImages.url"),Sequelize.literal("'image preview unavailable'")), "previewImage"],
       ],
       group: ["Spot.id", "SpotImages.url"],
     },
     scopes: {
-      // getAllSpotsQF() {
-      //   return {
-      //     attributes: [ 'id', 'ownerId', 'address', 'city', 'state', 'country','lat','lng','name','description','price','createdAt','updatedAt',
-      //       // [ Sequelize.literal(`(SELECT ROUND(AVG(stars), 1) FROM ${schema ? `"${schema}"."Reviews"` : 'Reviews'} WHERE "Reviews"."spotId" = "Spot"."id")`),'avgRating',],
-      //       [ Sequelize.fn('AVG', Sequelize.col('Reviews.stars')), 'avgRating'],
-      //       [ Sequelize.literal(`(SELECT url FROM ${schema ? `"${schema}"."SpotImages"` : 'SpotImages'} WHERE "SpotImages"."spotId" = "Spot"."id" AND "SpotImages"."preview" = true LIMIT 1)`),'previewImage'],
-          //],
-        //};
-     // }}
      spotDetails: {
       include: [
         {
@@ -139,14 +116,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       ],
       attributes: [
-        [
-          sequelize.fn(
-            "COALESCE",
-            sequelize.fn("COUNT", sequelize.col("Reviews.id")),
-            0
-          ),
-          "numReviews",
-        ],
+        [ Sequelize.fn("COALESCE", Sequelize.fn("COUNT", Sequelize.col("Reviews.id")), 0),"numReviews"]
       ],
       group: ["Spot.id","SpotImages.id", "Reviews.id", "Owner.id"],
     },

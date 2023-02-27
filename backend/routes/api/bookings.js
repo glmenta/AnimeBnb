@@ -6,19 +6,6 @@ const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize')
 const router = express.Router();
 
-const validateBooking = [
-    check('startDate')
-        .exists({ checkFalsy: true})
-        .isDate()
-        .withMessage('startDate is not valid'),
-    check('endDate')
-        .exists({ checkFalsy: true })
-        .notEmpty()
-        .isDate()
-        .withMessage('endDate is not valid'),
-    handleValidationErrors
-]
-
 //get all current bookings
 router.get('/current', restoreUser, requireAuth, async(req,res) => {
     const userId = req.user.id
@@ -35,7 +22,6 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                     }
                 ]},
                 ],
-            // attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
         });
 
 
