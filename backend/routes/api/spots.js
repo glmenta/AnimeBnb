@@ -93,6 +93,7 @@ router.get('/', async (req,res) => {
                 statusCode: 404
             })
         }
+    let errors = {}
         if (unpage <= 0) {
         return res.status(400).json({
             'message': 'Validation Error',
@@ -166,34 +167,65 @@ router.get('/', async (req,res) => {
         }
 
 
-    for ( let spot of spots ) {
-        const Images = spot.SpotImages
+    // for ( let spot of spots ) {
+    //     const Images = spot.SpotImages
 
-        for ( let image of Images ) {
-              if ( image.dataValues.preview ) {
-                    spot.dataValues.previewImage = image.url;
-              }
-            delete spot.dataValues.SpotImages;
+    //     for ( let image of Images ) {
+    //           if ( image.dataValues.preview ) {
+    //                 spot.dataValues.previewImage = image.url;
+    //           }
+    //         delete spot.dataValues.SpotImages;
+    //     }
+
+    //     if (!Images.length) {
+    //         spot.dataValues.previewImage = 'No images'
+    //         delete spot.dataValues.SpotImages;
+    //     }
+
+    //     let avg = 0;
+
+    //     for ( let review of spot.Reviews ) {
+    //           avg += review.dataValues.stars
+    //     }
+
+    //     avg = avg / spot.Reviews.length
+    //     spot.dataValues.avgRating = avg;
+    //     if ( !spot.dataValues.avgRating ) {
+    //           spot.dataValues.avgRating = "No reviews"
+    //     }
+    //     delete spot.dataValues.Reviews;
+    // }
+    for (let spot of spots) {
+        const images = spot.SpotImages;
+        let previewImage = 'No images';
+        let avgRating = 'No reviews';
+        let totalStars = 0;
+
+        for (let image of images) {
+          if (image.dataValues.preview) {
+            previewImage = image.url;
+            break;
+          }
         }
 
-        if (!Images.length) {
-            spot.dataValues.previewImage = 'No images'
-            delete spot.dataValues.SpotImages;
+        if (images.length > 0) {
+          let reviews = spot.Reviews || [];
+          let numReviews = reviews.length;
+
+          if (numReviews > 0) {
+            for (let review of reviews) {
+              totalStars += review.dataValues.stars;
+            }
+            avgRating = totalStars / numReviews;
+          }
         }
 
-        let avg = 0;
-
-        for ( let review of spot.Reviews ) {
-              avg += review.dataValues.stars
-        }
-
-        avg = avg / spot.Reviews.length
-        spot.dataValues.avgRating = avg;
-        if ( !spot.dataValues.avgRating ) {
-              spot.dataValues.avgRating = "No reviews"
-        }
+        spot.dataValues.previewImage = previewImage;
+        spot.dataValues.avgRating = avgRating;
+        delete spot.dataValues.SpotImages;
         delete spot.dataValues.Reviews;
-    }
+      }
+
         if(spots) {
             const allSpots = spots.map(spot => {
                 spot = spot.toJSON()
@@ -291,12 +323,13 @@ router.get('/:spotId', async (req,res) => {
         }
     return res.status(200).json(spot)
 })
+
 //create a spot
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
-    const newSpot = await Spot.create({
+    let newSpot = await Spot.create({
         ownerId,
         address,
         city,
@@ -308,7 +341,12 @@ router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
         description,
         price
     })
+
     if (newSpot) {
+        newSpot = newSpot.toJSON()
+        newSpot.lat = parseFloat(newSpot.lat)
+        newSpot.lng = parseFloat(newSpot.lng)
+        newSpot.price = parseFloat(newSpot.price)
         return res.status(201).json(newSpot)
     }
 })
