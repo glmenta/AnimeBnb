@@ -3,6 +3,7 @@ const { restoreUser, requireAuth } = require('../../utils/auth');
 const { Spot, SpotImage, Review, User, ReviewImage, Sequelize } = require('../../db/models');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
+const review = require('../../db/models/review');
 const router = express.Router();
 
 const validateReview = [
@@ -22,7 +23,7 @@ const validateReview = [
 router.get('/current', restoreUser, requireAuth, async (req,res) => {
     const userId = req.user.id
 
-    const currentReviews = await Review.findAll( { where: { userId: userId },
+    let currentReviews = await Review.findAll( { where: { userId: userId },
         include: [
              { model: User, attributes:
                 ['id', 'firstName', 'lastName']
@@ -44,15 +45,63 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
     }
 
     for (let review of currentReviews) {
-        const prevImg = await SpotImage.findOne({
+        const reviewImage = await SpotImage.findOne({
           where: { spotId: review.Spot.id, preview: true },
         });
-        if (prevImg) {
-          review.Spot.dataValues.previewImage = prevImg.url;
+        if (reviewImage) {
+          review.Spot.dataValues.previewImage = reviewImage.url;
         } else {
           review.Spot.dataValues.previewImage = "No Preview Image";
         }
       }
+
+    if (currentReviews) {
+        // currentReviews = currentReviews.toJSON()
+        currentReviews.lat = parseFloat(currentReviews.lat)
+        currentReviews.lng = parseFloat(currentReviews.lng)
+        currentReviews.price = parseFloat(currentReviews.price)
+    }
+    //   if (currentReviews) {
+    //     const currUserReviews = currentReviews.map(reviews => {
+    //         reviews = reviews.toJSON()
+    //         const lat = parseFloat(reviews.Spot.lat)
+    //         const lng = parseFloat(reviews.Spot.lng)
+    //         const price = parseFloat(reviews.Spot.price)
+    //         return {
+    //             id: reviews.id,
+    //             userId,
+    //             spotId: reviews.spotId,
+    //             review: reviews.review,
+    //             stars: reviews.stars,
+    //             createdAt: reviews.createdAt,
+    //             updatedAt: reviews.updatedAt,
+    //             User: {
+    //                 id: userId,
+    //                 firstName: reviews.User.firstName,
+    //                 lastName: reviews.User.lastName
+    //             },
+    //             Spot: {
+    //                 id: reviews.Spot.id,
+    //                 ownerId: reviews.Spot.ownerId,
+    //                 address: reviews.Spot.address,
+    //                 city: reviews.Spot.city,
+    //                 state: reviews.Spot.state,
+    //                 country: reviews.Spot.country,
+    //                 lat,
+    //                 lng,
+    //                 name: reviews.Spot.name,
+    //                 description: reviews.Spot.description,
+    //                 price,
+    //                 previewImage: reviews.Spot.previewImage
+    //             },
+    //             ReviewImage: {
+    //                 id: reviews.ReviewImage.id,
+    //                 url: reviews.ReviewImage.url
+    //             }
+    //         }
+    //     })
+    //     return res.json({ Reviews: currUserReviews });
+    //   }
       return res.json({ Reviews: currentReviews });
 })
 

@@ -229,10 +229,36 @@ router.get('/', async (req,res) => {
 //get all spots by current user
 router.get('/current', requireAuth, async (req,res) => {
     const userId = req.user.id
-    const currSpots = await Spot.findAll({ where: { ownerId: userId },
+    const currSpots = await Spot.findAll({
+        where: { ownerId: userId },
         })
+
     if (currSpots) {
-        return res.status(200).json({ "Spots": currSpots })
+        const allSpots = currSpots.map(spot => {
+            spot = spot.toJSON()
+            const lat = parseFloat(spot.lat)
+            const lng = parseFloat(spot.lng)
+            const price = parseFloat(spot.price)
+            const avgRating = parseFloat(spot.avgRating)
+            return {
+                id: spot.id,
+                ownerId: spot.ownerId,
+                address: spot.address,
+                city: spot.city,
+                state: spot.state,
+                country: spot.country,
+                lat,
+                lng,
+                name: spot.name,
+                description: spot.description,
+                price,
+                createdAt: spot.createdAt,
+                updatedAt: spot.updatedAt,
+                avgRating,
+                previewImage: spot.previewImage
+            }
+        })
+        return res.status(200).json({ "Spots": allSpots })
     } else {
         res.status(400).json({
             "message": 'Current user has no spots',
@@ -245,19 +271,25 @@ router.get('/current', requireAuth, async (req,res) => {
 router.get('/:spotId', async (req,res) => {
     const id = req.params.spotId
     const checkIfExists = await Spot.findByPk(id)
+
     if (!checkIfExists) {
         res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
         })
     }
-    const spot = await Spot.scope(['defaultScope','spotDetails']).findOne({
+    let spot = await Spot.scope(['defaultScope','spotDetails']).findOne({
         where: { id },
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
     })
-    if (spot.id) {
-        res.status(200).json(spot)
-    }
+    if (spot) {
+            spot = spot.toJSON()
+            spot.lat = parseFloat(spot.lat)
+            spot.lng = parseFloat(spot.lng)
+            spot.price = parseFloat(spot.price)
+            spot.avgRating = parseFloat(spot.avgRating)
+        }
+    return res.status(200).json(spot)
 })
 //create a spot
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
