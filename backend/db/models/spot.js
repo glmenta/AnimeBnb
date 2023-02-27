@@ -120,25 +120,55 @@ module.exports = (sequelize, DataTypes) => {
           //],
         //};
      // }}
-      spotInfo: {
-        attributes: [
-          "id",
-          "ownerId",
-          "address",
-          "city",
-          "state",
-          "country",
-          "lat",
-          "lng",
-          "name",
-          "description",
-          "price",
-          "createdAt",
-          "updatedAt",
+     spotDetails: {
+      include: [
+        {
+          association: "Owner",
+          required: false,
+          attributes: ["id", "firstName", "lastName"],
+        },
+        {
+          association: "SpotImages",
+          required: false,
+          attributes: ["id", "url", "preview"],
+        },
+        {
+          association: "Reviews",
+          required: false,
+          attributes: [],
+        },
+      ],
+      attributes: [
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("COUNT", sequelize.col("Reviews.id")),
+            0
+          ),
+          "numReviews",
         ],
-        group: ["Spot.id"],
-      },
+      ],
+      group: ["Spot.id","SpotImages.id", "Reviews.id", "Owner.id"],
     },
+    spotInfo: {
+      attributes: [
+        "id",
+        "ownerId",
+        "address",
+        "city",
+        "state",
+        "country",
+        "lat",
+        "lng",
+        "name",
+        "description",
+        "price",
+        "createdAt",
+        "updatedAt",
+      ],
+      group: ["Spot.id"],
+    },
+  },
   });
   return Spot;
 };

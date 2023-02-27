@@ -34,6 +34,22 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Review',
+    defaultScope: {
+      attributes: {
+        include: [
+          'id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'
+        ]
+      }
+    },
+    scopes: {
+      spotReview: {
+        include:
+        [
+          { association: "User", attributes: ['id', 'firstName', 'lastName'], required: false},
+          { association: "ReviewImage", attributes: ['id', 'url'], required: false}
+        ]
+      }
+    }
   });
   return Review;
 };

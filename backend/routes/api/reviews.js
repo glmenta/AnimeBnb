@@ -22,13 +22,14 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
     const userId = req.user.id
 
     const currentReviews = await Review.findAll( { where: { userId: userId },
-        attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'],
+        // attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'],
         include: [
              { model: User, attributes: ['id', 'firstName', 'lastName']},
-             { model: Spot, attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
-               include: [
-                { model: SpotImage, attributes: ['url'], where: { preview: true }, required: false }
-            ]},
+             { model: Spot.scope('spotInfo'), attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price'],
+            //    include: [
+            //     { model: SpotImage, attributes: ['url'], where: { preview: true }, required: false }
+            // ]},
+            },
             { model: ReviewImage, attributes: ['id', 'url']},
         ],
     })
@@ -39,57 +40,67 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
             statusCode: 404
         })
     }
+    for (let review of currentReviews) {
+        const previewPic = await SpotImage.findOne({
+          where: { spotId: review.Spot.id, preview: true },
+        });
+        if (previewPic) {
+          review.Spot.dataValues.previewImage = previewPic.url;
+        } else {
+          review.Spot.dataValues.previewImage = "No Preview Image";
+        }
+      }
+      return res.json({ Reviews: currentReviews });
+    // if (currentReviews) {
+    //     const currentReviewData = currentReviews.map((review) => {
+    //         const {
+    //             id,
+    //             userId,
+    //             spotId,
+    //             review: userReview,
+    //             stars,
+    //             createdAt,
+    //             updatedAt,
+    //             User,
+    //             Spot,
+    //             ReviewImages,
+    //         } = review;
 
-    if (currentReviews) {
-        const currentReviewData = currentReviews.map((review) => {
-            const {
-                id,
-                userId,
-                spotId,
-                review: userReview,
-                stars,
-                createdAt,
-                updatedAt,
-                User,
-                Spot,
-                ReviewImages,
-            } = review;
+    //             let previewImage;
 
-                let previewImage;
+    //             if (Spot.SpotImages.length > 0) {
+    //                 previewImage = Spot.SpotImages[0].url
+    //             } else {
+    //                 previewImage = null;
+    //             }
 
-                if (Spot.SpotImages.length > 0) {
-                    previewImage = Spot.SpotImages[0].url
-                } else {
-                    previewImage = null;
-                }
-
-                return {
-                    id,
-                    userId,
-                    spotId,
-                    review: userReview,
-                    stars,
-                    createdAt,
-                    updatedAt,
-                    User,
-                    Spot: {
-                        id: Spot.id,
-                        ownerId: Spot.ownerId,
-                        address: Spot.address,
-                        city: Spot.city,
-                        state: Spot.state,
-                        country: Spot.country,
-                        lat: Spot.lat,
-                        lng: Spot.lng,
-                        name: Spot.name,
-                        price: Spot.price,
-                        previewImage,
-                    },
-                    ReviewImages,
-                };
-            });
-    return res.status(200).json({ Reviews: currentReviewData });
-    }
+    //             return {
+    //                 id,
+    //                 userId,
+    //                 spotId,
+    //                 review: userReview,
+    //                 stars,
+    //                 createdAt,
+    //                 updatedAt,
+    //                 User,
+    //                 Spot: {
+    //                     id: Spot.id,
+    //                     ownerId: Spot.ownerId,
+    //                     address: Spot.address,
+    //                     city: Spot.city,
+    //                     state: Spot.state,
+    //                     country: Spot.country,
+    //                     lat: Spot.lat,
+    //                     lng: Spot.lng,
+    //                     name: Spot.name,
+    //                     price: Spot.price,
+    //                     previewImage,
+    //                 },
+    //                 ReviewImages,
+    //             };
+    //         });
+    // return res.status(200).json({ Reviews: currentReviewData });
+    // }
 
 })
 

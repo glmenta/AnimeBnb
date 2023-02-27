@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Booking',
+    defaultScope: {
+      attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt']
+    },
+    scopes: {}
   });
   return Booking;
 };

@@ -24,7 +24,7 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
     const userId = req.user.id
     const currentBookings = await Booking.findAll({ where:{ userId },
             include: [
-                { model: Spot, attributes: ['id', 'ownerId', 'address', 'city',
+                { model: Spot.scope('spotInfo'), attributes: ['id', 'ownerId', 'address', 'city',
                 'state', 'country', 'lat', 'lng', 'name', 'description',
                 'price'],
                 include: [
@@ -35,7 +35,7 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                     }
                 ]},
                 ],
-            attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
+            // attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
         });
 
 
@@ -73,7 +73,11 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                     updatedAt
                 }
             })
-            return res.status(200).json({ 'Bookings': bookings })
+            if(bookings.length > 0) {
+                return res.status(200).json({ 'Bookings': bookings })
+            } else {
+                return res.status(404).json({ 'Message': "No bookings found" })
+            }
         }
         return res.status(404).json({
             "message": "Spot couldn't be found",
@@ -158,7 +162,7 @@ router.delete('/:bookingId', requireAuth, async (req,res) => {
     const userId = req.user.id
 
     const findBooking = await Booking.findByPk(bookingId, {
-        include: Spot
+        include: Spot.scope('spotInfo')
     })
 
     if (!findBooking) {
