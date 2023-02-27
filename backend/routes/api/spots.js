@@ -64,10 +64,10 @@ const validateReview = [
 
 //get all spots
 router.get('/', async (req,res) => {
-    const { page = 1, size = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
+    const { unpage = 1, unsize = 20, minLat, maxLat, minLng, maxLng, minPrice = 0, maxPrice = 0 } = req.query;
 
-    const limit = Math.min(parseInt(size), 20);
-    const offset = (parseInt(page) - 1) * limit;
+    const limit = Math.min(parseInt(unsize), 20);
+    const offset = (parseInt(unpage) - 1) * limit;
     const filters = {
         ...(minLat && { lat: { [Op.gte]: minLat } }),
         ...(maxLat && { lat: { [Op.lte]: maxLat } }),
@@ -76,6 +76,7 @@ router.get('/', async (req,res) => {
         ...(minPrice && { price: { [Op.gte]: minPrice } }),
         ...(maxPrice && { price: { [Op.lte]: maxPrice } })
     };
+
     const spots = await Spot.scope('spotInfo').findAll({
             include: [
                 { model: Review },
@@ -92,7 +93,7 @@ router.get('/', async (req,res) => {
                 statusCode: 404
             })
         }
-        if (page <= 0) {
+        if (unpage <= 0) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -100,7 +101,7 @@ router.get('/', async (req,res) => {
                'page': "Page must be greater than or equal to 1"
             }
         })
-    } else if (size < 1) {
+    } else if (unsize < 1) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -193,7 +194,35 @@ router.get('/', async (req,res) => {
         }
         delete spot.dataValues.Reviews;
     }
-        return res.status(200).json({ Spots: spots, page, size })
+        if(spots) {
+            const allSpots = spots.map(spot => {
+                spot = spot.toJSON()
+                const lat = parseFloat(spot.lat)
+                const lng = parseFloat(spot.lng)
+                const price = parseFloat(spot.price)
+                const avgRating = parseFloat(spot.avgRating)
+                return {
+                    id: spot.id,
+                    ownerId: spot.ownerId,
+                    address: spot.address,
+                    city: spot.city,
+                    state: spot.state,
+                    country: spot.country,
+                    lat,
+                    lng,
+                    name: spot.name,
+                    description: spot.description,
+                    price,
+                    createdAt: spot.createdAt,
+                    updatedAt: spot.updatedAt,
+                    avgRating,
+                    previewImage: spot.previewImage
+                }
+            })
+            let page = parseFloat(unpage)
+            let size = parseFloat(unsize)
+            return res.status(200).json({ Spots: allSpots, page, size })
+        }
     }
 })
 
