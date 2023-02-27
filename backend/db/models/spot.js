@@ -91,7 +91,7 @@ module.exports = (sequelize, DataTypes) => {
         "price",
         "createdAt",
         "updatedAt",
-        [ Sequelize.fn("COALESCE", Sequelize.fn("AVG", Sequelize.col("Reviews.stars")), 'No Reviews'), "avgRating"],
+        [ Sequelize.fn("COALESCE", Sequelize.fn("AVG", Sequelize.col("Reviews.stars")), 0), "avgRating"],
         [ Sequelize.fn("COALESCE", Sequelize.col("SpotImages.url"),Sequelize.literal("'image preview unavailable'")), "previewImage"],
       ],
       group: ["Spot.id", "SpotImages.url"],
