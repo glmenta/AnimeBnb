@@ -166,14 +166,6 @@ router.get('/', async (req,res) => {
             })
         }
 
-    // if(Object.keys(err).length) {
-    //     return res.status(400).json({
-    //         message: 'Validation Error',
-    //         statusCode: 400,
-    //         errors: err
-    //     })
-    // }
-
     for (let spot of spots) {
         const images = spot.SpotImages;
         let previewImage = 'No images';
@@ -390,12 +382,14 @@ router.delete('/:spotId', restoreUser, requireAuth, async(req,res) => {
     const id = req.params.spotId
     const userId = req.user.id
     const spot = await Spot.findByPk(id)
+
     if (!spot) {
         res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
         })
     }
+
     if (userId === spot.ownerId) {
         await spot.destroy()
         return res.status(200).json({
@@ -411,6 +405,7 @@ router.delete('/:spotId', restoreUser, requireAuth, async(req,res) => {
 router.get('/:spotId/reviews', async(req,res) => {
     const id = req.params.spotId
     const spot = await Spot.findByPk(id)
+
     if (!spot) {
         return res.status(404).json({
             "message": "Spot couldn't be found",
@@ -499,8 +494,8 @@ router.get('/:spotId/bookings', restoreUser, requireAuth, async(req,res) => {
             }
         })
         return res.status(200).json({ 'Bookings': ownerBookings })
-
-    } else { //if you are not the owner
+    //if you are not the owner
+    } else {
         const notOwnedBookings = bookings.map((booking) => {
             const { spotId, startDate, endDate } = booking
             return {
