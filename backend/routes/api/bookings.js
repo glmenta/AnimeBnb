@@ -28,6 +28,10 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
         if (currentBookings) {
             const bookings = currentBookings.map((booking) => {
                 const { id, spotId, userId, startDate, endDate, createdAt, updatedAt, Spot } = booking
+                booking = booking.toJSON()
+                const lat = parseFloat(booking.Spot.lat)
+                const lng = parseFloat(booking.Spot.lng)
+                const price = parseFloat(booking.Spot.price)
 
                 let previewImage;
 
@@ -46,10 +50,13 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                         city: Spot.city,
                         state: Spot.state,
                         country: Spot.country,
-                        lat: Spot.lat,
-                        lng: Spot.lng,
+                        // lat: Spot.lat,
+                        // lng: Spot.lng,
+                        lat,
+                        lng,
                         name: Spot.name,
-                        price: Spot.price,
+                        // price: Spot.price,
+                        price,
                         previewImage
                     },
                     userId,
