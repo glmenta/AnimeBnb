@@ -66,14 +66,18 @@ const setTokenCookie = (res, user) => {
   //This will ensure that if a valid JWT cookie exists, the session user will be loaded into the req.user attribute.
   //The second middleware will check req.user and will go to the next middleware if there is a session user present there.
   //If there is no session user, then an error will be created and passed along to the error-handling middlewares.
-  const requireAuth = function (req, _res, next) {
-    if (req.user) return next();
-    // If there is no current user, return an error
-    const err = new Error('Unauthorized');
-    err.title = 'Unauthorized';
-    err.errors = ['Unauthorized'];
-    err.status = 401;
-    return next(err);
+  const requireAuth = function (req, res, next) {
+    // if (req.user) return next();
+    // // If there is no current user, return an error
+    // const err = new Error('Unauthorized');
+    // err.title = 'Unauthorized';
+    // err.errors = ['Unauthorized'];
+    // err.status = 401;
+    // return next(err);
+    return res.status(403).json({
+      "message": "Forbidden",
+      "statusCode": 403
+    })
   };
 
   module.exports = { setTokenCookie, restoreUser, requireAuth };
