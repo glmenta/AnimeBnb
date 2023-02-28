@@ -77,24 +77,7 @@ router.get('/', async (req,res) => {
         ...(maxPrice && { price: { [Op.lte]: maxPrice } })
     };
 
-    const spots = await Spot.scope('spotInfo').findAll({
-            include: [
-                { model: Review },
-                { model: SpotImage },
-            ],
-            where: filters,
-            limit: limit,
-            offset: offset,
-        })
-
-        if (!spots || spots.length === 0) {
-            return res.status(404).json({
-                message: "Spots do not exist",
-                statusCode: 404
-            })
-        }
-
-        if (page <= 0) {
+    if (page <= 0) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -103,14 +86,32 @@ router.get('/', async (req,res) => {
             }
         })
     } if (size < 1) {
-        return res.status(400).json({
-            'message': 'Validation Error',
-            "statusCode": 400,
-            'errors': {
-               'size': "Size must be greater than or equal to 1"
-            }
+            return res.status(400).json({
+                'message': 'Validation Error',
+                "statusCode": 400,
+                'errors': {
+                   'size': "Size must be greater than or equal to 1"
+                }
+            })
+
+    }
+    const spots = await Spot.scope('spotInfo').findAll({
+        include: [
+            { model: Review },
+            { model: SpotImage },
+        ],
+        where: filters,
+        limit: limit,
+        offset: offset,
+    })
+
+    if (!spots || spots.length === 0) {
+        return res.status(404).json({
+            message: "Spots do not exist",
+            statusCode: 404
         })
-    }  if (minLat < -90) {
+    }
+    if (minLat < -90) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
