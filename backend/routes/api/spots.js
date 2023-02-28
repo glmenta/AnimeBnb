@@ -93,7 +93,7 @@ router.get('/', async (req,res) => {
                 statusCode: 404
             })
         }
-    let errors = {}
+
         if (page <= 0) {
         return res.status(400).json({
             'message': 'Validation Error',
@@ -102,7 +102,7 @@ router.get('/', async (req,res) => {
                'page': "Page must be greater than or equal to 1"
             }
         })
-    } else if (size < 1) {
+    } if (size < 1) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -110,7 +110,7 @@ router.get('/', async (req,res) => {
                'size': "Size must be greater than or equal to 1"
             }
         })
-    } else if (minLat < -90) {
+    }  if (minLat < -90) {
         return res.status(400).json({
             'message': 'Validation Error',
             "statusCode": 400,
@@ -166,6 +166,14 @@ router.get('/', async (req,res) => {
             })
         }
 
+    // if(Object.keys(err).length) {
+    //     return res.status(400).json({
+    //         message: 'Validation Error',
+    //         statusCode: 400,
+    //         errors: err
+    //     })
+    // }
+
     for (let spot of spots) {
         const images = spot.SpotImages;
         let previewImage = 'No images';
@@ -197,7 +205,7 @@ router.get('/', async (req,res) => {
         delete spot.dataValues.Reviews;
       }
 
-        if(spots) {
+    if(spots) {
             const allSpots = spots.map(spot => {
                 spot = spot.toJSON()
                 const lat = parseFloat(spot.lat)
