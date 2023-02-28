@@ -67,7 +67,7 @@ const setTokenCookie = (res, user) => {
   //The second middleware will check req.user and will go to the next middleware if there is a session user present there.
   //If there is no session user, then an error will be created and passed along to the error-handling middlewares.
   const requireAuth = function (req, res, next) {
-    // if (req.user) return next();
+    if (req.user) return next();
     // // If there is no current user, return an error
     // const err = new Error('Unauthorized');
     // err.title = 'Unauthorized';
