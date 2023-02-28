@@ -50,12 +50,9 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
                         city: Spot.city,
                         state: Spot.state,
                         country: Spot.country,
-                        // lat: Spot.lat,
-                        // lng: Spot.lng,
                         lat,
                         lng,
                         name: Spot.name,
-                        // price: Spot.price,
                         price,
                         previewImage
                     },
