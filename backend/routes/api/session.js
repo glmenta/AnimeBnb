@@ -59,9 +59,9 @@ router.post(
       }
       //If there is a user returned from the login static method, then call setTokenCookie and return a JSON response with the user information.
       await setTokenCookie(res, user);
-
+      const { id, username, email, firstName, lastName, createdAt, updatedAt } = user
       return res.json({
-        user: user
+        user: { id, username, email, firstName, lastName, createdAt, updatedAt }
       });
     }
   );
