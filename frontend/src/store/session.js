@@ -26,7 +26,18 @@ export const login = (user) => async (dispatch) => {
     }),
   });
   const data = await response.json();
-  dispatch(setUser(data.user));
+  const userInfo = {
+    user: {
+      createdAt: data.user.createdAt,
+      email: data.user.email,
+      id: data.user.id,
+      updatedAt: data.user.updatedAt,
+      username: data.user.username,
+      firstName: data.user.firstName,
+      lastName: data.user.lastName
+    }
+  }
+  dispatch(setUser(userInfo.user));
   return response;
 };
 
@@ -50,7 +61,8 @@ export const signup = (user) => async (dispatch) => {
         }),
     });
     const data = await response.json();
-    dispatch(setUser(data.user));
+    console.log(data)
+    dispatch(setUser(data));
     return response;
 };
 
