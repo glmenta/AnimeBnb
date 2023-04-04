@@ -16,6 +16,7 @@ function ProfileButton({ user }) {
     if (showMenu) return;
     setShowMenu(true);
     setProfileClicked(true);
+    document.getElementById('profile-dropdown').style.display = 'block';
   };
 
   useEffect(() => {

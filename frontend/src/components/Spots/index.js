@@ -24,22 +24,24 @@ function Spots() {
   };
 
   return (
-    <div className='allSpots-container'>
+    <div className='spots-container'>
       {allSpots[0].map((spot) => {
         const avgRating = Number(spot.avgRating) ? Number(spot.avgRating).toFixed(1) : '0';
         return (
-          <div className='spot' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
-            <div className='previewImg'>
-              <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`} />
-            </div>
-            <div className='spot-container'>
-              <p className='location'>
-                {`${spot.city}, ${spot.state}`}<span className='stars'>★{avgRating}</span>
-              </p>
-              <p className='spot-name'>{spot.name}</p>
-              <p className='price'>
-                <span className='spot-price'>${spot.price}</span> night
-              </p>
+            <div className = 'spotCard'>
+            <div className='spot' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
+                <div className='previewImg'>
+                <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`} />
+                </div>
+                <div className='spot-container'>
+                <p className='location'>
+                    {`${spot.city}, ${spot.state}`}<span className='stars'>★{avgRating}</span>
+                </p>
+                <p className='spot-name'>{spot.name}</p>
+                <p className='price'>
+                    <span className='spot-price'>${spot.price}</span> night
+                </p>
+                </div>
             </div>
           </div>
         );
