@@ -82,7 +82,7 @@ router.post('/', validateSignup, async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       username: user.username,
-      token: newToken
+      // token: newToken
     });
     }
   }
