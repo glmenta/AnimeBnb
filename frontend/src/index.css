@@ -1,11 +1,9 @@
-/* TODO Add site wide styles */
+body {
+  background-color: #fff;
+  color: #333;
+}
 
-/* body {
-    height: 100vh;
-    background-color: black;
-    color: #fff;
-  }
-
-div {
-   color: unset
-} */
+.body-bg {
+  background-color: #fff;
+  color: #333;
+}
