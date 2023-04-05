@@ -19,6 +19,7 @@ function Spots() {
 
   const allSpots = Object.values(spots);
 
+  //redirects user to spot detail page
   const handleSpotClick = (spotId) => {
     history.push(`/spots/${spotId}`);
   };

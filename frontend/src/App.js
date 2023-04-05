@@ -8,10 +8,12 @@ import SignupFormPage from "./components/SignupFormPage";
 import LoginModal from "./components/LoginModal";
 import SignupModal from "./components/SignupModal";
 import Spots from "./components/Spots";
+import SpotDetailPage from "./components/SpotDetailsPage";
 
 function App() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [spotId, setSpotId] = useState(null)
 
   useEffect(() => {
     dispatch(sessionActions.restoreUser());
@@ -31,6 +33,9 @@ function App() {
           </Route>
           <Route path="/signup">
             <SignupModal />
+          </Route>
+          <Route path='/spots/:spotId'>
+            <SpotDetailPage spotId={spotId} setSpotId={setSpotId}/>
           </Route>
         </Switch>
       )}
