@@ -1,0 +1,86 @@
+/* Overall styles */
+
+.spot-detail-container {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.spot-details {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Header */
+
+  .spot-details h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .spot-details h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #777;
+  }
+
+  /* Image gallery */
+
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .image-grid img {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .image-grid img:hover {
+    transform: scale(1.05);
+  }
+
+  /* Host info */
+
+  .host-text {
+    margin-bottom: 20px;
+  }
+
+  .host-text h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .host-text p {
+    font-size: 16px;
+    color: #777;
+    line-height: 1.5;
+  }
+
+  /* Reviews */
+
+  .review-box {
+    margin-bottom: 20px;
+  }
+
+  .review-box h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .review-box p {
+    font-size: 16px;
+    color: #777;
+    line-height: 1.5;
+  }

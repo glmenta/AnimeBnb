@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { getSpotsFxn } from '../../store/spots';
+import { getSpotsFxn } from '../../../store/spots';
 import './Spots.css';
 
 function Spots() {
   const spots = useSelector((state) => state.spot.spots);
+  //const newSpot = useSelector((state) => state.spot.newSpot);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -18,15 +19,16 @@ function Spots() {
   }
 
   const allSpots = Object.values(spots);
+  // const allSpotsWithNewSpot = newSpot ? [...allSpots, newSpot] : allSpots;
 
   //redirects user to spot detail page
   const handleSpotClick = (spotId) => {
     history.push(`/spots/${spotId}`);
   };
 
-  return (
+  return spots && (
     <div className='spots-container'>
-      {allSpots[0].map((spot) => {
+      {Array.isArray(allSpots[0]) && allSpots[0].map((spot) => {
         const avgRating = Number(spot.avgRating) ? Number(spot.avgRating).toFixed(1) : '0';
         return (
             <div className = 'spotCard'>

@@ -1,0 +1,53 @@
+.create-new-spot-container {
+    font-family: "Circular Air Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #484848;
+    margin-top: 90px;
+  }
+
+  .create-new-spot-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .form-container {
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  .create-new-spot-label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .create-new-spot-input {
+    width: 100%;
+    height: 48px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #484848;
+  }
+
+  .create-new-spot-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(72, 72, 72, 0.2);
+    border-color: #008489;
+  }
+
+  .create-new-spot-error-ul {
+    color: red;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding-left: 0;
+    list-style-type: none;
+  }
+
+  .create-new-spot-error-li {
+    margin-bottom: 5px;
+  }

@@ -9,39 +9,32 @@ ul {
     width: 100%;
   }
 
-  /* li {
-    display: flex;
-    align-items: center;
-    padding-right: 80px;
-  } */
-
-  /* nav a,
-  nav button {
-    display: inline-block;
-    padding: 10px 15px;
+  .create_spot_link {
     text-decoration: none;
-    color: white;
-    font-weight: bold;
-  } */
-
-  /* nav a:hover,
-  nav button:hover {
-    background-color: #555;
-    color: white;
+    color: #667;
   }
 
-  nav a.active {
-    background-color: #007bff;
-    color: white;
-  } */
+  .create-spot-button {
+    position: relative;
+    right: 15%;
+    /* margin-bottom: 5px; */
+    border: 1px solid red;
+    background-color: #fafafa;
+    border-radius: 10px;
+    padding: 5px;
+  }
 
-  /* nav button {
-    background: transparent;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-  } */
+  .create-spot-button:hover {
+    background-color: #f5f5f5;
+  }
 
+  .logged_in_icon {
+    padding-right: 70px;
+  }
+
+  .not_logged_in {
+    padding-right: 80px;
+  }
   .logo {
     height: 70px;
     width: 170px;
