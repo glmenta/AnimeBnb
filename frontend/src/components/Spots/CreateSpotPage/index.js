@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createSpotFxn } from '../../../store/spots'
 import { useHistory } from 'react-router-dom'
+//import * as StoreSpots from '../../../store/spots';
+
 import "./CreateNewSpot.css"
 
 function CreateNewSpot() {
@@ -17,87 +19,46 @@ function CreateNewSpot() {
   const [name, setName] = useState("")
   const [price, setPrice] = useState("")
   const [previewImage, setPreviewImage] = useState("")
-  const [image1, setImage1] = useState("")
-  const [image2, setImage2] = useState("")
-  const [image3, setImage3] = useState("")
-  const [image4, setImage4] = useState("")
-  const [image5, setImage5] = useState("")
+  const [lat, setLat] = useState('')
+  const [lng, setLng] = useState('')
+  // const [image1, setImage1] = useState("")
+  // const [image2, setImage2] = useState("")
+  // const [image3, setImage3] = useState("")
+  // const [image4, setImage4] = useState("")
+  // const [image5, setImage5] = useState("")
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  const [errors, setErrors] = useState({
-    country: [],
-    address: [],
-    city: [],
-    state: [],
-    description: [],
-    name: [],
-    price: [],
-    previewImage: [],
-    image1: [],
-    image2: [],
-    image3: [],
-    image4: [],
-    image5: []
-  })
-
-  const validateFileExtension = (url) => {
-    const allowedExtensions = ['.png', '.jpeg', '.jpg'];
-    const fileExtension = url.slice(url.lastIndexOf('.'));
-
-    return allowedExtensions.includes(fileExtension);
-  };
-
-
-  useEffect(() => {
-    if (hasSubmitted) {
-
-      const validationErrors = { country: [], address: [], city: [], state: [], description: [], name: [], price: [], previewImage: [], image2: [], image3: [], image4: [], image5: [] }
-
-      if (!country.length) validationErrors.country.push("Country is required")
-      if (!address.length) validationErrors.address.push("Address is required")
-      if (!city.length) validationErrors.city.push("City is required")
-      if (!state.length) validationErrors.state.push("State is required")
-      if (description.length < 30) validationErrors.description.push("Description needs a minimum of 30 characters")
-      if (!name.length) validationErrors.name.push("Name is required")
-      if (!price.length) validationErrors.price.push("Price is required")
-      if (!validateFileExtension(previewImage)) validationErrors.previewImage.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image2) && image2.length > 0) validationErrors.image2.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image3) && image3.length > 0) validationErrors.image3.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image4) && image4.length > 0) validationErrors.image4.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image5) && image5.length > 0) validationErrors.image5.push("Image URL must end in .png, .jpg, or .jpeg")
-
-      setErrors(validationErrors)
-
-    }
-
-  }, [hasSubmitted, country, address, city, state, description, name, price, previewImage, image2, image3, image4, image5])
+  const [errors, setErrors] = useState([])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const parsedPrice = parseFloat(price)
+    //const parsedPrice = parseFloat(price)
 
-    const createNewSpotForm = {
+    const newSpotForm = {
       country,
       address,
       city,
       state,
       description,
       name,
-      price: parsedPrice,
+     // price: parsedPrice,
+      lat,
+      lng,
+      price,
       previewImage,
-      image1,
-      image2,
-      image3,
-      image4,
-      image5,
+      // image1,
+      // image2,
+      // image3,
+      // image4,
+      // image5,
     };
 
-    console.log('this is new spot', createNewSpotForm);
+    console.log('this is new spot', newSpotForm);
     let newSpot;
-    await dispatch(createSpotFxn(createNewSpotForm)).then((spot) => {
+    await dispatch(createSpotFxn(newSpotForm)).then((spot) => {
       newSpot = spot
-      return history.push(`/spots/${spot.id}`)
+      return history.push(`/spots/${spot}`)
     })
 
 
@@ -110,33 +71,20 @@ function CreateNewSpot() {
       setName("")
       setPrice("")
       setPreviewImage("")
-      setImage1("")
-      setImage2("")
-      setImage3("")
-      setImage4("")
-      setImage5("")
+      // setImage1("")
+      // setImage2("")
+      // setImage3("")
+      // setImage4("")
+      // setImage5("")
       setHasSubmitted(true)
-      setErrors({
-        country: [],
-        address: [],
-        city: [],
-        state: [],
-        description: [],
-        name: [],
-        price: [],
-        image1: [],
-        image2: [],
-        image3: [],
-        image4: [],
-        image5: []
-    })
-
+      setErrors([])
     }
   }
 
 
   return (
     <div className='create-new-spot-container'>
+      <div className ='create-new-spot-contents'>
       <div className='create-new-spot-header'>
         <h1 className='create-new-spot-h1'>Create a new Spot</h1>
         <h3 className='create-new-spot-h3'>Where's your place located?</h3>
@@ -159,11 +107,11 @@ function CreateNewSpot() {
               placeholder='Country'
               className='create-new-spot-input'
             />
-            {hasSubmitted && errors.country.length > 0 && errors.country.map((error, idx) => (
+            {/* {hasSubmitted && errors.country.length > 0 && errors.country.map((error, idx) => (
               <ul key={idx} className='create-new-spot-error-ul'>
                 <li className='create-new-spot-error-li'>* {error}</li>
               </ul>
-            ))}
+            ))} */}
 
           </label>
           <label className='create-new-spot-label'>
@@ -178,11 +126,11 @@ function CreateNewSpot() {
             />
           </label>
 
-          {hasSubmitted && errors.address.length > 0 && errors.address.map((error, idx) => (
+          {/* {hasSubmitted && errors.address.length > 0 && errors.address.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
 
           <label className='create-new-spot-label'>
@@ -197,11 +145,11 @@ function CreateNewSpot() {
             />
           </label>
 
-          {hasSubmitted && errors.city.length > 0 && errors.city.map((error, idx) => (
+          {/* {hasSubmitted && errors.city.length > 0 && errors.city.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
           <label className='create-new-spot-label'>
             State
@@ -215,13 +163,35 @@ function CreateNewSpot() {
             />
           </label>
 
-          {hasSubmitted && errors.state.length > 0 && errors.state.map((error, idx) => (
+          {/* {hasSubmitted && errors.state.length > 0 && errors.state.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
+          <label className='create-new-spot-label'>
+            Latitude
+            <input
+              type="text"
+              onChange={(e) => setLat(e.target.value)}
+              value={lat}
 
+              placeholder='Lat'
+              className='create-new-spot-input'
+            />
+          </label>
+
+          <label className='create-new-spot-label'>
+            Longitude
+            <input
+              type="text"
+              onChange={(e) => setLng(e.target.value)}
+              value={lng}
+
+              placeholder='Lng'
+              className='create-new-spot-input'
+            />
+          </label>
 
           <div className='line'></div>
 
@@ -239,12 +209,12 @@ function CreateNewSpot() {
               cols="50"
             />
           </label>
-
+{/*
           {hasSubmitted && errors.description.length > 0 && errors.description.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
 
           <div className='line'></div>
@@ -262,11 +232,11 @@ function CreateNewSpot() {
             />
           </label>
 
-          {hasSubmitted && errors.name.length > 0 && errors.name.map((error, idx) => (
+          {/* {hasSubmitted && errors.name.length > 0 && errors.name.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
 
 
@@ -282,11 +252,11 @@ function CreateNewSpot() {
             />
           </label>
 
-          {hasSubmitted && errors.price.length > 0 && errors.price.map((error, idx) => (
+          {/* {hasSubmitted && errors.price.length > 0 && errors.price.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
 
           <div className='line'></div>
@@ -304,14 +274,14 @@ function CreateNewSpot() {
             />
 
           </label>
-
+{/*
           {hasSubmitted && errors.previewImage.length > 0 && errors.previewImage.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
-          <label className='create-new-spot-label'>
+          {/* <label className='create-new-spot-label'>
             <input
               type="text"
               placeholder='Image URL'
@@ -319,15 +289,15 @@ function CreateNewSpot() {
               onChange={(e) => setImage2(e.target.value)}
               value={image2}
             />
-          </label>
-
+          </label> */}
+{/*
           {hasSubmitted && errors.image2.length > 0 && errors.image2.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
-          <label className='create-new-spot-label'>
+          {/* <label className='create-new-spot-label'>
             <input
               type="text"
               placeholder='Image URL'
@@ -335,15 +305,15 @@ function CreateNewSpot() {
               onChange={(e) => setImage3(e.target.value)}
               value={image3}
             />
-          </label>
-
+          </label> */}
+{/*
           {hasSubmitted && errors.image3.length > 0 && errors.image3.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
-          <label className='create-new-spot-label'>
+          {/* <label className='create-new-spot-label'>
             <input
               type="text"
               placeholder='Image URL'
@@ -351,15 +321,15 @@ function CreateNewSpot() {
               onChange={(e) => setImage4(e.target.value)}
               value={image4}
             />
-          </label>
-
+          </label> */}
+{/*
           {hasSubmitted && errors.image4.length > 0 && errors.image4.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
-          <label className='create-new-spot-label'>
+          {/* <label className='create-new-spot-label'>
 
             <input
               type="text"
@@ -368,17 +338,18 @@ function CreateNewSpot() {
               onChange={(e) => setImage5(e.target.value)}
               value={image5}
             />
-          </label>
+          </label> */}
 
-          {hasSubmitted && errors.image5.length > 0 && errors.image5.map((error, idx) => (
+          {/* {hasSubmitted && errors.image5.length > 0 && errors.image5.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
               <li className='create-new-spot-error-li'>* {error}</li>
             </ul>
-          ))}
+          ))} */}
 
-
+          <div className='line'></div>
           <button disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
         </form>
+      </div>
       </div>
     </div >
   )

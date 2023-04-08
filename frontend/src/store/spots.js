@@ -2,7 +2,8 @@ import { csrfFetch } from './csrf';
 
 const GET_SPOTS = 'spots/getSpots';
 const CREATE_SPOT = 'spots/createSpot';
-const GET_SPOT_DETAILS = 'spots/getSpotDetails'
+const GET_SPOT_DETAILS = 'spots/getSpotDetails';
+const GET_SPOT_ID = 'spots/getSpotId';
 
 export const getSpots = (spots) => {
     return {
@@ -25,17 +26,23 @@ export const getSpotDetails = (spotDetails) => {
   }
 }
 
+export const getSpotId = (spot) => {
+  return {
+    type: GET_SPOT_ID,
+    spot
+  }
+}
 export const getSpotsFxn = () => async (dispatch) => {
     const response = await csrfFetch('/api/spots')
 
     if (response.ok) {
         const spotData = await response.json()
         let spotsObj = {}
-        console.log(spotData)
+        console.log('this is spotData from getSpotsFxn', spotData)
         spotData.Spots.forEach(spot => {
           spotsObj[spot.id] = spot
         })
-        console.log('this is spots', spotData);
+        console.log('this is spotsObj', spotsObj);
         dispatch(getSpots(spotsObj))
         return spotsObj
     }
@@ -49,7 +56,7 @@ export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
 
   if (response.ok) {
     const spotDetails = await response.json();
-    console.log('spotDetails', spotDetails)
+    //console.log('spotDetails', spotDetails)
     console.log('this is the spotId', spotId)
     dispatch(getSpotDetails(spotDetails))
     return spotDetails
@@ -58,21 +65,54 @@ export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
 
 export const createSpotFxn = (spot) => async (dispatch) => {
     console.log('thunk fxn spot', spot)
+    const {
+      country,
+      address,
+      city,
+      state,
+      lng,
+      lat,
+      description,
+      name,
+      price,
+      previewImage,
+    } = spot
     const response = await csrfFetch('/api/spots', {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(spot)
+      headers: {
+        "Content-Type": "application/json"
+      },
+      //body: JSON.stringify(spot)
+      body: JSON.stringify({
+        country,
+        address,
+        city,
+        state,
+        lat,
+        lng,
+        description,
+        name,
+        price,
+        previewImage,
+      })
      })
 
     if(response.ok) {
         const newSpot = await response.json()
-        // console.log(spot)
         console.log('thunk new spot', newSpot)
         dispatch(createSpot(newSpot))
-        return newSpot;
+        return newSpot.id
     }
 }
 
+export const getSpotIdFxn = (id) => async (dispatch) => {
+  const res = await fetch(`/api/spots/${id}`)
+  if (res.ok) {
+    const data = await res.json();
+    console.log('this is spotIdFxn', data);
+    dispatch(getSpotId(data))
+  }
+}
 const initialState = { spots: [] }
 
 const spotReducer = (state = initialState, action) => {

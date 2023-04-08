@@ -2,20 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
+import { getReviewsFxn } from '../../../store/reviews';
 import './SpotDetails.css';
 
 function SpotDetailPage () {
     const { spotId } = useParams();
     const spotDetail = useSelector(state => state.spot.spotDetails)
-    //const reviewDetail = useSelector(state => state.review.currentReviews)
+    //const reviewDetail = useSelector(state => state.reviews[spotId])
 
     const dispatch = useDispatch();
 
-    const [review, setReview] = ('')
-    const [stars, setStars] = useState(1)
+    // const [review, setReview] = ('')
+    // const [stars, setStars] = useState(1)
 
     useEffect(() => {
         dispatch(getSpotDetailsFxn(spotId));
+        dispatch(getReviewsFxn(spotId))
+        //dispatch(getSpotIdFxn(spotId))
       }, [dispatch, spotId]);
 
     if(!spotDetail) {
