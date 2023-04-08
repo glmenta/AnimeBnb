@@ -1,9 +1,12 @@
-.allSpots-container {
+.spots-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(4, minmax(300px, 1fr));
     grid-gap: 20px;
     padding-top: 100px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
+
 
   .spot {
     display: flex;

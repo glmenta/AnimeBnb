@@ -28,6 +28,12 @@ module.exports = {
         spotId: 3,
         review: 'I know now about the truth of the world',
         stars: 5,
+      },
+      {
+        userId: 3,
+        spotId: 4,
+        review: 'Relaxing hotsprings; gotta watch out for some yokais',
+        stars: 3,
       }
     ], {});
 
@@ -37,7 +43,12 @@ module.exports = {
     options.tableName = 'Reviews';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      review: { [Op.in]: ['Pretty amazing ramen', 'The captains were too loud arguing and the spiritual pressure kept me awake', 'I know now about the truth of the world'] }
+      review: { [Op.in]: [
+        'Pretty amazing ramen',
+        'The captains were too loud arguing and the spiritual pressure kept me awake',
+        'I know now about the truth of the world',
+        'Relaxing hotsprings; gotta watch out for some yokais'
+      ] }
     }, {});
   }
 };

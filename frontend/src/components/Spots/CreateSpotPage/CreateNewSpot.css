@@ -1,0 +1,79 @@
+.create-new-spot-container {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #484848;
+    margin-top: 90px;
+  }
+
+  .create-new-spot-contents {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    justify-content: center;
+    align-items: center;
+  }
+  .create-spot-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: auto;
+    border: solid 1px black;
+  }
+  .line {
+    border: solid 1px black;
+    width: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .create-new-spot-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 600px;
+    width: 450px;
+    border-radius: 5px;
+    justify-content: center;
+  }
+
+  .create-new-spot-label {
+    display: block;
+    margin-bottom: 10px;
+    margin-right: 15px;
+  }
+
+  .create-new-spot-input {
+    width: 100%;
+    height: 48px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 400;
+    color: #484848;
+  }
+
+  .create-new-spot-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(72, 72, 72, 0.2);
+    border-color: #008489;
+  }
+
+  .create-new-spot-error-ul {
+    color: red;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    padding-left: 0;
+    list-style-type: none;
+  }
+
+  .create-new-spot-error-li {
+    margin-bottom: 5px;
+  }

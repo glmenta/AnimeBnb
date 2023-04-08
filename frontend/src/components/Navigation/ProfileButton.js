@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from 'react-redux';
 import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
-import LoginFormModal from '../LoginFormPage';
-import SignupFormModal from '../SignupFormPage';
+import LoginFormModal from '../Session/LoginFormPage';
+import SignupFormModal from '../Session/SignupFormPage';
 import './ProfileButton.css';
 
 function ProfileButton({ user }) {
@@ -16,6 +16,7 @@ function ProfileButton({ user }) {
     if (showMenu) return;
     setShowMenu(true);
     setProfileClicked(true);
+    document.getElementById('profile-dropdown').style.display = 'block';
   };
 
   useEffect(() => {
