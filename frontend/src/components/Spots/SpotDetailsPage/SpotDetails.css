@@ -84,3 +84,48 @@
     color: #777;
     line-height: 1.5;
   }
+
+  .review-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f7f7;
+    border-radius: 50px;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+    color: #484848;
+    margin-right: 16px;
+  }
+
+  .star-rating {
+    margin-right: 6px;
+    color: #FF385C;
+  }
+
+  .reserve-button {
+    background-color: #FF5A5F;
+    color: white;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .reserve-button:hover {
+    background-color: #E5444E;
+  }
+
+  .review-box{
+    border: 1px solid black;
+    border-radius: 1px;
+    display: flex;
+    justify-content: center;
+    flex-direction:row;
+    max-width: 300px;
+  }

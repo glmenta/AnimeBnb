@@ -5,8 +5,7 @@ import { getSpotsFxn } from '../../../store/spots';
 import './Spots.css';
 
 function Spots() {
-  const spots = useSelector((state) => state.spot.spots);
-  //const newSpot = useSelector((state) => state.spot.newSpot);
+  const spots = useSelector((state) => Object.values(state.spot.spots));
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -18,8 +17,7 @@ function Spots() {
     return null;
   }
 
-  const allSpots = Object.values(spots);
-  // const allSpotsWithNewSpot = newSpot ? [...allSpots, newSpot] : allSpots;
+  //const allSpots = Object.values(spots);
 
   //redirects user to spot detail page
   const handleSpotClick = (spotId) => {
@@ -28,7 +26,7 @@ function Spots() {
 
   return spots && (
     <div className='spots-container'>
-      {Array.isArray(allSpots[0]) && allSpots[0].map((spot) => {
+      {spots.map((spot) => {
         const avgRating = Number(spot.avgRating) ? Number(spot.avgRating).toFixed(1) : '0';
         return (
             <div className = 'spotCard'>

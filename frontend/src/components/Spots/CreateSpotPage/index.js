@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { createSpot } from '../../../store/spots'
+import { createSpotFxn } from '../../../store/spots'
 import { useHistory } from 'react-router-dom'
 import "./CreateNewSpot.css"
 
@@ -72,7 +72,7 @@ function CreateNewSpot() {
 
   }, [hasSubmitted, country, address, city, state, description, name, price, previewImage, image2, image3, image4, image5])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     const parsedPrice = parseFloat(price)
@@ -94,7 +94,12 @@ function CreateNewSpot() {
     };
 
     console.log('this is new spot', createNewSpotForm);
-    let newSpot = dispatch(createSpot(createNewSpotForm))
+    let newSpot;
+    await dispatch(createSpotFxn(createNewSpotForm)).then((spot) => {
+      newSpot = spot
+      return history.push(`/spots/${spot.id}`)
+    })
+
 
     if (newSpot) {
       setCountry("")
@@ -125,7 +130,7 @@ function CreateNewSpot() {
         image4: [],
         image5: []
     })
-    history.push(`/`)
+
     }
   }
 
@@ -297,7 +302,7 @@ function CreateNewSpot() {
               onChange={(e) => setPreviewImage(e.target.value)}
               value={previewImage}
             />
-            <img src={previewImage} alt='Preview' className='create-new-spot-preview-image' />
+
           </label>
 
           {hasSubmitted && errors.previewImage.length > 0 && errors.previewImage.map((error, idx) => (
@@ -372,7 +377,7 @@ function CreateNewSpot() {
           ))}
 
 
-          <button type="submit" disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
+          <button disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
         </form>
       </div>
     </div >

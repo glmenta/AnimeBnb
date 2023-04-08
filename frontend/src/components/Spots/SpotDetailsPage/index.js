@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import './SpotDetails.css';
 
 function SpotDetailPage () {
     const { spotId } = useParams();
-    // const spotDetail = useSelector(state => state.spots && state.spots.find(spot => spot.id === +spotId))
     const spotDetail = useSelector(state => state.spot.spotDetails)
-    // const spotDetail = useSelector((state) => (
-    //     state.session.spots.find((spot) => spot.id === +spotId)
-    //   ))
+    //const reviewDetail = useSelector(state => state.review.currentReviews)
+
     const dispatch = useDispatch();
-    // const history = useHistory();
+
+    const [review, setReview] = ('')
+    const [stars, setStars] = useState(1)
 
     useEffect(() => {
         dispatch(getSpotDetailsFxn(spotId));
@@ -35,10 +35,18 @@ function SpotDetailPage () {
                 <p>{spotDetail.description}</p>
             </div>
             <div className='review-box'>
-                {/* Implement review component here */}
+                <div className='price-per-night'>
+                    <h1>${spotDetail.price}night</h1>
+                </div>
+                <div classname='star-rating'>
+                    ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
+                </div>
+                <div className='reviews'>
+                    <p>{Number(spotDetail.numReviews)}Reviews</p>
+                </div>
+                <button className='reserve-button'>Reserve</button>
             </div>
         </div>
-        {/* <button onClick={handleBooking}>Book this spot</button> */}
     </div>
     )
 }

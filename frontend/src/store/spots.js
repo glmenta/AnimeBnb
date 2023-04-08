@@ -1,8 +1,8 @@
 import { csrfFetch } from './csrf';
 
-const GET_SPOTS = 'spot/getSpots';
-const CREATE_SPOT = 'spot/createSpot';
-const GET_SPOT_DETAILS = 'spot/getSpotDetails'
+const GET_SPOTS = 'spots/getSpots';
+const CREATE_SPOT = 'spots/createSpot';
+const GET_SPOT_DETAILS = 'spots/getSpotDetails'
 
 export const getSpots = (spots) => {
     return {
@@ -24,18 +24,25 @@ export const getSpotDetails = (spotDetails) => {
     spotDetails
   }
 }
+
 export const getSpotsFxn = () => async (dispatch) => {
     const response = await csrfFetch('/api/spots')
 
     if (response.ok) {
         const spotData = await response.json()
+        let spotsObj = {}
+        console.log(spotData)
+        spotData.Spots.forEach(spot => {
+          spotsObj[spot.id] = spot
+        })
         console.log('this is spots', spotData);
-        dispatch(getSpots(spotData))
-        return spotData
+        dispatch(getSpots(spotsObj))
+        return spotsObj
     }
 }
 
 export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
+
   const response = await csrfFetch(`/api/spots/${spotId}`, {
     method: 'GET'
   });
@@ -50,68 +57,47 @@ export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
 }
 
 export const createSpotFxn = (spot) => async (dispatch) => {
-  // const {
-  //   country,
-  //   address,
-  //   city,
-  //   state,
-  //   description,
-  //   name,
-  //   price,
-  //   previewImage,
-  //   image1,
-  //   image2,
-  //   image3,
-  //   image4,
-  //   image5
-  //  } = spot
+    console.log('thunk fxn spot', spot)
     const response = await csrfFetch('/api/spots', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(spot)
-      // body: JSON.stringify({
-      //   country,
-      //   address,
-      //   city,
-      //   state,
-      //   description,
-      //   name,
-      //   price,
-      //   previewImage,
-      //   image1,
-      //   image2,
-      //   image3,
-      //   image4,
-      //   image5
-      // })
-    })
+     })
 
     if(response.ok) {
         const newSpot = await response.json()
         // console.log(spot)
+        console.log('thunk new spot', newSpot)
         dispatch(createSpot(newSpot))
-        //return newSpot;
+        return newSpot;
     }
 }
 
-const initialState = { spots: []}
+const initialState = { spots: [] }
 
 const spotReducer = (state = initialState, action) => {
   //console.log('initial state', state.spots)
   let newState = { ...state }
+  //let newState;
   switch (action.type) {
-    case CREATE_SPOT:
-      newState = Object.assign({}, state)
-      console.log('this is state.spots', state.spots)
-      newState.spots = Array.isArray(state.spots) ? [...state.spots, action.spot] : [action.spot]
-      return newState
     case GET_SPOTS:
-        newState = Object.assign({}, state);
-        newState.spots = action.spots;
-        return newState;
-
+      //newState = Object.assign({}, state);
+      newState.spots = action.spots;
+      return newState;
+    case CREATE_SPOT:
+      //newState = Object.assign({}, state)
+      console.log('this is state.spots', state.spots)
+      //newState.spots = Array.isArray(state.spots) ? [...state.spots, action.spot] : [action.spot]
+      //newState = state.spots.push(Object.values(newState.spots[0]))
+      //newState.spots = [...state.spots, action.spot]
+      newState[action.spot.id] = action.spot
+      console.log('this is newState.spots', newState.spots)
+      return newState
+      // return {...newState,
+      //   spots: [...state.spots, action.spot]
+      // }
     case GET_SPOT_DETAILS:
-        // newState = Object.assign({}, state);
+        //newState = Object.assign({}, state);
         newState.spotDetails = action.spotDetails;
         console.log('this is newState', newState)
         return newState;
