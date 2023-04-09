@@ -27,11 +27,12 @@ const updateReviews = (review) => {
 }
 
 export const getReviewsFxn = (spotId) => async(dispatch) => {
-    const res = await csrfFetch(`api/spots/${spotId}/reviews`)
+    const res = await csrfFetch(`/api/spots/${spotId}/reviews`)
 
     if (res.ok) {
         const reviewData = await res.json();
-        dispatch(getReviews);
+        console.log('this is getReviews thunk', reviewData)
+        dispatch(getReviews(reviewData));
         return reviewData
     }
 }
@@ -39,20 +40,13 @@ export const getReviewsFxn = (spotId) => async(dispatch) => {
 const initialState = { reviews: {} }
 
 const reviewReducer = (state = initialState, action) => {
-    let reviews;
+    let newState = { ...state }
     switch(action.type) {
         case GET_REVIEWS:
-            reviews = {
-                ...state,
-                currentReviews: {
-                ...state.currentReviews
-                }
+            return {
+                ...newState,
+                reviews: action.reviews
             }
-            let review = {}
-            let reviewList = action.review.Reviews;
-            reviewList.forEach((review) => (review[review.id] = review))
-            reviews.currentReviews = {...review}
-            return reviews
         default:
             return state;
     }

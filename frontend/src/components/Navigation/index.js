@@ -19,11 +19,16 @@ function Navigation({ isLoaded }){
 
   const [islogInOpen, setIsLogInOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
+  const [createButton, setCreateButton] = useState(false);
 
   const logout = (e) => {
     e.preventDefault();
     dispatch(sessionActions.logout());
   };
+
+  const toggleCreateButton = () => {
+    setCreateButton(true)
+  }
 
   const openLogInModal = () => {
     setIsLogInOpen(true);
@@ -80,74 +85,17 @@ function Navigation({ isLoaded }){
     )}
          {sessionUser && (
          <div className='create-spot-button'>
-           <li>
-            <button>
+            <button onClick={toggleCreateButton}>
                <NavLink to="/create-spot" className="create_spot_link">
                  Create a New Spot
-                 {/* <span style={{ color: 'red' }}> (Debug)</span> */}
                </NavLink>
              </button>
-           </li>
          </div>
        )}
     </ul>
   <LoginModal open={islogInOpen} onClose={() => setIsLogInOpen(false)}><LoginFormPage onSuccess={handleLoginSuccess} /></LoginModal>
   <SignupModal open={isSignupOpen} onClose={() => setIsSignupOpen(false)}><SignupFormPage onSuccess={handleSignupSuccess} /></SignupModal>
 </div>
-  // <div className='nav-container'>
-  //   <ul>
-  //     <div className='home-button'>
-  //       <li className='nav-li'>
-  //         <NavLink exact to="/">
-  //           <img src={whiteLogo} alt="logo" className='logo' />
-  //         </NavLink>
-  //       </li>
-  //     </div>
-  //     {isLoaded && (
-  //       <div className='profile-button'>
-  //         <li>
-  //           <ProfileButton user={sessionUser} />
-  //         </li>
-  //       </div>
-  //     )}
-  //     {sessionUser && (
-  //       <div className='create-spot-button'>
-  //         <li>
-  //           <button>
-  //             <NavLink to="/create-spot" className="create_spot_link">
-  //               Create a New Spot
-  //               <span style={{ color: 'red' }}> (Debug)</span>
-  //             </NavLink>
-  //           </button>
-  //         </li>
-  //       </div>
-  //     )}
-  //     {!sessionUser && (
-  //       <div className='not_logged_in'>
-  //         <li>
-  //           <button onClick={openLogInModal}>
-  //             <NavLink to="/login" className="sign-log-in-link">
-  //               Log In
-  //             </NavLink>
-  //           </button>
-  //         </li>
-  //         <li>
-  //           <button onClick={openSignupModal}>
-  //             <NavLink to="/signup" className="sign-log-in-link">
-  //               Sign Up
-  //             </NavLink>
-  //           </button>
-  //         </li>
-  //       </div>
-  //     )}
-  //   </ul>
-  //   <LoginModal open={islogInOpen} onClose={() => setIsLogInOpen(false)}>
-  //     <LoginFormPage onSuccess={handleLoginSuccess} />
-  //   </LoginModal>
-  //   <SignupModal open={isSignupOpen} onClose={() => setIsSignupOpen(false)}>
-  //     <SignupFormPage onSuccess={handleSignupSuccess} />
-  //   </SignupModal>
-  // </div>
   );
 }
 

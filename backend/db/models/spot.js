@@ -73,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
       {
         association: 'SpotImages',
         required: false,
-        where: { preview: true },
+        // where: { preview: true },
         attributes: []
       }
       ],
@@ -116,7 +116,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       ],
       attributes: [
-        [ Sequelize.fn("COALESCE", Sequelize.fn("COUNT", Sequelize.col("Reviews.id")), 0),"numReviews"]
+        [ Sequelize.fn("COALESCE", Sequelize.fn("COUNT", Sequelize.col("Reviews.id")), 0),"numReviews"],
       ],
       group: ["Spot.id","SpotImages.id", "Reviews.id", "Owner.id"],
     },

@@ -286,7 +286,9 @@ router.get('/:spotId', async (req,res) => {
         where: { id },
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
     })
+
     if (spot) {
+            //console.log('this is spot from backend', spot)
             spot = spot.toJSON()
             spot.lat = parseFloat(spot.lat)
             spot.lng = parseFloat(spot.lng)
@@ -295,7 +297,29 @@ router.get('/:spotId', async (req,res) => {
         }
     return res.status(200).json(spot)
 })
-
+// router.get('/:spotId', async (req, res) => {
+//     const id = req.params.spotId;
+//     const checkIfExists = await Spot.findByPk(id);
+//     if (!checkIfExists) {
+//         res.status(404).json({
+//             "message": "Spot couldn't be found",
+//             "statusCode": 404
+//         });
+//     }
+//     let spot = await Spot.findOne({
+//         where: { id },
+//         include: [{ model: SpotImage }],
+//         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
+//     });
+//     if (spot) {
+//         spot = spot.toJSON();
+//         spot.lat = parseFloat(spot.lat);
+//         spot.lng = parseFloat(spot.lng);
+//         spot.price = parseFloat(spot.price);
+//         spot.avgRating = parseFloat(spot.avgRating);
+//     }
+//     return res.status(200).json(spot);
+// });
 //create a spot
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
