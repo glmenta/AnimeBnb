@@ -70,7 +70,7 @@ function ProfileButton({ user }) {
       </button>
       <div className='profile-dropdown-contents'>
       <ul className={ulClassName} ref={ulRef} id='profile-dropdown'>
-        {user ? (
+        {user && profileClicked ? (
           <div id='user-dropdown' >
             <li id="firstname">Hello, {user.firstName} {user.lastName}</li>
             <li id="email">{user.email}</li>

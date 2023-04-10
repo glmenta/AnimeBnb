@@ -11,6 +11,13 @@ function LoginFormPage() {
   const [errors, setErrors] = useState([]);
   const { closeModal } = useModal();
 
+  //validations
+  const MIN_USERNAME_LENGTH = 4;
+  const MIN_PASSWORD_LENGTH = 6;
+
+  const validCredential = credential.length >= MIN_USERNAME_LENGTH;
+  const validPassword = password.length >= MIN_PASSWORD_LENGTH;
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors([]);
@@ -19,7 +26,12 @@ function LoginFormPage() {
       .catch(
         async (res) => {
           const data = await res.json();
-          if (data && data.errors) setErrors(data.errors);
+          if (data && data.errors) {
+            setErrors(data.errors);
+          }
+          else {
+            setErrors(["The provided credentials are invalid"]);
+          }
         }
       );
   };
@@ -54,7 +66,10 @@ function LoginFormPage() {
         required
       />
     </label>
-    <button type='submit' className='button'>
+    <button type='submit'
+      className='button'
+      disabled={!validCredential || !validPassword}
+      >
       Log In
     </button>
   </form>

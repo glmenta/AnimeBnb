@@ -17,8 +17,6 @@ function Spots() {
     return null;
   }
 
-  //const allSpots = Object.values(spots);
-
   //redirects user to spot detail page
   const handleSpotClick = (spotId) => {
     history.push(`/spots/${spotId}`);
@@ -27,7 +25,9 @@ function Spots() {
   return spots && (
     <div className='spots-container'>
       {spots.map((spot) => {
-        const avgRating = Number(spot.avgRating) ? Number(spot.avgRating).toFixed(1) : '0';
+        const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
+        ? Number(spot.avgRating).toFixed(1)
+        : 'New';
         return (
             <div className = 'spotCard'>
             <div className='spot' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
@@ -36,9 +36,12 @@ function Spots() {
                 </div>
                 <div className='spot-container'>
                 <p className='location'>
-                    {`${spot.city}, ${spot.state}`}<span className='stars'>★{avgRating}</span>
+                    {`${spot.city}, ${spot.state}`}<span className='stars'>★{ avgRating || 'New' }</span>
                 </p>
-                <p className='spot-name'>{spot.name}</p>
+                <p className='spot-name tooltip' title={spot.name}>
+                  {spot.name}
+                  <span className='tooltip-text'>{spot.name}</span>
+                </p>
                 <p className='price'>
                     <span className='spot-price'>${spot.price}</span> night
                 </p>

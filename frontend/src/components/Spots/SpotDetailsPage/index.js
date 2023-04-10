@@ -4,7 +4,9 @@ import { useParams } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import { getReviewsFxn } from '../../../store/reviews';
 //import './SpotDetails.css';
-import './testSpot.css';
+//import './testSpot.css';
+//import './testSpotAgain.css';
+import './updatedSpotDetail.css';
 
 function SpotDetailPage () {
     const { spotId } = useParams();
@@ -37,15 +39,18 @@ function SpotDetailPage () {
         <div className = 'spot-detail-container'>
         <h1>{spotDetail.name}</h1>
         <h2>{spotDetail.city}, {spotDetail.state}, {spotDetail.country}</h2>
-        <div classname='image-grid'>
-            <div className='main-spot-img'>
-                <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} />
-            </div>
-            <div>
-            {spotDetail?.SpotImages.filter(image => image.preview !== true).map((image, index) => (
-                <img key={index} id={`spotImage${index + 1}`} src={image.url} alt={spotDetail?.name} />
-            ))}
-            </div>
+        <div className ='image-container'>
+            {/* <div className='image-grid'> */}
+                <div className='main-spot-img'>
+                    <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} />
+                </div>
+
+                <div className='spot-img-filter'>
+                {spotDetail?.SpotImages.filter(image => image.preview !== true).map((image, index) => (
+                    <img key={index} id={`spotImage${index + 1}`} src={image.url} alt={spotDetail?.name} />
+                ))}
+                {/* </div> */}
+        </div>
         </div>
         <div className='spot-info'>
             <div className='host-text'>
@@ -53,6 +58,7 @@ function SpotDetailPage () {
                 <p id='spot-description'>{spotDetail.description}</p>
             </div>
             <div className='review-box'>
+                <div className='review-box-top'>
                 <div className='price-per-night'>
                     <h1>${spotDetail.price}night</h1>
                 </div>
@@ -63,9 +69,22 @@ function SpotDetailPage () {
                 <div className='reviews'>
                     <p>{Number(spotDetail.numReviews)}Reviews</p>
                 </div>
+                </div>
                 <button className='reserve-button' onClick={handleClick}>Reserve</button>
             </div>
             { user && user.id !== spotDetail.ownerId ? (
+            <div className='review-content'>
+                <div className='review-content-top'>
+                <div classname='star-rating'>
+                    ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
+                </div>
+                <div className = 'dot'><p>·</p></div>
+                { spotDetail.numReviews >= 1 && (
+                    <div className='num-reviews'>
+                        <p>{Number(spotDetail.numReviews)}Reviews</p>
+                    </div>
+                )}
+                </div>
             <div className='review-map'>
             {Array.isArray(reviews) && reviews.length > 0 ? (
               reviews
@@ -78,8 +97,13 @@ function SpotDetailPage () {
                   </div>
                 ))
             ) : (
-              <p id='no-reviews'>Be the first to post a review!</p>
+                <div>
+                <button className='post-review-button'>Post your Review</button>
+                <p id='no-reviews'>Be the first to post a review!</p>
+              </div>
             )}
+            </div>
+
             </div>
             ) : null}
         </div>
