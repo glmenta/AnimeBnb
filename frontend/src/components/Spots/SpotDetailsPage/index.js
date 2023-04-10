@@ -3,9 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import { getReviewsFxn } from '../../../store/reviews';
-//import './SpotDetails.css';
-//import './testSpot.css';
-//import './testSpotAgain.css';
 import './updatedSpotDetail.css';
 
 function SpotDetailPage () {
@@ -42,7 +39,11 @@ function SpotDetailPage () {
         <div className ='image-container'>
             {/* <div className='image-grid'> */}
                 <div className='main-spot-img'>
-                    <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} />
+                    {/* <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} /> */}
+                    {spotDetail?.SpotImages.find(image => image.preview === true) ?
+                    <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} /> :
+                    <p>No image available</p>
+                    }
                 </div>
 
                 <div className='spot-img-filter'>

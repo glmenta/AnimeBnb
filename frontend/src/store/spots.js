@@ -101,7 +101,7 @@ export const createSpotFxn = (spot) => async (dispatch) => {
         const newSpot = await response.json()
         console.log('thunk new spot', newSpot)
         dispatch(createSpot(newSpot))
-        return newSpot.id
+        return newSpot
     }
 }
 
@@ -125,17 +125,10 @@ const spotReducer = (state = initialState, action) => {
       newState.spots = action.spots;
       return newState;
     case CREATE_SPOT:
-      //newState = Object.assign({}, state)
       console.log('this is state.spots', state.spots)
-      //newState.spots = Array.isArray(state.spots) ? [...state.spots, action.spot] : [action.spot]
-      //newState = state.spots.push(Object.values(newState.spots[0]))
-      //newState.spots = [...state.spots, action.spot]
       newState[action.spot.id] = action.spot
       console.log('this is newState.spots', newState.spots)
       return newState
-      // return {...newState,
-      //   spots: [...state.spots, action.spot]
-      // }
     case GET_SPOT_DETAILS:
         //newState = Object.assign({}, state);
         newState.spotDetails = action.spotDetails;

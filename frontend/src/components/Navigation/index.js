@@ -53,7 +53,15 @@ function Navigation({ isLoaded }){
     console.log(sessionUser)
     sessionLinks = (
       <li className='logged_in_icon'>
-        <button className='create-spot-button'><NavLink to="/create-spot" className="create_spot_link">Create a New Spot</NavLink></button>
+        <button className='create-spot-button' style={{
+          backgroundColor: 'transparent',
+          border: 'none',
+          outline: 'none',
+          }}>
+            <NavLink to="/create-spot" className="create_spot_link"
+            style={{ backgroundColor: 'transparent', textDecoration: 'none', color: 'inherit' }}
+            >Create a New Spot</NavLink>
+            </button>
         <ProfileButton user={sessionUser} />
       </li>
     );

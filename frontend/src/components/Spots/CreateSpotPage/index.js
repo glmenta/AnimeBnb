@@ -21,14 +21,14 @@ function CreateNewSpot() {
   const [previewImage, setPreviewImage] = useState("")
   const [lat, setLat] = useState('')
   const [lng, setLng] = useState('')
-  // const [image1, setImage1] = useState("")
-  // const [image2, setImage2] = useState("")
-  // const [image3, setImage3] = useState("")
-  // const [image4, setImage4] = useState("")
-  // const [image5, setImage5] = useState("")
+  const [image2, setImage2] = useState("")
+  const [image3, setImage3] = useState("")
+  const [image4, setImage4] = useState("")
+  const [image5, setImage5] = useState("")
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
   const [errors, setErrors] = useState([])
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -47,18 +47,17 @@ function CreateNewSpot() {
       lng,
       price,
       previewImage,
-      // image1,
-      // image2,
-      // image3,
-      // image4,
-      // image5,
+      image2,
+      image3,
+      image4,
+      image5,
     };
 
     console.log('this is new spot', newSpotForm);
     let newSpot;
     await dispatch(createSpotFxn(newSpotForm)).then((spot) => {
       newSpot = spot
-      return history.push(`/spots/${spot}`)
+      return history.push(`/spots/${spot.id}`)
     })
 
 
@@ -71,11 +70,10 @@ function CreateNewSpot() {
       setName("")
       setPrice("")
       setPreviewImage("")
-      // setImage1("")
-      // setImage2("")
-      // setImage3("")
-      // setImage4("")
-      // setImage5("")
+      setImage2("")
+      setImage3("")
+      setImage4("")
+      setImage5("")
       setHasSubmitted(true)
       setErrors([])
     }
@@ -281,7 +279,7 @@ function CreateNewSpot() {
             </ul>
           ))} */}
 
-          {/* <label className='create-new-spot-label'>
+          <label className='create-new-spot-label'>
             <input
               type="text"
               placeholder='Image URL'
@@ -289,7 +287,7 @@ function CreateNewSpot() {
               onChange={(e) => setImage2(e.target.value)}
               value={image2}
             />
-          </label> */}
+          </label>
 {/*
           {hasSubmitted && errors.image2.length > 0 && errors.image2.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
@@ -297,7 +295,7 @@ function CreateNewSpot() {
             </ul>
           ))} */}
 
-          {/* <label className='create-new-spot-label'>
+          <label className='create-new-spot-label'>
             <input
               type="text"
               placeholder='Image URL'
@@ -305,7 +303,7 @@ function CreateNewSpot() {
               onChange={(e) => setImage3(e.target.value)}
               value={image3}
             />
-          </label> */}
+          </label>
 {/*
           {hasSubmitted && errors.image3.length > 0 && errors.image3.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
@@ -313,7 +311,7 @@ function CreateNewSpot() {
             </ul>
           ))} */}
 
-          {/* <label className='create-new-spot-label'>
+          <label className='create-new-spot-label'>
             <input
               type="text"
               placeholder='Image URL'
@@ -321,7 +319,7 @@ function CreateNewSpot() {
               onChange={(e) => setImage4(e.target.value)}
               value={image4}
             />
-          </label> */}
+          </label>
 {/*
           {hasSubmitted && errors.image4.length > 0 && errors.image4.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
@@ -329,7 +327,7 @@ function CreateNewSpot() {
             </ul>
           ))} */}
 
-          {/* <label className='create-new-spot-label'>
+          <label className='create-new-spot-label'>
 
             <input
               type="text"
@@ -338,7 +336,7 @@ function CreateNewSpot() {
               onChange={(e) => setImage5(e.target.value)}
               value={image5}
             />
-          </label> */}
+          </label>
 
           {/* {hasSubmitted && errors.image5.length > 0 && errors.image5.map((error, idx) => (
             <ul key={idx} className='create-new-spot-error-ul'>
