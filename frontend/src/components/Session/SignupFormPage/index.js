@@ -14,13 +14,6 @@ function SignupFormPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState([]);
   const { closeModal } = useModal();
-  //const [usernameValid, setUsernameValid] = useState(false);
-  // const [validEmail, setValidEmail] = useState(true);
-  // const [validUsername, setValidUsername] = useState(true);
-  // const [validFirstName, setValidFirstName] = useState(true);
-  // const [validLastName, setValidLastName] = useState(true);
-  // const [validPassword, setValidPassword] = useState(true);
-  // const [validConfirmPassword, setValidConfirmPassword] = useState(true);
 
   //validations
   const MIN_FIRSTNAME_LENGTH = 2;

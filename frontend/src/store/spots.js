@@ -87,6 +87,7 @@ export const createSpotFxn = (spot, images) => async (dispatch) => {
             })
           )
         );
+
         const imageUrls = await Promise.all(
           imageResponses.map(async (res) => {
             if (res.ok) {
@@ -99,7 +100,7 @@ export const createSpotFxn = (spot, images) => async (dispatch) => {
 
         newSpot.images = imageUrls.filter((url) => url !== null);
 
-        dispatch(createSpot(newSpot));
+        await dispatch(createSpot(newSpot));
         return newSpot;
     }
 }

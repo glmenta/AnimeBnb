@@ -25,47 +25,53 @@ function CreateNewSpot() {
   const [image5, setImage5] = useState("")
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  const [errors, setErrors] = useState([])
-
-  // const verifyImgUrl = ({previewImage, image2, image3, image4, image5}) => {
-  //   const pattern = /^https?:\/\/.+$/;
-  //   if (previewImage) {
-  //     return pattern.test(previewImage);
-  //   }
-  //   if (image2) {
-  //     return pattern.test(image2);
-  //   }
-  //   if (image3) {
-  //     return pattern.test(image3);
-  //   }
-  //   if (image4) {
-  //     return pattern.test(image4);
-  //   }
-  //   if (image5) {
-  //     return pattern.test(image5);
-  //   }
-  // }
-
-  // const handleImgUrls = (e) => {
-  //   const img = e.target.value
-
-  //   const urls = {
-  //     previewImage: '',
-  //     image2: '',
-  //     image3: '',
-  //     image4: '',
-  //     image5: '',
-  //   };
-
-  //   if(verifyImgUrl(img)) {
-  //     setImgUrl(img)
-  //   } else {
-  //     setImgUrl('')
-  //   }
-  // }
+  const [errors, setErrors] = useState({})
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // const errors = {};
+
+    // if (!country) {
+    //   errors.country = "Country is required.";
+    // }
+
+    // if (!address) {
+    //   errors.address = "Street address is required.";
+    // }
+
+    // if (!city) {
+    //   errors.city = "City is required.";
+    // }
+
+    // if (!state) {
+    //   errors.state = "State is required.";
+    // }
+
+    // if (!lat) {
+    //   errors.lat = "Latitude is required.";
+    // }
+
+    // if (!lng) {
+    //   errors.lng = "Longitude is required.";
+    // }
+
+    // if (!description || description.length < 30) {
+    //   errors.description = "Description must be at least 30 characters.";
+    // }
+
+    // if (!name) {
+    //   errors.name = "Name is required.";
+    // }
+
+    // if (!price) {
+    //   errors.price = "Price is required.";
+    // }
+
+    // if (Object.keys(errors).length > 0) {
+    //   setErrors(errors);
+    //   return;
+    // }
 
     const newSpot = {
       country,
@@ -93,13 +99,10 @@ function CreateNewSpot() {
 
     console.log('this is new spot', newSpot);
     let createdSpot;
+
     await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
       createdSpot = spot
       console.log('newly created spot', spot)
-      return history.push(`/spots/${spot.id}`)
-    })
-
-    if (createdSpot) {
       setCountry("")
       setAddress("")
       setCity("")
@@ -114,20 +117,25 @@ function CreateNewSpot() {
       setImage5("")
       setHasSubmitted(true)
       setErrors([])
-    }
+      history.push(`/spots/${spot.id}`)
+      return
+    }).catch((err) => {
+      console.log('Err creating spot', err)
+    })
   }
 
 
   return (
     <div className='create-new-spot-container'>
       <div className ='create-new-spot-contents'>
-      <div className='create-new-spot-header'>
-        <h1 className='create-new-spot-h1'>Create a new Spot</h1>
-        <h3 className='create-new-spot-h3'>Where's your place located?</h3>
-        <p className='create-new-spot-p'>Guests will only get your exact address once they booked a
-          reservation.
-        </p>
-      </div>
+
+        <div className='create-new-spot-header'>
+          <h1 className='create-new-spot-h1'>Create a new Spot</h1>
+          <h3 className='create-new-spot-h3'>Where's your place located?</h3>
+          <p className='create-new-spot-p'>
+            Guests will only get your exact address once they booked a reservation.
+          </p>
+        </div>
 
       <div className='form-container'>
 
@@ -143,8 +151,15 @@ function CreateNewSpot() {
               placeholder='Country'
               className='create-new-spot-input'
             />
-
+            {/* {hasSubmitted && errors.country.length > 0 && (
+              <ul>
+                {Object.values(errors.country).map((error, index) => (
+                <li key={index}>{error}</li>
+                ))}
+              </ul>
+            )} */}
           </label>
+
           <label className='create-new-spot-label'>
             Street Address
             <input
@@ -176,7 +191,7 @@ function CreateNewSpot() {
               onChange={(e) => setState(e.target.value)}
               value={state}
 
-              placeholder='State'
+              placeholder='STATE'
               className='create-new-spot-input'
             />
           </label>
@@ -187,12 +202,12 @@ function CreateNewSpot() {
               type="text"
               onChange={(e) => setLat(e.target.value)}
               value={lat}
-
-              placeholder='Lat'
+              placeholder='Latitude'
               className='create-new-spot-input'
             />
           </label>
 
+          <div className ='comma'>,</div>
           <label className='create-new-spot-label'>
             Longitude
             <input
@@ -200,22 +215,24 @@ function CreateNewSpot() {
               onChange={(e) => setLng(e.target.value)}
               value={lng}
 
-              placeholder='Lng'
+              placeholder='Longitude'
               className='create-new-spot-input'
             />
           </label>
 
           <div className='line'></div>
 
-
           <label className='create-new-spot-label'>
-            Description
+            <h3>Describe your place to guests</h3>
+            <p>
+              Mention the best features of your space, any special amentities like fast wifi or parking, and what you love about the neighborhood.
+              </p>
             <textarea
               type="text"
               onChange={(e) => setDescription(e.target.value)}
               value={description}
 
-              placeholder='Tell us something about your spot...'
+              placeholder='Please write at least 30 characters'
               className='create-new-spot-input'
               rows="10"
               cols="50"
@@ -226,19 +243,25 @@ function CreateNewSpot() {
 
 
           <label className='create-new-spot-label'>
-            Create a Title for your Spot
+            <h3>Create a Title for your Spot</h3>
+            <p>
+              Catch guests' attention with a spot title that highlights what makes your place special.
+              </p>
             <input
               type="text"
               onChange={(e) => setName(e.target.value)}
               value={name}
 
-              placeholder='Name your Spot'
+              placeholder='Name of your spot'
               className='create-new-spot-input'
             />
           </label>
 
           <label className='create-new-spot-label'>
-            Set a price for your Spot
+            <h3>Set a base price for your spot</h3>
+            <p>
+            Competitive pricing can help your listing stand out and rank higher in search results.
+            </p>
             <input
               type="number"
               onChange={(e) => setPrice(e.target.value)}
@@ -251,10 +274,11 @@ function CreateNewSpot() {
 
           <div className='line'></div>
 
-
-          <p>Add Images</p>
-
           <label className='create-new-spot-label'>
+          <h3>Liven up your spot with photos</h3>
+          <p>
+            Submit a link to at least one photo to publish your spot.
+          </p>
             <input
               type="text"
               placeholder='Preview Image URL'
@@ -272,7 +296,6 @@ function CreateNewSpot() {
               onChange={(e) => setImage2(e.target.value)}
               value={image2}
             />
-
           </label>
 
 
