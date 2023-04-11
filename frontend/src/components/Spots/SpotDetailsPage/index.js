@@ -37,9 +37,7 @@ function SpotDetailPage () {
         <h1>{spotDetail.name}</h1>
         <h2>{spotDetail.city}, {spotDetail.state}, {spotDetail.country}</h2>
         <div className ='image-container'>
-            {/* <div className='image-grid'> */}
                 <div className='main-spot-img'>
-                    {/* <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} /> */}
                     {spotDetail?.SpotImages.find(image => image.preview === true) ?
                     <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} /> :
                     <p>No image available</p>
@@ -50,7 +48,6 @@ function SpotDetailPage () {
                 {spotDetail?.SpotImages.filter(image => image.preview !== true).map((image, index) => (
                     <img key={index} id={`spotImage${index + 1}`} src={image.url} alt={spotDetail?.name} />
                 ))}
-                {/* </div> */}
         </div>
         </div>
         <div className='spot-info'>
@@ -114,12 +111,3 @@ function SpotDetailPage () {
 }
 
 export default SpotDetailPage
-
-{/* <div className='main-img'>
-<img src={currSpot?.SpotImages.find(image => image.preview === true).url} alt={currSpot?.name} />
-</div>
-<div>
-{currSpot?.SpotImages.filter(image => image.preview !== true).map((image, index) => (
-    <img key={index} id={`spotImage${index + 1}`} src={image.url} alt={currSpot?.name} />
-  ))}
-</div> */}

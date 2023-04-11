@@ -63,45 +63,44 @@ export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
   }
 }
 
-export const createSpotFxn = (spot) => async (dispatch) => {
+export const createSpotFxn = (spot, images) => async (dispatch) => {
     console.log('thunk fxn spot', spot)
-    const {
-      country,
-      address,
-      city,
-      state,
-      lng,
-      lat,
-      description,
-      name,
-      price,
-      previewImage,
-    } = spot
     const response = await csrfFetch('/api/spots', {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      //body: JSON.stringify(spot)
-      body: JSON.stringify({
-        country,
-        address,
-        city,
-        state,
-        lat,
-        lng,
-        description,
-        name,
-        price,
-        previewImage,
-      })
+      body: JSON.stringify(spot)
      })
 
     if(response.ok) {
         const newSpot = await response.json()
+        //this newSpot has no access to the images yet
         console.log('thunk new spot', newSpot)
-        dispatch(createSpot(newSpot))
-        return newSpot
+
+        const imageResponses = await Promise.all(
+          images.map((img) =>
+            csrfFetch(`/api/spots/${newSpot.id}/images`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(img),
+            })
+          )
+        );
+        const imageUrls = await Promise.all(
+          imageResponses.map(async (res) => {
+            if (res.ok) {
+              const img = await res.json();
+              return img.url;
+            }
+            return null;
+          })
+        );
+
+        newSpot.images = imageUrls.filter((url) => url !== null);
+
+        dispatch(createSpot(newSpot));
+        return newSpot;
     }
 }
 
@@ -113,6 +112,7 @@ export const getSpotIdFxn = (id) => async (dispatch) => {
     dispatch(getSpotId(data))
   }
 }
+
 const initialState = { spots: [] }
 
 const spotReducer = (state = initialState, action) => {

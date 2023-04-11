@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createSpotFxn } from '../../../store/spots'
 import { useHistory } from 'react-router-dom'
-//import * as StoreSpots from '../../../store/spots';
-
 import "./CreateNewSpot.css"
 
 function CreateNewSpot() {
@@ -18,9 +16,9 @@ function CreateNewSpot() {
   const [description, setDescription] = useState("")
   const [name, setName] = useState("")
   const [price, setPrice] = useState("")
-  const [previewImage, setPreviewImage] = useState("")
   const [lat, setLat] = useState('')
   const [lng, setLng] = useState('')
+  const [previewImage, setPreviewImage] = useState("")
   const [image2, setImage2] = useState("")
   const [image3, setImage3] = useState("")
   const [image4, setImage4] = useState("")
@@ -29,20 +27,53 @@ function CreateNewSpot() {
 
   const [errors, setErrors] = useState([])
 
+  // const verifyImgUrl = ({previewImage, image2, image3, image4, image5}) => {
+  //   const pattern = /^https?:\/\/.+$/;
+  //   if (previewImage) {
+  //     return pattern.test(previewImage);
+  //   }
+  //   if (image2) {
+  //     return pattern.test(image2);
+  //   }
+  //   if (image3) {
+  //     return pattern.test(image3);
+  //   }
+  //   if (image4) {
+  //     return pattern.test(image4);
+  //   }
+  //   if (image5) {
+  //     return pattern.test(image5);
+  //   }
+  // }
+
+  // const handleImgUrls = (e) => {
+  //   const img = e.target.value
+
+  //   const urls = {
+  //     previewImage: '',
+  //     image2: '',
+  //     image3: '',
+  //     image4: '',
+  //     image5: '',
+  //   };
+
+  //   if(verifyImgUrl(img)) {
+  //     setImgUrl(img)
+  //   } else {
+  //     setImgUrl('')
+  //   }
+  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    //const parsedPrice = parseFloat(price)
-
-    const newSpotForm = {
+    const newSpot = {
       country,
       address,
       city,
       state,
       description,
       name,
-     // price: parsedPrice,
       lat,
       lng,
       price,
@@ -53,15 +84,22 @@ function CreateNewSpot() {
       image5,
     };
 
-    console.log('this is new spot', newSpotForm);
-    let newSpot;
-    await dispatch(createSpotFxn(newSpotForm)).then((spot) => {
-      newSpot = spot
+    const images = [previewImage, image2, image3, image4, image5];
+
+    const newSpotImgs = images.map((img, index) => ({
+      url: img,
+      preview: index === 0,
+    }));
+
+    console.log('this is new spot', newSpot);
+    let createdSpot;
+    await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
+      createdSpot = spot
+      console.log('newly created spot', spot)
       return history.push(`/spots/${spot.id}`)
     })
 
-
-    if (newSpot) {
+    if (createdSpot) {
       setCountry("")
       setAddress("")
       setCity("")
@@ -105,11 +143,6 @@ function CreateNewSpot() {
               placeholder='Country'
               className='create-new-spot-input'
             />
-            {/* {hasSubmitted && errors.country.length > 0 && errors.country.map((error, idx) => (
-              <ul key={idx} className='create-new-spot-error-ul'>
-                <li className='create-new-spot-error-li'>* {error}</li>
-              </ul>
-            ))} */}
 
           </label>
           <label className='create-new-spot-label'>
@@ -124,13 +157,6 @@ function CreateNewSpot() {
             />
           </label>
 
-          {/* {hasSubmitted && errors.address.length > 0 && errors.address.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
-
-
           <label className='create-new-spot-label'>
             City
             <input
@@ -143,12 +169,6 @@ function CreateNewSpot() {
             />
           </label>
 
-          {/* {hasSubmitted && errors.city.length > 0 && errors.city.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
-
           <label className='create-new-spot-label'>
             State
             <input
@@ -160,12 +180,6 @@ function CreateNewSpot() {
               className='create-new-spot-input'
             />
           </label>
-
-          {/* {hasSubmitted && errors.state.length > 0 && errors.state.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
 
           <label className='create-new-spot-label'>
             Latitude
@@ -207,13 +221,6 @@ function CreateNewSpot() {
               cols="50"
             />
           </label>
-{/*
-          {hasSubmitted && errors.description.length > 0 && errors.description.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
-
 
           <div className='line'></div>
 
@@ -230,14 +237,6 @@ function CreateNewSpot() {
             />
           </label>
 
-          {/* {hasSubmitted && errors.name.length > 0 && errors.name.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
-
-
-
           <label className='create-new-spot-label'>
             Set a price for your Spot
             <input
@@ -249,13 +248,6 @@ function CreateNewSpot() {
               className='create-new-spot-input'
             />
           </label>
-
-          {/* {hasSubmitted && errors.price.length > 0 && errors.price.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
-
 
           <div className='line'></div>
 
@@ -270,14 +262,7 @@ function CreateNewSpot() {
               onChange={(e) => setPreviewImage(e.target.value)}
               value={previewImage}
             />
-
           </label>
-{/*
-          {hasSubmitted && errors.previewImage.length > 0 && errors.previewImage.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
 
           <label className='create-new-spot-label'>
             <input
@@ -287,13 +272,9 @@ function CreateNewSpot() {
               onChange={(e) => setImage2(e.target.value)}
               value={image2}
             />
+
           </label>
-{/*
-          {hasSubmitted && errors.image2.length > 0 && errors.image2.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
+
 
           <label className='create-new-spot-label'>
             <input
@@ -303,13 +284,9 @@ function CreateNewSpot() {
               onChange={(e) => setImage3(e.target.value)}
               value={image3}
             />
+
           </label>
-{/*
-          {hasSubmitted && errors.image3.length > 0 && errors.image3.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
+
 
           <label className='create-new-spot-label'>
             <input
@@ -320,12 +297,7 @@ function CreateNewSpot() {
               value={image4}
             />
           </label>
-{/*
-          {hasSubmitted && errors.image4.length > 0 && errors.image4.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
+
 
           <label className='create-new-spot-label'>
 
@@ -337,12 +309,6 @@ function CreateNewSpot() {
               value={image5}
             />
           </label>
-
-          {/* {hasSubmitted && errors.image5.length > 0 && errors.image5.map((error, idx) => (
-            <ul key={idx} className='create-new-spot-error-ul'>
-              <li className='create-new-spot-error-li'>* {error}</li>
-            </ul>
-          ))} */}
 
           <div className='line'></div>
           <button disabled={Object.values(errors).flat().length > 0}>Create Spot</button>

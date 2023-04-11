@@ -324,7 +324,7 @@ router.get('/:spotId', async (req,res) => {
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
-
+    //const { address, city, state, country, lat, lng, name, description, price, previewImage, image2, image3, image4, image5 } = req.body
     let newSpot = await Spot.create({
         ownerId,
         address,
@@ -335,8 +335,18 @@ router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
         lng,
         name,
         description,
-        price
+        price,
+        //previewImage
     })
+    // const previewImg = await SpotImage.create({ url: previewImage, preview: true, spotId: newSpot.id })
+
+    // const newSpotImgs = [image2, image3, image4, image5 ]
+
+    // for (const img of newSpotImgs) {
+    //     if (img) {
+    //         await SpotImage.create({ url, preview: false, spotId: newSpot.id });
+    //     }
+    // }
 
     if (newSpot) {
         newSpot = newSpot.toJSON()
@@ -371,7 +381,7 @@ router.post('/:spotId/images', restoreUser, requireAuth, async (req,res) => {
     const spotImg = await SpotImage.findByPk(newImage.id)
 
     if (spotImg) {
-            return res.status(200).json(spotImg)
+        return res.status(200).json(spotImg)
     }
 
     return res.status(403).json({ 'Message':'User is not authorized' })
