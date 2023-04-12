@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 //import { deleteSpot } from './api'; //I need a similar import from my spots store
 import { getSpotsFxn } from '../../../store/spots';
-//import './OwnedSpots.css';
+import './OwnedSpots.css';
 
 function OwnedSpotsPage() {
 
@@ -51,9 +51,10 @@ return (
          ? Number(spot.avgRating).toFixed(1)
          : 'New';
          return (
-        <div className='manage-spots-list' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
+            //
+        <div className='manage-spots-list' key={spot.id} >
             <div className='owned-spot'>
-                <div className='preview-img'>
+                <div className='preview-img' onClick={() => handleSpotClick(spot.id)}>
                 <img className='owned-spot-img' src={spot.previewImage || null} alt={`${spot.name}`}/>
                 </div>
                 <div className='owned-spot-info'>
@@ -82,7 +83,8 @@ return (
                         {/* delete button */}
                         Delete
                     </button>
-                </div>
+            </div>
+
             </div>
         </div>
          )
