@@ -324,7 +324,7 @@ router.get('/:spotId', async (req,res) => {
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
-    //const { address, city, state, country, lat, lng, name, description, price, previewImage, image2, image3, image4, image5 } = req.body
+
     let newSpot = await Spot.create({
         ownerId,
         address,
@@ -338,15 +338,6 @@ router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
         price,
         //previewImage
     })
-    // const previewImg = await SpotImage.create({ url: previewImage, preview: true, spotId: newSpot.id })
-
-    // const newSpotImgs = [image2, image3, image4, image5 ]
-
-    // for (const img of newSpotImgs) {
-    //     if (img) {
-    //         await SpotImage.create({ url, preview: false, spotId: newSpot.id });
-    //     }
-    // }
 
     if (newSpot) {
         newSpot = newSpot.toJSON()
@@ -389,7 +380,7 @@ router.post('/:spotId/images', restoreUser, requireAuth, async (req,res) => {
 })
 
 //edit a spot
-router.put('/:spotId', requireAuth, validateSpots, async(req,res) => {
+router.put('/:spotId/edit', requireAuth, validateSpots, async(req,res) => {
     const id = req.params.spotId
     const userId = req.user.id
     const spot = await Spot.findByPk(id)

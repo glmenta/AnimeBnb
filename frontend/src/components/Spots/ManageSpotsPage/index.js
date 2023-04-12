@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { createSpotFxn } from '../../../store/spots'
+import { updateSpotFxn } from '../../../store/spots'
 import { useHistory } from 'react-router-dom'
-import "./CreateNewSpot.css"
 
-function CreateNewSpot() {
+function ManageSpotPage() {
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -30,7 +29,7 @@ function CreateNewSpot() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const newSpot = {
+    const updateSpot = {
       country,
       address,
       city,
@@ -49,17 +48,17 @@ function CreateNewSpot() {
 
     const images = [previewImage, image2, image3, image4, image5];
 
-    const newSpotImgs = images.map((img, index) => ({
+    const updatedSpotImgs = images.map((img, index) => ({
       url: img,
       preview: index === 0,
     }));
 
-    console.log('this is new spot', newSpot);
-    let createdSpot;
+    console.log('this is updated spot', updateSpot);
+    let updatedSpot;
 
-    await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
-      createdSpot = spot
-      console.log('newly created spot', spot)
+    await dispatch(updateSpotFxn(updateSpot, updatedSpotImgs)).then((spot) => {
+      updatedSpot = spot
+      console.log('newly updated spot', spot)
       setCountry("")
       setAddress("")
       setCity("")
@@ -77,7 +76,7 @@ function CreateNewSpot() {
       history.push(`/spots/${spot.id}`)
       return
     }).catch((err) => {
-      console.log('Err creating spot', err)
+      console.log('Err updating spot', err)
     })
   }
 
@@ -87,7 +86,7 @@ function CreateNewSpot() {
       <div className ='create-new-spot-contents'>
 
         <div className='create-new-spot-header'>
-          <h1 className='create-new-spot-h1'>Create a new Spot</h1>
+          <h1 className='create-new-spot-h1'>Update your Spot</h1>
           <h3 className='create-new-spot-h3'>Where's your place located?</h3>
           <p className='create-new-spot-p'>
             Guests will only get your exact address once they booked a reservation.
@@ -306,47 +305,4 @@ function CreateNewSpot() {
   )
 }
 
-export default CreateNewSpot
-
-  // const errors = {};
-
-    // if (!country) {
-    //   errors.country = "Country is required.";
-    // }
-
-    // if (!address) {
-    //   errors.address = "Street address is required.";
-    // }
-
-    // if (!city) {
-    //   errors.city = "City is required.";
-    // }
-
-    // if (!state) {
-    //   errors.state = "State is required.";
-    // }
-
-    // if (!lat) {
-    //   errors.lat = "Latitude is required.";
-    // }
-
-    // if (!lng) {
-    //   errors.lng = "Longitude is required.";
-    // }
-
-    // if (!description || description.length < 30) {
-    //   errors.description = "Description must be at least 30 characters.";
-    // }
-
-    // if (!name) {
-    //   errors.name = "Name is required.";
-    // }
-
-    // if (!price) {
-    //   errors.price = "Price is required.";
-    // }
-
-    // if (Object.keys(errors).length > 0) {
-    //   setErrors(errors);
-    //   return;
-    // }
+export default ManageSpotPage;

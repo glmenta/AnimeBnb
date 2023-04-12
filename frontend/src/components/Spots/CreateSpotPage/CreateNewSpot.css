@@ -65,15 +65,19 @@
     box-shadow: 0 0 0 2px rgba(72, 72, 72, 0.2);
     border-color: #008489;
   }
-
+/*
   .create-new-spot-error-ul {
     color: red;
     margin-top: 5px;
     margin-bottom: 20px;
     padding-left: 0;
     list-style-type: none;
-  }
+  } */
 
   .create-new-spot-error-li {
     margin-bottom: 5px;
   }
+
+.span-error {
+  color: red
+}

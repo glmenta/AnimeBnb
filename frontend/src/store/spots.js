@@ -4,6 +4,7 @@ const GET_SPOTS = 'spots/getSpots';
 const CREATE_SPOT = 'spots/createSpot';
 const GET_SPOT_DETAILS = 'spots/getSpotDetails';
 const GET_SPOT_ID = 'spots/getSpotId';
+const UPDATE_SPOT = '/spots/updateSpot';
 
 export const getSpots = (spots) => {
     return {
@@ -32,6 +33,14 @@ export const getSpotId = (spot) => {
     spot
   }
 }
+
+export const updateSpot = (spot) => {
+  return {
+    type: UPDATE_SPOT,
+    spot
+  }
+}
+
 export const getSpotsFxn = () => async (dispatch) => {
     const response = await csrfFetch('/api/spots')
 
@@ -114,15 +123,55 @@ export const getSpotIdFxn = (id) => async (dispatch) => {
   }
 }
 
+export const updateSpotFxn = (updatedSpot, updatedImages, spotId) => async dispatch => {
+  console.log('thunk fxn spot', updatedSpot);
+
+  const response = await csrfFetch(`/api/spots/${spotId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedSpot),
+  });
+
+  if (response.ok) {
+    const updatedSpot = await response.json();
+    console.log('thunk updated spot', updatedSpot);
+
+    const imageResponses = await Promise.all(
+      updatedImages.map((img) =>
+        csrfFetch(`/api/spots/${updatedSpot.id}/images`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(img),
+        })
+      )
+    );
+
+    const imageUrls = await Promise.all(
+      imageResponses.map(async (res) => {
+        if (res.ok) {
+          const img = await res.json();
+          return img.url;
+        }
+        return null;
+      })
+    );
+
+    updatedSpot.images = imageUrls.filter((url) => url !== null);
+
+    await dispatch(updateSpot(updatedSpot));
+    return updatedSpot;
+  }
+}
+
 const initialState = { spots: [] }
 
 const spotReducer = (state = initialState, action) => {
   //console.log('initial state', state.spots)
   let newState = { ...state }
-  //let newState;
   switch (action.type) {
     case GET_SPOTS:
-      //newState = Object.assign({}, state);
       newState.spots = action.spots;
       return newState;
     case CREATE_SPOT:
@@ -131,10 +180,18 @@ const spotReducer = (state = initialState, action) => {
       console.log('this is newState.spots', newState.spots)
       return newState
     case GET_SPOT_DETAILS:
-        //newState = Object.assign({}, state);
         newState.spotDetails = action.spotDetails;
-        console.log('this is newState', newState)
         return newState;
+    case UPDATE_SPOT:
+      const updatedSpot = action.spot
+      const updatedSpots = newState.spots.map(spot => {
+        if (spot.id === updatedSpot.id) {
+          return updatedSpot;
+        }
+        return spot;
+      })
+      newState.spots = updatedSpots;
+      return newState;
     default:
       return state
   }

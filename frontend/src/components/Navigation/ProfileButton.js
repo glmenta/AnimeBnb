@@ -75,7 +75,8 @@ function ProfileButton({ user }) {
             <li id="firstname">Hello, {user.firstName} {user.lastName}</li>
             <li id="email">{user.email}</li>
             <li id="manage-spots">
-              <NavLink to={`/users/${user.id}/spots`}>
+              {/* to={`/users/${user.id}/spots`} */}
+              <NavLink to={`/spots/current`}>
                 Manage Spots
               </NavLink>
               </li>

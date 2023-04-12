@@ -26,17 +26,62 @@ const updateReviews = (review) => {
     }
 }
 
+const deleteReview = (reviewId) => {
+    return {
+        type: DELETE_REVIEW,
+        reviewId
+    }
+}
+
 export const getReviewsFxn = (spotId) => async(dispatch) => {
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`)
 
     if (res.ok) {
         const reviewData = await res.json();
-        console.log('this is getReviews thunk', reviewData)
+        //console.log('this is getReviews thunk', reviewData)
         dispatch(getReviews(reviewData));
         return reviewData
     }
 }
 
+export const addReviewFxn = (review) => async(dispatch) => {
+    const res = await csrfFetch(`/api/spots/${review.spotId}/reviews`, {
+        method: 'POST',
+        body: JSON.stringify(review),
+      });
+
+      if (res.ok) {
+        const newReview = await res.json();
+        console.log('this is addReview thunk', newReview);
+        dispatch(addReviews(newReview));
+        return newReview;
+      }
+}
+
+export const updateReviewFxn = (review) => async (dispatch) => {
+    const res = await csrfFetch(`/api/reviews/${review.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(review),
+    });
+
+    if (res.ok) {
+      const updatedReview = await res.json();
+      console.log('this is updateReview thunk', updatedReview);
+      dispatch(updateReviews(updatedReview));
+      return updatedReview;
+    }
+};
+
+export const deleteReviewFxn = (review) => async(dispatch) => {
+    const res = await csrfFetch(`/api/spots/${review.spotId}/reviews/${review.id}`, {
+        method: 'DELETE'
+    })
+
+    if (res.ok) {
+        dispatch(deleteReview(review.id));
+        return review.id
+    }
+}
 const initialState = { reviews: {} }
 
 const reviewReducer = (state = initialState, action) => {
@@ -47,6 +92,25 @@ const reviewReducer = (state = initialState, action) => {
                 ...newState,
                 reviews: action.reviews
             }
+        case ADD_REVIEWS:
+            return {
+                ...newState,
+                reviews: {
+                    ...newState.reviews,
+                    [action.newReview.id]: action.newReview
+                }
+            }
+        case UPDATE_REVIEW:
+            return {
+                ...newState,
+                reviews: {
+                    ...newState.reviews,
+                    [action.review.id]: action.review
+                },
+            };
+        case DELETE_REVIEW:
+            delete newState.reviews[action.reviewId];
+            return newState;
         default:
             return state;
     }
