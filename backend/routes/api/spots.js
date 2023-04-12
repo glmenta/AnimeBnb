@@ -271,6 +271,30 @@ router.get('/current', requireAuth, async (req,res) => {
     }
 })
 
+//edit a spot
+router.put('/:spotId/edit', requireAuth, validateSpots, async(req,res) => {
+    const id = req.params.spotId
+    const userId = req.user.id
+    const spot = await Spot.findByPk(id)
+    const { address, city, state, country, lat, lng, name, description, price } = req.body
+
+    if (!spot || spot.id === null) {
+        return res.json({
+            message: "Spot couldn't be found",
+            statusCode: 404
+        })
+    }
+
+    if (userId === spot.ownerId) {
+        await spot.update({
+            address, city, state, country, lat, lng, name, description, price
+        })
+        return res.status(200).json(spot)
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
+    }
+})
+
 //get details of a spot by spotId
 router.get('/:spotId', async (req,res) => {
     const id = req.params.spotId
@@ -321,6 +345,7 @@ router.get('/:spotId', async (req,res) => {
 //     return res.status(200).json(spot);
 // });
 //create a spot
+//need to change this to /:spotId/new
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
@@ -376,30 +401,6 @@ router.post('/:spotId/images', restoreUser, requireAuth, async (req,res) => {
     }
 
     return res.status(403).json({ 'Message':'User is not authorized' })
-    }
-})
-
-//edit a spot
-router.put('/:spotId/edit', requireAuth, validateSpots, async(req,res) => {
-    const id = req.params.spotId
-    const userId = req.user.id
-    const spot = await Spot.findByPk(id)
-    const { address, city, state, country, lat, lng, name, description, price } = req.body
-
-    if (!spot || spot.id === null) {
-        return res.json({
-            message: "Spot couldn't be found",
-            statusCode: 404
-        })
-    }
-
-    if (userId === spot.ownerId) {
-        await spot.update({
-            address, city, state, country, lat, lng, name, description, price
-        })
-        return res.status(200).json(spot)
-    } else {
-        return res.status(403).json({ 'Message':'User is not authorized' })
     }
 })
 

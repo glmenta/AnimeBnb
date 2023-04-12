@@ -40,14 +40,14 @@ function App() {
           <Route path='/spots/current'>
             <OwnedSpotsPage/>
           </Route>
+          <Route path='/spots/:spotId/edit'>
+            <ManageSpotPage spotId={spotId} setSpotId={setSpotId}/>
+          </Route>
           <Route path='/spots/:spotId'>
             <SpotDetailPage spotId={spotId} setSpotId={setSpotId}/>
           </Route>
           <Route path = '/create-spot'>
             <CreateNewSpot/>
-          </Route>
-          <Route path='/spots/:spotId/edit'>
-            <ManageSpotPage spotId={spotId} setSpotId={setSpotId}/>
           </Route>
         </Switch>
       )}

@@ -23,9 +23,11 @@ useEffect(() => {
 },[dispatch])
 
 //handle click functions
-const  updateClick = (spotId) => {
-    history.push(`/spots/${spotId}/edit`)
-}
+//history.push(`/spots/${spotId}/edit`)
+// const  updateClick = (spotId, e) => {
+//     e.preventDefault();
+//     return <Link to={`/spots/${spotId}/edit`}>Update</Link>
+// }
 
 const deleteClick = () => {
 
@@ -71,10 +73,11 @@ return (
                     </div>
                 </div>
                 <div className='owned-spot-buttons'>
-                    <button className='update-button' onClick={() => updateClick(spot.id)}>
-                        {/* update button */}
-                        Update
-                    </button>
+                    <Link to={`/spots/${spot.id}/edit`}>
+                        {/* <button className='update-button'> */}
+                                Update
+                        {/* </button> */}
+                    </Link>
                     <button className='delete-button'>
                         {/* delete button */}
                         Delete
