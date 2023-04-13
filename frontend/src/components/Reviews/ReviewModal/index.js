@@ -21,9 +21,6 @@ function ReviewModal({isOpen, onClose, spotId}) {
 
         console.log('this is review data from review modal', reviewData)
 
-
-
-
         return dispatch(addReviewFxn(spotId, reviewData))
             .then(closeModal)
             .catch(
@@ -38,6 +35,11 @@ function ReviewModal({isOpen, onClose, spotId}) {
             )
 
     }
+
+    if (!isOpen) {
+        return null
+    }
+
     const handleStarClick = (i) => {
         setStars(i)
     }
@@ -52,9 +54,9 @@ function ReviewModal({isOpen, onClose, spotId}) {
     }
 
     return (
-        <div className='review-modal-container'>
-            <div className='review-modal'>
-                <form className='post-review-form' onSubmit={handleSubmit}>
+        <div className='review-modal-container' onClick={onClose}>
+            <div className='review-modal' onClick={(e) => e.stopPropagation()}>
+                <form className='post-review-form' onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
                     <h2 className='review-modal-title'>How was your stay?</h2>
                     <label className='post-review-label'>
                         <textarea

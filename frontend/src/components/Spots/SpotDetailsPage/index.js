@@ -70,7 +70,7 @@ function SpotDetailPage () {
                 <div className='price-per-night'>
                     <h1>${spotDetail.price}night</h1>
                 </div>
-                <div classname='star-rating'>
+                <div className='star-rating'>
                     ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
                 </div>
                 <div className = 'dot'><p>·</p></div>
@@ -80,7 +80,67 @@ function SpotDetailPage () {
                 </div>
                 <button className='reserve-button' onClick={handleClick}>Reserve</button>
             </div>
-            { user || user.id !== spotDetail.ownerId ? (
+            <div className='review-content'>
+            <div className='review-content-top'>
+                <div className='star-rating'>
+                ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
+                </div>
+                <div className='dot'>
+                <p>·</p>
+                </div>
+                {spotDetail.numReviews >= 1 && (
+                <div className='num-reviews'>
+                    <p>{Number(spotDetail.numReviews)}Reviews</p>
+                </div>
+                )}
+            </div>
+            <div className='review-map'>
+                {Array.isArray(reviews) && reviews.length > 0 ? (
+                reviews
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .map((review) => (
+                    <div key={review.id}>
+                        <p id='first-name'>{review.User.firstName}</p>
+                        <p id='createdAt'>
+                        {new Intl.DateTimeFormat('default', {
+                            month: 'long',
+                            year: 'numeric',
+                        }).format(new Date(review.createdAt))}
+                        </p>
+                        <p id='review-description'>{review.review}</p>
+                    </div>
+                    ))
+                ) : (
+                <div>
+                    {(!user || user && user?.id !== spotDetail?.ownerId) && (
+                    <button
+                        className='post-review-button'
+                        onClick={openReviewModal}
+                    >
+                        Post your Review
+                    </button>
+                    )}
+                    <ReviewModal
+                    isOpen={reviewModalOpen}
+                    onClose={closeReviewModal}
+                    spotId={spotId}
+                    />
+                    <p id='no-reviews'>Be the first to post a review!</p>
+                </div>
+                )}
+            </div>
+            </div>
+
+
+        </div>
+    </div>
+    )
+
+}
+
+export default SpotDetailPage
+     {/* { !user || user && user.id !== spotDetail.ownerId ? ( */}
+            {/* { !user || (user && user.id !== spotDetail.ownerId) ? (
             <div className='review-content'>
                 <div className='review-content-top'>
                 <div classname='star-rating'>
@@ -116,13 +176,5 @@ function SpotDetailPage () {
               </div>
             )}
             </div>
-
             </div>
-            ) : null}
-        </div>
-    </div>
-    )
-
-}
-
-export default SpotDetailPage
+            ) : null} */}

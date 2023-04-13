@@ -36,6 +36,15 @@ function LoginFormPage() {
       );
   };
 
+  const handleDemoLogin = (e) => {
+    e.preventDefault();
+    setErrors([]);
+    return dispatch(sessionActions.login({
+      credential: "Demo-lition",
+      password: "password"
+    })).then(closeModal);
+  };
+
   return (
     <div className = 'popup'>
     <form onSubmit={handleSubmit} className='login'>
@@ -72,6 +81,12 @@ function LoginFormPage() {
       >
       Log In
     </button>
+      <div className='demo-login'>
+        <a
+        href="javascript:void(0)"
+        onClick={handleDemoLogin}
+        >Demo User</a>
+      </div>
   </form>
   </div>
   );

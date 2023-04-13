@@ -89,6 +89,17 @@ function SignupFormPage() {
     return setErrors(['Confirm Password field must be the same as the Password field']);
   };
 
+  const handleDemoSignup = (e) => {
+    e.preventDefault();
+    setErrors([])
+    return dispatch(sessionActions.signup({
+      username: "Demo-lition",
+      email: "demo@example.com",
+      firstName: 'Demo',
+      lastName: 'Man',
+      password: "password"
+    })).then(closeModal)
+  }
 
   return (
     <div className='form-container'>
@@ -155,6 +166,12 @@ function SignupFormPage() {
           disabled={!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword}
           //disabled={!email || !username || !firstName || !lastName || !password || !confirmPassword }
         >Sign Up</button>
+        <div className='demo-signup'>
+        <a
+        href="javascript:void(0)"
+        onClick={handleDemoSignup}
+        >Demo Signup</a>
+        </div>
       </form>
     </div>
   );

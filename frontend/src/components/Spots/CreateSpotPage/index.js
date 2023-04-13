@@ -81,7 +81,6 @@ function CreateNewSpot() {
     })
   }
 
-
   return (
     <div className='create-new-spot-container'>
       <div className ='create-new-spot-contents'>
