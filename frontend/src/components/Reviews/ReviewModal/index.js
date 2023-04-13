@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { addReviewFxn } from '../../../store/reviews';
 import { useDispatch } from 'react-redux';
 import { useModal } from '../../../context/Modal';
+import './Review.css';
 
 function ReviewModal({isOpen, onClose, spotId}) {
     const dispatch = useDispatch();
@@ -9,6 +10,11 @@ function ReviewModal({isOpen, onClose, spotId}) {
     const [stars, setStars] = useState(0)
     const [errors, setErrors] = useState([])
     const { closeModal } = useModal();
+
+    //validations
+    const MIN_REVIEW_LENGTH = 10;
+
+    const validReview = review.length >= MIN_REVIEW_LENGTH;
 
     const handleSubmit = async (e) => {
         e.preventDefault();

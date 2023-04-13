@@ -111,12 +111,16 @@ function SpotDetailPage () {
                     </div>
                     ))
                 ) : (
-                <div>
-                    {(!user || user && user?.id !== spotDetail?.ownerId) && (
+                    <>
+                    {user && spotDetail?.numReviews < 1 && (
+                    <p id='no-reviews'>Be the first to post a review!</p>
+                    )}</>
+                )}
+                    <div>
+                    {(user && user?.id !== spotDetail?.ownerId) && (
                     <button
                         className='post-review-button'
-                        onClick={openReviewModal}
-                    >
+                        onClick={openReviewModal}>
                         Post your Review
                     </button>
                     )}
@@ -125,12 +129,9 @@ function SpotDetailPage () {
                     onClose={closeReviewModal}
                     spotId={spotId}
                     />
-                    <p id='no-reviews'>Be the first to post a review!</p>
                 </div>
-                )}
             </div>
             </div>
-
 
         </div>
     </div>

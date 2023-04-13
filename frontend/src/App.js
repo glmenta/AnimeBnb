@@ -12,6 +12,7 @@ import SpotDetailPage from "./components/Spots/SpotDetailsPage";
 import CreateNewSpot from "./components/Spots/CreateSpotPage";
 import UpdateSpotPage from "./components/Spots/UpdateSpotsPage";
 import OwnedSpotsPage from "./components/Spots/OwnedSpotsPage";
+import ReviewModal from "./components/Reviews/ReviewModal";
 
 function App() {
   const dispatch = useDispatch();
@@ -48,6 +49,9 @@ function App() {
           </Route>
           <Route path = '/create-spot'>
             <CreateNewSpot/>
+          </Route>
+          <Route path='/spots/:spotId/reviews'>
+            <ReviewModal spotId={spotId} setSpotId={setSpotId}/>
           </Route>
         </Switch>
       )}
