@@ -1,10 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+
 /* Overall styles */
 
 .spot-detail-container {
     margin: 0 auto;
     max-width: 1000px;
+    width: 100%;
     padding: 20px;
     justify-content: center;
+    margin-top: 90px;
+    display: flex;
+    flex-direction: column;
 }
 
 .spot-details {
@@ -16,6 +28,7 @@
   /* Header */
 
   .spot-details h1 {
+    display: flex;
     font-size: 36px;
     font-weight: bold;
     margin-bottom: 10px;
@@ -34,6 +47,22 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     grid-gap: 20px;
     margin-bottom: 20px;
+  }
+
+  .main-spot-img {
+    display: flex;
+    width: 675px;
+    height: 450px;
+  }
+
+  .spot-img-filter {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 500px;
+    height: 450px;
+    border-radius: 20px;
+    border: solid 1px black;
   }
 
   .image-grid img {

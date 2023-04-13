@@ -1,14 +1,27 @@
-.spots-container {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(300px, 1fr));
-    grid-gap: 20px;
+
+.manage-spots-container {
+    display: flex;
+    flex-direction: column;
     padding-top: 100px;
-    max-width: 1200px;
-    margin: 0 auto;
+}
+.manage-spots-header {
+    display: flex;
+    position: relative;
+}
+
+.create-spot-button {
+    display: flex;
+    position: relative;
+}
+
+.manage-spots-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
 
-  .spot {
+  .owned-spot {
     display: flex;
     flex-direction: column;
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);

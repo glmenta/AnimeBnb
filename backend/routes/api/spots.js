@@ -271,6 +271,30 @@ router.get('/current', requireAuth, async (req,res) => {
     }
 })
 
+//edit a spot
+router.put('/:spotId/edit', requireAuth, validateSpots, async(req,res) => {
+    const id = req.params.spotId
+    const userId = req.user.id
+    const spot = await Spot.findByPk(id)
+    const { address, city, state, country, lat, lng, name, description, price } = req.body
+
+    if (!spot || spot.id === null) {
+        return res.json({
+            message: "Spot couldn't be found",
+            statusCode: 404
+        })
+    }
+
+    if (userId === spot.ownerId) {
+        await spot.update({
+            address, city, state, country, lat, lng, name, description, price
+        })
+        return res.status(200).json(spot)
+    } else {
+        return res.status(403).json({ 'Message':'User is not authorized' })
+    }
+})
+
 //get details of a spot by spotId
 router.get('/:spotId', async (req,res) => {
     const id = req.params.spotId
@@ -286,7 +310,9 @@ router.get('/:spotId', async (req,res) => {
         where: { id },
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
     })
+
     if (spot) {
+            //console.log('this is spot from backend', spot)
             spot = spot.toJSON()
             spot.lat = parseFloat(spot.lat)
             spot.lng = parseFloat(spot.lng)
@@ -295,8 +321,31 @@ router.get('/:spotId', async (req,res) => {
         }
     return res.status(200).json(spot)
 })
-
+// router.get('/:spotId', async (req, res) => {
+//     const id = req.params.spotId;
+//     const checkIfExists = await Spot.findByPk(id);
+//     if (!checkIfExists) {
+//         res.status(404).json({
+//             "message": "Spot couldn't be found",
+//             "statusCode": 404
+//         });
+//     }
+//     let spot = await Spot.findOne({
+//         where: { id },
+//         include: [{ model: SpotImage }],
+//         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
+//     });
+//     if (spot) {
+//         spot = spot.toJSON();
+//         spot.lat = parseFloat(spot.lat);
+//         spot.lng = parseFloat(spot.lng);
+//         spot.price = parseFloat(spot.price);
+//         spot.avgRating = parseFloat(spot.avgRating);
+//     }
+//     return res.status(200).json(spot);
+// });
 //create a spot
+//need to change this to /:spotId/new
 router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
@@ -311,7 +360,8 @@ router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
         lng,
         name,
         description,
-        price
+        price,
+        //previewImage
     })
 
     if (newSpot) {
@@ -347,34 +397,10 @@ router.post('/:spotId/images', restoreUser, requireAuth, async (req,res) => {
     const spotImg = await SpotImage.findByPk(newImage.id)
 
     if (spotImg) {
-            return res.status(200).json(spotImg)
+        return res.status(200).json(spotImg)
     }
 
     return res.status(403).json({ 'Message':'User is not authorized' })
-    }
-})
-
-//edit a spot
-router.put('/:spotId', requireAuth, validateSpots, async(req,res) => {
-    const id = req.params.spotId
-    const userId = req.user.id
-    const spot = await Spot.findByPk(id)
-    const { address, city, state, country, lat, lng, name, description, price } = req.body
-
-    if (!spot || spot.id === null) {
-        return res.json({
-            message: "Spot couldn't be found",
-            statusCode: 404
-        })
-    }
-
-    if (userId === spot.ownerId) {
-        await spot.update({
-            address, city, state, country, lat, lng, name, description, price
-        })
-        return res.status(200).json(spot)
-    } else {
-        return res.status(403).json({ 'Message':'User is not authorized' })
     }
 })
 

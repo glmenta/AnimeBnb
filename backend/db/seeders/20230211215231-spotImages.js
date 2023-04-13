@@ -17,6 +17,16 @@ module.exports = {
         preview: true
       },
       {
+        spotId: 1,
+        url: 'https://i.pinimg.com/originals/3b/f3/c3/3bf3c3f72c1dc1965ffd6e55382f7798.jpg',
+        preview: false
+      },
+      {
+        spotId: 1,
+        url: 'https://cdn.inprnt.com/thumbs/ae/ee/aeeef5606d257aba19bfb577dbd75b6d.jpg',
+        preview: false
+      },
+      {
         spotId: 2,
         url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
         preview: true

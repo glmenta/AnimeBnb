@@ -16,6 +16,9 @@
     flex-direction: column;
 }
 
+.profile-dropdown-contents {
+  display: flex;
+}
  #profile-button {
     border: 1px solid gray;
     border-radius: 10px;
