@@ -84,7 +84,6 @@ return (
                         Delete
                     </button>
             </div>
-
             </div>
         </div>
          )

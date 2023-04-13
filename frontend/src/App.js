@@ -10,7 +10,7 @@ import SignupModal from "./components/Session/SignupModal";
 import SpotList from "./components/Spots/SpotList";
 import SpotDetailPage from "./components/Spots/SpotDetailsPage";
 import CreateNewSpot from "./components/Spots/CreateSpotPage";
-import ManageSpotPage from "./components/Spots/ManageSpotsPage";
+import UpdateSpotPage from "./components/Spots/UpdateSpotsPage";
 import OwnedSpotsPage from "./components/Spots/OwnedSpotsPage";
 
 function App() {
@@ -41,7 +41,7 @@ function App() {
             <OwnedSpotsPage/>
           </Route>
           <Route path='/spots/:spotId/edit'>
-            <ManageSpotPage spotId={spotId} setSpotId={setSpotId}/>
+            <UpdateSpotPage spotId={spotId} setSpotId={setSpotId}/>
           </Route>
           <Route path='/spots/:spotId'>
             <SpotDetailPage spotId={spotId} setSpotId={setSpotId}/>

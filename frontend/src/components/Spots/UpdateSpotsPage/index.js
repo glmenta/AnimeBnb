@@ -1,30 +1,51 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateSpotFxn } from '../../../store/spots'
-import { useHistory } from 'react-router-dom'
+import { updateSpotFxn, getSpotsFxn, getSpotDetailsFxn} from '../../../store/spots'
+import { useHistory, useParams } from 'react-router-dom'
 
-function ManageSpotPage() {
+function UpdateSpotPage() {
 
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [country, setCountry] = useState("")
-  const [address, setAddress] = useState("")
-  const [city, setCity] = useState("")
-  const [state, setState] = useState("")
-  const [description, setDescription] = useState("")
-  const [name, setName] = useState("")
-  const [price, setPrice] = useState("")
-  const [lat, setLat] = useState('')
-  const [lng, setLng] = useState('')
-  const [previewImage, setPreviewImage] = useState("")
-  const [image2, setImage2] = useState("")
-  const [image3, setImage3] = useState("")
-  const [image4, setImage4] = useState("")
-  const [image5, setImage5] = useState("")
+  const { spotId } = useParams();
+
+  const spots = useSelector(state => Object.values(state.spot.spots))
+  const currUser = useSelector(state => state.session.user)
+  const userSpots = spots.filter((spot) => currUser.id === spot.ownerId)
+  console.log('this is curr user from update spot', currUser)
+  //gives me id
+  console.log('this is user spots from update spot', userSpots)
+  //gives me array of spot objs
+  const selectSpot = userSpots.find((spot) => spot.id === parseInt(spotId))
+  //this gives me everything but the spot images; I do get preview image tho
+  console.log('this is the spot we want to edit', selectSpot)
+  const spotImgDetails = useSelector(state => state.spot.spotDetails)
+  //this gives me everything including the owner and spotImages
+  console.log('this is spotImgDetails', spotImgDetails)
+  console.log('this is selectSpot.id from updateSpot', selectSpot.id)
+
+  const [country, setCountry] = useState(selectSpot?.country || '')
+  const [address, setAddress] = useState(selectSpot?.address || '')
+  const [city, setCity] = useState(selectSpot?.city || '')
+  const [state, setState] = useState(selectSpot?.state || '')
+  const [description, setDescription] = useState(selectSpot?.description || '')
+  const [name, setName] = useState(selectSpot?.name || '')
+  const [price, setPrice] = useState(selectSpot?.price || '')
+  const [lat, setLat] = useState(selectSpot?.lat || '')
+  const [lng, setLng] = useState(selectSpot?.lng || '')
+  const [previewImage, setPreviewImage] = useState(selectSpot?.previewImage || '')
+  const [image2, setImage2] = useState(spotImgDetails?.image2 || '')
+  const [image3, setImage3] = useState(spotImgDetails?.image3 || '')
+  const [image4, setImage4] = useState(spotImgDetails?.image4 || '')
+  const [image5, setImage5] = useState(spotImgDetails?.image5 || '')
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
   const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    dispatch(getSpotDetailsFxn(selectSpot.id))
+  }, [dispatch, selectSpot.id])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -55,8 +76,8 @@ function ManageSpotPage() {
 
     console.log('this is updated spot', updateSpot);
     let updatedSpot;
-
-    await dispatch(updateSpotFxn(updateSpot, updatedSpotImgs)).then((spot) => {
+    console.log('this is selectSpot.id', selectSpot.id)
+    await dispatch(updateSpotFxn(updateSpot, updatedSpotImgs, selectSpot.id)).then((spot) => {
       updatedSpot = spot
       console.log('newly updated spot', spot)
       setCountry("")
@@ -305,4 +326,4 @@ function ManageSpotPage() {
   )
 }
 
-export default ManageSpotPage;
+export default UpdateSpotPage;

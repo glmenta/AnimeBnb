@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import { getReviewsFxn } from '../../../store/reviews';
+import ReviewModal from '../../Reviews/ReviewModal';
 import './updatedSpotDetail.css';
 
 function SpotDetailPage () {
@@ -12,6 +13,7 @@ function SpotDetailPage () {
     const dispatch = useDispatch();
 
     const [reviews, setReviews] = useState([])
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
     //this grabs our spot details in general
     useEffect(() => {
@@ -25,6 +27,14 @@ function SpotDetailPage () {
 
     if(!spotDetail) {
         return <div>Loading...</div>
+    }
+
+    const openReviewModal = () => {
+        setReviewModalOpen(true)
+    }
+
+    const closeReviewModal = () => {
+        setReviewModalOpen(false)
     }
 
     //This is for the reserve button
@@ -70,7 +80,7 @@ function SpotDetailPage () {
                 </div>
                 <button className='reserve-button' onClick={handleClick}>Reserve</button>
             </div>
-            { user && user.id !== spotDetail.ownerId ? (
+            { user || user.id !== spotDetail.ownerId ? (
             <div className='review-content'>
                 <div className='review-content-top'>
                 <div classname='star-rating'>
@@ -96,7 +106,12 @@ function SpotDetailPage () {
                 ))
             ) : (
                 <div>
-                <button className='post-review-button'>Post your Review</button>
+                <button className='post-review-button' onClick={openReviewModal}>Post your Review</button>
+                <ReviewModal
+                    isOpen={reviewModalOpen}
+                    onClose={closeReviewModal}
+                    spotId={spotId}
+                />
                 <p id='no-reviews'>Be the first to post a review!</p>
               </div>
             )}

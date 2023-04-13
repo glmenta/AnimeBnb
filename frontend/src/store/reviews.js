@@ -44,8 +44,8 @@ export const getReviewsFxn = (spotId) => async(dispatch) => {
     }
 }
 
-export const addReviewFxn = (review) => async(dispatch) => {
-    const res = await csrfFetch(`/api/spots/${review.spotId}/reviews`, {
+export const addReviewFxn = (spotId, review) => async(dispatch) => {
+    const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
         method: 'POST',
         body: JSON.stringify(review),
       });
@@ -53,7 +53,7 @@ export const addReviewFxn = (review) => async(dispatch) => {
       if (res.ok) {
         const newReview = await res.json();
         console.log('this is addReview thunk', newReview);
-        dispatch(addReviews(newReview));
+        dispatch(addReviews({...newReview, spotId}));
         return newReview;
       }
 }
@@ -93,11 +93,18 @@ const reviewReducer = (state = initialState, action) => {
                 reviews: action.reviews
             }
         case ADD_REVIEWS:
+            const spotId = action.review.spotId
+            const newReview = action.newReview
+            const existingReviews = newState.reviews[spotId] || {}
+            const addReview = {
+                ...existingReviews,
+                [newReview.id]: newReview
+            }
             return {
                 ...newState,
                 reviews: {
                     ...newState.reviews,
-                    [action.newReview.id]: action.newReview
+                    [spotId]: addReview
                 }
             }
         case UPDATE_REVIEW:

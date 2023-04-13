@@ -125,8 +125,7 @@ export const getSpotIdFxn = (id) => async (dispatch) => {
 
 export const updateSpotFxn = (updatedSpot, updatedImages, spotId) => async dispatch => {
   console.log('thunk fxn spot', updatedSpot);
-
-  const response = await csrfFetch(`/api/spots/${spotId}`, {
+  const response = await csrfFetch(`/api/spots/${spotId}/edit`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -183,15 +182,37 @@ const spotReducer = (state = initialState, action) => {
         newState.spotDetails = action.spotDetails;
         return newState;
     case UPDATE_SPOT:
-      const updatedSpot = action.spot
-      const updatedSpots = newState.spots.map(spot => {
-        if (spot.id === updatedSpot.id) {
-          return updatedSpot;
-        }
-        return spot;
-      })
-      newState.spots = updatedSpots;
-      return newState;
+      // const spotId = action.spot.id;
+      // //this finds our spot
+      // const spotToUpdate = Object.values(state.spots).find(spot => spot.id === spotId);
+      // console.log('this is our spotToUpdate', spotToUpdate)
+      // //findSpotDetail has all the information I want to be updated
+      // if (spotToUpdate) {
+      //   // If the spot exists in the state, update it with the new spot object
+      //   const updatedSpots = Object.assign({}, state.spots, { [spotId]: action.spot });
+      //   return { ...state, spots: updatedSpots };
+      // } else {
+      //   // If the spot does not exist in the state, return the original state
+      //   return state;
+      // }
+      console.log('this is newState.spots from UPDATE_SPOTS', newState.spots)
+      const spotId = action.spot.id;
+      const spotToUpdate = newState.spots[spotId];
+
+      if (spotToUpdate) {
+        // If the spot exists in the state, update it with the new spot object
+        const updatedSpots = {
+          ...newState.spots,
+          [spotId]: {
+            ...spotToUpdate,
+            ...action.spot,
+          }
+        };
+        return { ...newState, spots: updatedSpots };
+      } else {
+        // If the spot does not exist in the state, return the original state
+        return newState;
+      }
     default:
       return state
   }
