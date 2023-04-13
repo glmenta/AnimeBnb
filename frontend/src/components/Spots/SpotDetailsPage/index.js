@@ -73,10 +73,21 @@ function SpotDetailPage () {
                 <div className='star-rating'>
                     ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
                 </div>
-                <div className = 'dot'><p>·</p></div>
+                {/* <div className = 'dot'><p>·</p></div> */}
+
+                {spotDetail.numReviews > 0 && (
+                    <div className='dot'>
+                        <p>·</p>
+                    </div>
+                    )}
+               {/* <p>{Number(spotDetail.numReviews)}Reviews</p> */}
+               {spotDetail.numReviews > 0 && (
                 <div className='reviews'>
-                    <p>{Number(spotDetail.numReviews)}Reviews</p>
+                    <p>
+                        {spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}
+                    </p>
                 </div>
+                )}
                 </div>
                 <button className='reserve-button' onClick={handleClick}>Reserve</button>
             </div>
@@ -85,12 +96,22 @@ function SpotDetailPage () {
                 <div className='star-rating'>
                 ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
                 </div>
-                <div className='dot'>
-                <p>·</p>
-                </div>
+
+                    {/* <div className='dot'>
+                    <p>·</p>
+                    </div> */}
+                    {spotDetail.numReviews > 0 && (
+                    <div className='dot'>
+                        <p>·</p>
+                    </div>
+                    )}
+
                 {spotDetail.numReviews >= 1 && (
                 <div className='num-reviews'>
-                    <p>{Number(spotDetail.numReviews)}Reviews</p>
+                    {/* <p>{Number(spotDetail.numReviews)}Reviews</p> */}
+                    <p>
+                        {spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}
+                    </p>
                 </div>
                 )}
             </div>
