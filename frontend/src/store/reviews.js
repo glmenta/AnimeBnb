@@ -38,7 +38,7 @@ export const getReviewsFxn = (spotId) => async(dispatch) => {
 
     if (res.ok) {
         const reviewData = await res.json();
-        //console.log('this is getReviews thunk', reviewData)
+        console.log('this is getReviews thunk', reviewData)
         dispatch(getReviews(reviewData));
         return reviewData
     }
@@ -54,6 +54,7 @@ export const addReviewFxn = (spotId, review) => async(dispatch) => {
         const newReview = await res.json();
         console.log('this is addReview thunk', newReview);
         dispatch(addReviews({...newReview, spotId}));
+        console.log('this is after dispatch', newReview)
         return newReview;
       }
 }
@@ -82,6 +83,7 @@ export const deleteReviewFxn = (review) => async(dispatch) => {
         return review.id
     }
 }
+
 const initialState = { reviews: {} }
 
 const reviewReducer = (state = initialState, action) => {
@@ -93,7 +95,7 @@ const reviewReducer = (state = initialState, action) => {
                 reviews: action.reviews
             }
         case ADD_REVIEWS:
-            const spotId = action.review.spotId
+            const spotId = action.newReview.spotId
             const newReview = action.newReview
             const existingReviews = newState.reviews[spotId] || {}
             const addReview = {

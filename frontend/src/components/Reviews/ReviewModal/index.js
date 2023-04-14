@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import { addReviewFxn } from '../../../store/reviews';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useModal } from '../../../context/Modal';
+import { useHistory } from 'react-router-dom';
 import './Review.css';
 
 function ReviewModal({isOpen, onClose, spotId}) {
@@ -10,6 +11,7 @@ function ReviewModal({isOpen, onClose, spotId}) {
     const [stars, setStars] = useState(0)
     const [errors, setErrors] = useState([])
     const { closeModal } = useModal();
+    const history = useHistory();
 
     //validations
     const MIN_REVIEW_LENGTH = 10;
@@ -39,7 +41,6 @@ function ReviewModal({isOpen, onClose, spotId}) {
                     }
                 }
             )
-
     }
 
     if (!isOpen) {

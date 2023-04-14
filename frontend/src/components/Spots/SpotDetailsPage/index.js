@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import { getReviewsFxn } from '../../../store/reviews';
 import ReviewModal from '../../Reviews/ReviewModal';
+import DeleteReviewModal from '../../Reviews/DeleteReviewModal';
 import './updatedSpotDetail.css';
 
 function SpotDetailPage () {
@@ -14,6 +15,7 @@ function SpotDetailPage () {
 
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
 
     //this grabs our spot details in general
     useEffect(() => {
@@ -22,7 +24,15 @@ function SpotDetailPage () {
 
     //this allows us to grab our reviews for that spot
     useEffect(() => {
-        dispatch(getReviewsFxn(spotId)).then(reviews => setReviews(reviews.Reviews))
+        // dispatch(getReviewsFxn(spotId)).then(reviews => setReviews(reviews.Reviews))
+        async function fetchReviews() {
+        const response = await dispatch(getReviewsFxn(spotId));
+        const reviews = response.Reviews;
+        setReviews(reviews);
+        console.log('this is useEff review', reviews); // Access the resolved value of the dispatch call here
+        // const userReview = reviews.find(review => review.userId === user.id)
+      }
+      fetchReviews()
     }, [spotId])
 
     if(!spotDetail) {
@@ -35,6 +45,14 @@ function SpotDetailPage () {
 
     const closeReviewModal = () => {
         setReviewModalOpen(false)
+    }
+
+    const openDeleteReviewModal = () => {
+        setDeleteReviewModalOpen(true)
+    }
+
+    const closeDeleteReviewModal = () => {
+        setDeleteReviewModalOpen(false)
     }
 
     //This is for the reserve button
@@ -66,6 +84,7 @@ function SpotDetailPage () {
                 <p id='spot-description'>{spotDetail.description}</p>
             </div>
             <div className='review-box'>
+
                 <div className='review-box-top'>
                 <div className='price-per-night'>
                     <h1>${spotDetail.price}night</h1>
@@ -73,48 +92,54 @@ function SpotDetailPage () {
                 <div className='star-rating'>
                     ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
                 </div>
-                {/* <div className = 'dot'><p>·</p></div> */}
 
                 {spotDetail.numReviews > 0 && (
-                    <div className='dot'>
-                        <p>·</p>
-                    </div>
-                    )}
-               {/* <p>{Number(spotDetail.numReviews)}Reviews</p> */}
+                    <div className='dot'><p>·</p></div>
+                )}
+
                {spotDetail.numReviews > 0 && (
                 <div className='reviews'>
-                    <p>
-                        {spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}
-                    </p>
+                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}</p>
                 </div>
                 )}
                 </div>
+
                 <button className='reserve-button' onClick={handleClick}>Reserve</button>
             </div>
-            <div className='review-content'>
-            <div className='review-content-top'>
-                <div className='star-rating'>
-                ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
-                </div>
 
-                    {/* <div className='dot'>
-                    <p>·</p>
-                    </div> */}
-                    {spotDetail.numReviews > 0 && (
-                    <div className='dot'>
-                        <p>·</p>
+            <div className='review-content'>
+                <div className='review-content-top'>
+                    <div className='star-rating'>
+                    ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
                     </div>
+
+                    {spotDetail.numReviews > 0 && (
+                        <div className='dot'><p>·</p></div>
                     )}
 
                 {spotDetail.numReviews >= 1 && (
                 <div className='num-reviews'>
-                    {/* <p>{Number(spotDetail.numReviews)}Reviews</p> */}
-                    <p>
-                        {spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}
-                    </p>
+                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}</p>
                 </div>
                 )}
-            </div>
+                </div>
+
+                <div className='post-review-modal'>
+                        {/* {(user && user?.id !== spotDetail?.ownerId) && ( */}
+                        {(user && (!reviews.find(review => review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
+                        <button
+                            className='post-review-button'
+                            onClick={openReviewModal}>
+                            Post your Review
+                        </button>
+                        )}
+                        <ReviewModal
+                        isOpen={reviewModalOpen}
+                        onClose={closeReviewModal}
+                        spotId={spotId}
+                        />
+                </div>
+
             <div className='review-map'>
                 {Array.isArray(reviews) && reviews.length > 0 ? (
                 reviews
@@ -129,31 +154,32 @@ function SpotDetailPage () {
                         }).format(new Date(review.createdAt))}
                         </p>
                         <p id='review-description'>{review.review}</p>
+                        <div className='delete-review-modal'>
+                        {(user && (reviews.find(review => review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
+                            <button
+                                className='post-review-button'
+                                onClick={openDeleteReviewModal}>
+                                Delete
+                            </button>
+                            )}
+                            <DeleteReviewModal
+                            isOpen={deleteReviewModalOpen}
+                            onClose={closeDeleteReviewModal}
+                            spotId={spotId}
+                            />
+                        </div>
                     </div>
                     ))
                 ) : (
-                    <>
-                    {user && spotDetail?.numReviews < 1 && (
-                    <p id='no-reviews'>Be the first to post a review!</p>
-                    )}</>
+                    <div className='no-review-notice'>
+                        {user && spotDetail?.numReviews < 1 && (
+                        <p id='no-reviews'>Be the first to post a review!</p>
+                        )}
+                    </div>
                 )}
-                    <div>
-                    {(user && user?.id !== spotDetail?.ownerId) && (
-                    <button
-                        className='post-review-button'
-                        onClick={openReviewModal}>
-                        Post your Review
-                    </button>
-                    )}
-                    <ReviewModal
-                    isOpen={reviewModalOpen}
-                    onClose={closeReviewModal}
-                    spotId={spotId}
-                    />
                 </div>
-            </div>
-            </div>
 
+            </div>
         </div>
     </div>
     )
