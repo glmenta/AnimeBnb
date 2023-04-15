@@ -24,17 +24,17 @@ function SpotDetailPage () {
 
     //this allows us to grab our reviews for that spot
     useEffect(() => {
-        // dispatch(getReviewsFxn(spotId)).then(reviews => setReviews(reviews.Reviews))
+
         async function fetchReviews() {
-        const response = await dispatch(getReviewsFxn(spotId));
-        const reviews = response.Reviews;
-        setReviews(reviews);
-        console.log('this is useEff review', reviews); // Access the resolved value of the dispatch call here
-        // const userReview = reviews.find(review => review.userId === user.id)
+            const response = await dispatch(getReviewsFxn(spotId));
+            const reviews = response.Reviews;
+            setReviews(reviews);
+            console.log('this is useEff review', reviews);
       }
       fetchReviews()
     }, [spotId])
-
+       // const userReview = reviews.find(review => review.userId === user.id)
+            // console.log('this is user rev', userReview)
     if(!spotDetail) {
         return <div>Loading...</div>
     }
@@ -155,18 +155,20 @@ function SpotDetailPage () {
                         </p>
                         <p id='review-description'>{review.review}</p>
                         <div className='delete-review-modal'>
-                        {(user && (reviews.find(review => review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
+                        {(user && ((review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
                             <button
                                 className='post-review-button'
                                 onClick={openDeleteReviewModal}>
                                 Delete
                             </button>
                             )}
-                            <DeleteReviewModal
-                            isOpen={deleteReviewModalOpen}
-                            onClose={closeDeleteReviewModal}
-                            spotId={spotId}
-                            />
+                            {(review.userId === user.id && (
+                                <DeleteReviewModal
+                                isOpen={deleteReviewModalOpen}
+                                onClose={closeDeleteReviewModal}
+                                reviewId={review.id}
+                                />
+                            ))}
                         </div>
                     </div>
                     ))

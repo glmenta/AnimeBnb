@@ -1,17 +1,26 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteReviewFxn } from "../../../store/reviews";
 import React, {useState} from "react";
 import { useModal } from "../../../context/Modal";
-
-function DeleteReviewModal ({isOpen, onClose, spotId}) {
-
+import { useParams } from "react-router-dom";
+import "./DeleteReviewModal.css"
+function DeleteReviewModal ({isOpen, onClose, reviewId}) {
     const dispatch = useDispatch();
-    const { setModalContent } = useModal();
+
+    const reviews = useSelector(state => Object.values(state.review.reviews))
+    const { closeModal } = useModal();
+
+    console.log('this is reviewId from del rev modal', reviewId)
 
     const handleDelete = () => {
-        return dispatch(deleteReviewFxn())
-            .then(setModalContent(null))
+        if(reviews) {
+            return dispatch(deleteReviewFxn(reviewId))
+            .then(closeModal);
+        }
+    }
 
+    const cancelDelete = () => {
+        onClose();
     }
 
     if (!isOpen) {
@@ -27,7 +36,7 @@ function DeleteReviewModal ({isOpen, onClose, spotId}) {
                     <button onClick={handleDelete}>Yes (Delete Review)</button>
                 </div>
                 <div className='no-button'>
-                    <button onClick={() => setModalContent(null)}>No (Keep Review)</button>
+                    <button onClick={cancelDelete}>No (Keep Review)</button>
                 </div>
             </div>
         </div>

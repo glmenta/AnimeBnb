@@ -73,13 +73,14 @@ export const updateReviewFxn = (review) => async (dispatch) => {
     }
 };
 
-export const deleteReviewFxn = (review) => async(dispatch) => {
-    const res = await csrfFetch(`/api/spots/${review.spotId}/reviews/${review.id}`, {
+export const deleteReviewFxn = (reviewId) => async(dispatch) => {
+    const res = await csrfFetch(`/api/reviews/${reviewId}`, {
         method: 'DELETE'
     })
-
+    console.log('this is res from delete thunk', res)
     if (res.ok) {
         const deletedReview = res.json();
+        console.log('this is thunk', deletedReview)
         dispatch(deleteReview(deletedReview));
         return deletedReview
     }

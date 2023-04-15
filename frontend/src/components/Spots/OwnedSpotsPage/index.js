@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 //import { deleteSpot } from './api'; //I need a similar import from my spots store
 import { getSpotsFxn } from '../../../store/spots';
 import './OwnedSpots.css';
+import DeleteSpotModal from '../UpdateSpotsPage/DeleteSpotModal';
 
 function OwnedSpotsPage() {
 
@@ -17,20 +18,20 @@ const unfilteredSpots = useSelector((state) => Object.values(state.spot.spots));
 console.log('this is unfiltered spots from ownedSpotsPage', unfilteredSpots)
 const ownedSpots = unfilteredSpots.filter(spot => spot.ownerId === user.id)
 console.log('this is filtered or owned spots', ownedSpots)
+const [deleteSpotModal, setDeleteSpotModal] = useState(false)
 
 useEffect(() => {
     dispatch(getSpotsFxn())
 },[dispatch])
 
 //handle click functions
-//history.push(`/spots/${spotId}/edit`)
-// const  updateClick = (spotId, e) => {
-//     e.preventDefault();
-//     return <Link to={`/spots/${spotId}/edit`}>Update</Link>
-// }
 
-const deleteClick = () => {
+const openDeleteSpotModal = () => {
+    setDeleteSpotModal(true)
+}
 
+const closeDeleteSpotModal = () => {
+    setDeleteSpotModal(false)
 }
 
 const handleSpotClick = (spotId) => {
@@ -41,8 +42,12 @@ return (
    <div className ='manage-spots-container'>
 
         <div className= 'manage-spots-header'>
-            <h1>Manage Your Spots</h1>
-            <button className='create-spot-button'>Create a New Spot</button>
+            <h1 className='manage-spots-title'>Manage Your Spots</h1>
+        {!ownedSpots.length && (
+            <div>
+            <Link to={`/spots/new`}className='create-spot-button'>Create a New Spot</Link>
+            </div>
+            )}
         </div>
 
         {/* this should be similar to spot list */}
@@ -74,15 +79,22 @@ return (
                     </div>
                 </div>
                 <div className='owned-spot-buttons'>
+                    <div className ='update-button'>
                     <Link to={`/spots/${spot.id}/edit`}>
-                        {/* <button className='update-button'> */}
                                 Update
-                        {/* </button> */}
                     </Link>
-                    <button className='delete-button'>
-                        {/* delete button */}
-                        Delete
-                    </button>
+                    </div>
+                    <div className='delete-button-modal'>
+                        <button className='delete-button'
+                            onClick={openDeleteSpotModal}>
+                            Delete
+                        </button>
+                        <DeleteSpotModal
+                            isOpen={deleteSpotModal}
+                            onClose={closeDeleteSpotModal}
+                            spotId={spot.id}
+                        />
+                    </div>
             </div>
             </div>
         </div>
