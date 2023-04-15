@@ -79,8 +79,9 @@ export const deleteReviewFxn = (review) => async(dispatch) => {
     })
 
     if (res.ok) {
-        dispatch(deleteReview(review.id));
-        return review.id
+        const deletedReview = res.json();
+        dispatch(deleteReview(deletedReview));
+        return deletedReview
     }
 }
 
