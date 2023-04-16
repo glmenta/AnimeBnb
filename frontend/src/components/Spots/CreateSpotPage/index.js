@@ -25,7 +25,20 @@ function CreateNewSpot() {
   const [image5, setImage5] = useState("")
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({
+    country: [],
+    address: [],
+    city: [],
+    state: [],
+    description: [],
+    name: [],
+    price: [],
+    previewImage: [],
+    image2: [],
+    image3: [],
+    image4: [],
+    image5: [],
+  })
 
 
   const validateFileExtension = (url) => {
