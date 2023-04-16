@@ -2,20 +2,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteReviewFxn } from "../../../store/reviews";
 import React, {useState} from "react";
 import { useModal } from "../../../context/Modal";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import "./DeleteReviewModal.css"
-function DeleteReviewModal ({isOpen, onClose, reviewId}) {
+function DeleteReviewModal ({isOpen, onClose, reviewId, spotId}) {
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const reviews = useSelector(state => Object.values(state.review.reviews))
     const { closeModal } = useModal();
 
     console.log('this is reviewId from del rev modal', reviewId)
-
+    console.log('this is reviews from del rev modal', reviews)
+    console.log(spotId)
     const handleDelete = () => {
+
         if(reviews) {
             return dispatch(deleteReviewFxn(reviewId))
-            .then(closeModal);
+            .then(() => {history.push(`/spots/${spotId}`)})
         }
     }
 

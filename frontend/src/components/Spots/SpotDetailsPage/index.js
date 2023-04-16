@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import { getReviewsFxn } from '../../../store/reviews';
 import ReviewModal from '../../Reviews/ReviewModal';
@@ -12,7 +12,7 @@ function SpotDetailPage () {
     const spotDetail = useSelector(state => state.spot.spotDetails)
     const user = useSelector(state => state.session.user);
     const dispatch = useDispatch();
-
+    const history = useHistory();
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
@@ -167,6 +167,7 @@ function SpotDetailPage () {
                                 isOpen={deleteReviewModalOpen}
                                 onClose={closeDeleteReviewModal}
                                 reviewId={review.id}
+                                spotId={spotId}
                                 />
                             ))}
                         </div>

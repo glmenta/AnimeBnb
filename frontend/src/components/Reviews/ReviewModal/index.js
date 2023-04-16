@@ -30,7 +30,7 @@ function ReviewModal({isOpen, onClose, spotId}) {
         console.log('this is review data from review modal', reviewData)
 
         return dispatch(addReviewFxn(spotId, reviewData))
-            .then(closeModal)
+            .then(history.push(`/spots/${spotId}`))
             .catch(
                 async(res) => {
                     const data = await res.json();
