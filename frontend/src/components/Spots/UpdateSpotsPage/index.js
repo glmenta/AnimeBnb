@@ -34,11 +34,11 @@ function UpdateSpotPage() {
   const [price, setPrice] = useState(selectSpot?.price || '')
   const [lat, setLat] = useState(selectSpot?.lat || '')
   const [lng, setLng] = useState(selectSpot?.lng || '')
-  const [previewImage, setPreviewImage] = useState(selectSpot?.previewImage || '')
-  const [image2, setImage2] = useState(spotImgDetails?.image2 || '')
-  const [image3, setImage3] = useState(spotImgDetails?.image3 || '')
-  const [image4, setImage4] = useState(spotImgDetails?.image4 || '')
-  const [image5, setImage5] = useState(spotImgDetails?.image5 || '')
+  // const [previewImage, setPreviewImage] = useState(selectSpot?.previewImage || '')
+  // const [image2, setImage2] = useState(spotImgDetails?.image2 || '')
+  // const [image3, setImage3] = useState(spotImgDetails?.image3 || '')
+  // const [image4, setImage4] = useState(spotImgDetails?.image4 || '')
+  // const [image5, setImage5] = useState(spotImgDetails?.image5 || '')
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
   const [errors, setErrors] = useState({})
@@ -60,24 +60,24 @@ function UpdateSpotPage() {
       lat,
       lng,
       price,
-      previewImage,
-      image2,
-      image3,
-      image4,
-      image5,
+      // previewImage,
+      // image2,
+      // image3,
+      // image4,
+      // image5,
     };
 
-    const images = [previewImage, image2, image3, image4, image5];
+    // const images = [previewImage, image2, image3, image4, image5];
 
-    const updatedSpotImgs = images.map((img, index) => ({
-      url: img,
-      preview: index === 0,
-    }));
+    // const updatedSpotImgs = images.map((img, index) => ({
+    //   url: img,
+    //   preview: index === 0,
+    // }));
 
     console.log('this is updated spot', updateSpot);
     let updatedSpot;
     console.log('this is selectSpot.id', selectSpot.id)
-    await dispatch(updateSpotFxn(updateSpot, updatedSpotImgs, selectSpot.id)).then((spot) => {
+    await dispatch(updateSpotFxn(updateSpot, selectSpot.id)).then((spot) => {
       updatedSpot = spot
       console.log('newly updated spot', spot)
       setCountry("")
@@ -87,11 +87,11 @@ function UpdateSpotPage() {
       setDescription("")
       setName("")
       setPrice("")
-      setPreviewImage("")
-      setImage2("")
-      setImage3("")
-      setImage4("")
-      setImage5("")
+      // setPreviewImage("")
+      // setImage2("")
+      // setImage3("")
+      // setImage4("")
+      // setImage5("")
       setHasSubmitted(true)
       setErrors([])
       history.push(`/spots/${spot.id}`)
@@ -258,7 +258,7 @@ function UpdateSpotPage() {
 
           <div className='line'></div>
 
-          <label className='create-new-spot-label'>
+          {/* <label className='create-new-spot-label'>
           <h3>Liven up your spot with photos</h3>
           <p>
             Submit a link to at least one photo to publish your spot.
@@ -315,7 +315,7 @@ function UpdateSpotPage() {
               onChange={(e) => setImage5(e.target.value)}
               value={image5}
             />
-          </label>
+          </label> */}
 
           <div className='line'></div>
           <button disabled={Object.values(errors).flat().length > 0}>Create Spot</button>

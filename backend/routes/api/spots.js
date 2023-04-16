@@ -346,7 +346,7 @@ router.get('/:spotId', async (req,res) => {
 // });
 //create a spot
 //need to change this to /:spotId/new
-router.post('/', restoreUser, requireAuth, validateSpots, async (req,res) => {
+router.post('/new', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 

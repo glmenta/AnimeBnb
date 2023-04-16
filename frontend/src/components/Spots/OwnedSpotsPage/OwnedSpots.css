@@ -7,11 +7,17 @@
 .manage-spots-header {
     display: flex;
     position: relative;
+    flex-direction: column;
 }
 
+.manage-spots-title {
+  display: flex;
+
+}
 .create-spot-button {
     display: flex;
     position: relative;
+    left: 20%;
 }
 
 .manage-spots-list {

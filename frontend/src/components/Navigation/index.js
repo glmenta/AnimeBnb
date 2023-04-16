@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { NavLink, useHistory, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import './Navigation.css';
@@ -14,17 +14,11 @@ import SignupFormPage from '../Session/SignupFormPage';
 function Navigation({ isLoaded }){
   const sessionUser = useSelector(state => state.session.user);
   const dispatch = useDispatch();
-
   const history = useHistory()
 
   const [islogInOpen, setIsLogInOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
   const [createButton, setCreateButton] = useState(false);
-
-  const logout = (e) => {
-    e.preventDefault();
-    dispatch(sessionActions.logout());
-  };
 
   const toggleCreateButton = () => {
     setCreateButton(true)
@@ -48,32 +42,7 @@ function Navigation({ isLoaded }){
     setIsSignupOpen(false);
   };
 
-  let sessionLinks;
-  if (sessionUser) {
-    console.log(sessionUser)
-    sessionLinks = (
-      <li className='logged_in_icon'>
-        <button className='create-spot-button' style={{
-          backgroundColor: 'transparent',
-          border: 'none',
-          outline: 'none',
-          }}>
-            <NavLink to="/create-spot" className="create_spot_link"
-            style={{ backgroundColor: 'transparent', textDecoration: 'none', color: 'inherit' }}
-            >Create a New Spot</NavLink>
-            </button>
-        <ProfileButton user={sessionUser} />
-      </li>
-    );
-  } else {
-    sessionLinks = (
-      <li className='not_logged_in'>
-        <button onClick={openLogInModal}><NavLink to="/login" className="sign-log-in-link">Log In</NavLink></button>
-        <button onClick={openSignupModal}><NavLink to="/signup" className="sign-log-in-link">Sign Up</NavLink></button>
-      </li>
-    );
-  }
-
+  console.log('this is logged in user', sessionUser)
   return (
    <div className='nav-container'>
     <ul>
@@ -84,6 +53,7 @@ function Navigation({ isLoaded }){
       </NavLink>
     </li>
     </div>
+
     {isLoaded && (
     <div className='profile-button'>
       <li>
@@ -92,14 +62,10 @@ function Navigation({ isLoaded }){
     </div>
     )}
          {sessionUser && (
-         <div className='create-spot-button'>
-            <button onClick={toggleCreateButton}>
-               <NavLink to="/create-spot" className="create_spot_link">
-                 Create a New Spot
-               </NavLink>
-             </button>
-         </div>
-       )}
+            <div className='create-spot-button' style={{backgroundColor: 'red'}}>
+              <NavLink to={`/spots/new`} className="create_spot_link">Create a New Spot</NavLink>
+            </div>
+          )}
     </ul>
   <LoginModal open={islogInOpen} onClose={() => setIsLogInOpen(false)}><LoginFormPage onSuccess={handleLoginSuccess} /></LoginModal>
   <SignupModal open={isSignupOpen} onClose={() => setIsSignupOpen(false)}><SignupFormPage onSuccess={handleSignupSuccess} /></SignupModal>
@@ -108,3 +74,34 @@ function Navigation({ isLoaded }){
 }
 
 export default Navigation;
+
+ // const logout = (e) => {
+  //   e.preventDefault();
+  //   dispatch(sessionActions.logout());
+  // };
+
+// let sessionLinks;
+  // if (sessionUser) {
+  //   console.log('this is sesh user', sessionUser)
+  //   sessionLinks = (
+  //     <li className='logged_in_icon'>
+  //       <button className='create-spot-button' style={{
+  //         backgroundColor: 'transparent',
+  //         border: 'none',
+  //         outline: 'none',
+  //         }}>
+  //           <NavLink to={`/spots/new`} className="create_spot_link"
+  //           style={{ backgroundColor: 'transparent', textDecoration: 'none', color: 'inherit' }}
+  //           >Create a New Spot</NavLink>
+  //           </button>
+  //       <ProfileButton user={sessionUser} />
+  //     </li>
+  //   );
+  // } else {
+  //   sessionLinks = (
+  //     <li className='not_logged_in'>
+  //       <button onClick={openLogInModal}><NavLink to="/login" className="sign-log-in-link">Log In</NavLink></button>
+  //       <button onClick={openSignupModal}><NavLink to="/signup" className="sign-log-in-link">Sign Up</NavLink></button>
+  //     </li>
+  //   );
+  // }

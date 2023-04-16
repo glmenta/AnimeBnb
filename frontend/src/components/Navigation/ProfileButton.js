@@ -40,16 +40,18 @@ function ProfileButton({ user }) {
     return () => document.removeEventListener("click", closeMenu);
   }, [showMenu]);
 
-  // const closeMenu = () => {
-  //   if (!ulRef.current) {
-  //     setShowMenu(false);
-  //     setProfileClicked(false);
-  //   }
+  const closeMenu = () => {
+    if (!ulRef.current) {
+      setShowMenu(false);
+      setProfileClicked(false);
+    }
 
-  // }
+  }
 
   const logout = (e) => {
     e.preventDefault();
+    setShowMenu(false);
+    setProfileClicked(false);
     dispatch(sessionActions.logout());
     history.push('/')
   };
@@ -92,14 +94,14 @@ function ProfileButton({ user }) {
                 <div className="login-button">
                   <OpenModalMenuItem
                     itemText="Log In"
-                    //onItemClick={closeMenu}
+                    onItemClick={closeMenu}
                     modalComponent={<LoginFormModal />}
                   />
                 </div>
                 <div className="signup-button">
                   <OpenModalMenuItem
                     itemText="Sign Up"
-                    //onItemClick={closeMenu}
+                    onItemClick={closeMenu}
                     modalComponent={<SignupFormModal />}
                   />
                 </div>
