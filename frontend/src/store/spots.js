@@ -159,50 +159,26 @@ export const deleteSpotFxn = (spotId) => async dispatch => {
     return deletedSpot;
   }
 }
+
 const initialState = { spots: [] }
 
 const spotReducer = (state = initialState, action) => {
-  //console.log('initial state', state.spots)
   let newState = { ...state }
   switch (action.type) {
     case GET_SPOTS:
       newState.spots = action.spots;
       return newState;
     case CREATE_SPOT:
-      console.log('this is state.spots', state.spots)
       newState[action.spot.id] = action.spot
-      console.log('this is newState.spots', newState.spots)
       return newState
     case GET_SPOT_DETAILS:
         newState.spotDetails = action.spotDetails;
         return newState;
     case UPDATE_SPOT:
-      // const spotId = action.spot.id;
-      // //this finds our spot
-      // const spotToUpdate = Object.values(state.spots).find(spot => spot.id === spotId);
-      // console.log('this is our spotToUpdate', spotToUpdate)
-      // //findSpotDetail has all the information I want to be updated
-      // if (spotToUpdate) {
-      //   // If the spot exists in the state, update it with the new spot object
-      //   const updatedSpots = Object.assign({}, state.spots, { [spotId]: action.spot });
-      //   return { ...state, spots: updatedSpots };
-      // } else {
-      //   // If the spot does not exist in the state, return the original state
-      //   return state;
-      // }
-      console.log('this is newState.spots from UPDATE_SPOTS', newState.spots)
       const spotId = action.spot.id;
       const spotToUpdate = newState.spots[spotId];
 
       if (spotToUpdate) {
-        // const updatedSpots = {
-        //   ...newState.spots,
-        //   [spotId]: {
-        //     ...spotToUpdate,
-        //     ...action.spot,
-        //   }
-        // };
-        // return { ...newState, spots: updatedSpots };
         newState[spotId] = action.spot
       } else {
         return newState;

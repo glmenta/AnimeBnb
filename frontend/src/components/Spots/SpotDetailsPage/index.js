@@ -29,12 +29,11 @@ function SpotDetailPage () {
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
             setReviews(reviews);
-            console.log('this is useEff review', reviews);
       }
       fetchReviews()
     }, [spotId])
        // const userReview = reviews.find(review => review.userId === user.id)
-            // console.log('this is user rev', userReview)
+
     if(!spotDetail) {
         return <div>Loading...</div>
     }
@@ -59,6 +58,9 @@ function SpotDetailPage () {
     function handleClick () {
         alert('Feature Coming Soon')
     }
+
+     // Dynamically calculate the average rating from reviews
+     //const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
 
     return spotDetail && (
         <div className = 'spot-detail-container'>
@@ -93,13 +95,13 @@ function SpotDetailPage () {
                     ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
                 </div>
 
-                {spotDetail.numReviews > 0 && (
+                {spotDetail?.numReviews > 0 && (
                     <div className='dot'><p>·</p></div>
                 )}
 
-               {spotDetail.numReviews > 0 && (
+               {spotDetail?.numReviews > 0 && (
                 <div className='reviews'>
-                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}</p>
+                    <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Reviews'}</p>
                 </div>
                 )}
                 </div>
@@ -125,7 +127,6 @@ function SpotDetailPage () {
                 </div>
 
                 <div className='post-review-modal'>
-                        {/* {(user && user?.id !== spotDetail?.ownerId) && ( */}
                         {(user && (!reviews.find(review => review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
                         <button
                             className='post-review-button'

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-//import { deleteSpot } from './api'; //I need a similar import from my spots store
-import { getSpotsFxn } from '../../../store/spots';
+import { getSpotsFxn, deleteSpotFxn } from '../../../store/spots';
 import './OwnedSpots.css';
 import DeleteSpotModal from '../UpdateSpotsPage/DeleteSpotModal';
 
@@ -13,24 +12,26 @@ const dispatch = useDispatch();
 const user = useSelector(state => state.session.user);
 console.log(user)
 //this useSelector filters ownedSpots but has
-//const ownedSpots = useSelector(state => state.spots.filter(spot => spot.ownerId === user.id))
 const unfilteredSpots = useSelector((state) => Object.values(state.spot.spots));
-console.log('this is unfiltered spots from ownedSpotsPage', unfilteredSpots)
 const ownedSpots = unfilteredSpots.filter(spot => spot.ownerId === user.id)
-console.log('this is filtered or owned spots', ownedSpots)
 const [deleteSpotModal, setDeleteSpotModal] = useState(false)
+const [spotToDelete, setSpotToDelete] = useState('')
 
 useEffect(() => {
     dispatch(getSpotsFxn())
 },[dispatch])
 
 //handle click functions
-
-const openDeleteSpotModal = () => {
-    setDeleteSpotModal(true)
+const closeDeleteSpotModal = () => {
+    setDeleteSpotModal(false)
 }
 
-const closeDeleteSpotModal = () => {
+const handleDelete = (id) => {
+    setSpotToDelete(id)
+    setDeleteSpotModal(true)
+}
+const handleModalDelete = () => {
+    dispatch(deleteSpotFxn(spotToDelete))
     setDeleteSpotModal(false)
 }
 
@@ -49,8 +50,11 @@ return (
             </div>
             )}
         </div>
-
-        {/* this should be similar to spot list */}
+        <DeleteSpotModal
+            isOpen={deleteSpotModal}
+            onClose={closeDeleteSpotModal}
+            onDelete={handleModalDelete}
+            />
         {ownedSpots.map(spot => {
          const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
          ? Number(spot.avgRating).toFixed(1)
@@ -65,16 +69,13 @@ return (
                 <div className='owned-spot-info'>
                     <div className='owned-spot-info-location-reviews'>
                         <p className='owned-spot-location'>
-                            {/* spot.city and spot.state here */}
                             {`${spot.city}, ${spot.state}`}
                         </p>
                         <p className='owned-spot-reviews'>
-                        {/* star and spot.numReviews */}
                             <span className='stars'>★{ avgRating || 'New' }</span>
                         </p>
                     </div>
                     <div className='owned-spot-price'>
-                        {/* spot.price per night */}
                         <span className='spot-price'>${spot.price}</span> night
                     </div>
                 </div>
@@ -86,14 +87,10 @@ return (
                     </div>
                     <div className='delete-button-modal'>
                         <button className='delete-button'
-                            onClick={openDeleteSpotModal}>
+                            onClick={() => handleDelete(spot.id)}>
                             Delete
                         </button>
-                        <DeleteSpotModal
-                            isOpen={deleteSpotModal}
-                            onClose={closeDeleteSpotModal}
-                            spotId={spot.id}
-                        />
+
                     </div>
             </div>
             </div>

@@ -16,7 +16,9 @@ function ReviewModal({isOpen, onClose, spotId}) {
     //validations
     const MIN_REVIEW_LENGTH = 10;
 
-    const validReview = review.length >= MIN_REVIEW_LENGTH;
+    const validReview = (review) => {
+        return review.length >= MIN_REVIEW_LENGTH;
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -78,7 +80,7 @@ function ReviewModal({isOpen, onClose, spotId}) {
                     </label>
                     <div className='review-modal-star'>{reviewStars()} Stars</div>
                     <button className='review-modal-button'
-                        disabled={stars < 1 || review.length < 10}>
+                        disabled={stars < 1 || review.length < 10 || !validReview(review)}>
                         Submit your Review
                     </button>
                 </form>

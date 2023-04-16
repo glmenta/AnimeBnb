@@ -27,6 +27,35 @@ function CreateNewSpot() {
 
   const [errors, setErrors] = useState({})
 
+
+  const validateFileExtension = (url) => {
+    const allowedExtensions = ['.png', '.jpeg', '.jpg'];
+    const fileExtension = url.slice(url.lastIndexOf('.'));
+
+    return allowedExtensions.includes(fileExtension);
+  };
+
+  useEffect(() => {
+
+    if (hasSubmitted) {
+      const validationErrors = { country: [], address: [], city: [], state: [], description: [], name: [], price: [], previewImage: [], image2: [], image3: [], image4: [], image5: [] }
+      if (!country.length) validationErrors.country.push("Country is required")
+      if (!address.length) validationErrors.address.push("Address is required")
+      if (!city.length) validationErrors.city.push("City is required")
+      if (!state.length) validationErrors.state.push("State is required")
+      if (description.length < 30) validationErrors.description.push("Description needs a minimum of 30 characters")
+      if (!name.length) validationErrors.name.push("Name is required")
+      if (!price.length) validationErrors.price.push("Price is required")
+      if (!validateFileExtension(previewImage)) validationErrors.previewImage.push("Image URL must end in .png, .jpg, or .jpeg")
+      if (!validateFileExtension(image2) && image2.length > 0) validationErrors.image2.push("Image URL must end in .png, .jpg, or .jpeg")
+      if (!validateFileExtension(image3) && image3.length > 0) validationErrors.image3.push("Image URL must end in .png, .jpg, or .jpeg")
+      if (!validateFileExtension(image4) && image4.length > 0) validationErrors.image4.push("Image URL must end in .png, .jpg, or .jpeg")
+      if (!validateFileExtension(image5) && image5.length > 0) validationErrors.image5.push("Image URL must end in .png, .jpg, or .jpeg")
+      setErrors(validationErrors)
+    }
+
+  }, [hasSubmitted, country, address, city, state, description, name, price, previewImage, image2, image3, image4, image5])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -54,12 +83,10 @@ function CreateNewSpot() {
       preview: index === 0,
     }));
 
-    console.log('this is new spot', newSpot);
     let createdSpot;
 
     await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
       createdSpot = spot
-      console.log('newly created spot', spot)
       setCountry("")
       setAddress("")
       setCity("")
@@ -76,8 +103,6 @@ function CreateNewSpot() {
       setErrors([])
       history.push(`/spots/${spot.id}`)
       return
-    }).catch((err) => {
-      console.log('Err creating spot', err)
     })
   }
 
@@ -97,6 +122,12 @@ function CreateNewSpot() {
 
         <form onSubmit={handleSubmit} className='create-spot-form' >
 
+        {hasSubmitted && errors.country.length > 0 && errors.country.map((error, idx) => (
+              <ul key={idx} className='create-new-spot-error-ul'>
+                <li className='create-new-spot-error-li'>* {error}</li>
+              </ul>
+            ))}
+
           <label className='create-new-spot-label'>
             Country
             <input
@@ -107,21 +138,9 @@ function CreateNewSpot() {
               placeholder='Country'
               className='create-new-spot-input'
             />
-{/*
-            {hasSubmitted && country === '' && (
-              <span className='span-error'>
-                Country is Required
-              </span>
-            )} */}
-          </label>
 
-       {/* {hasSubmitted && errors.country.length > 0 && (
-              <ul>
-                {Object.values(errors.country).map((error, index) => (
-                <li key={index}>{error}</li>
-                ))}
-              </ul>
-            )} */}
+
+          </label>
 
           <label className='create-new-spot-label'>
             Street Address
@@ -343,9 +362,4 @@ export default CreateNewSpot
 
     // if (!price) {
     //   errors.price = "Price is required.";
-    // }
-
-    // if (Object.keys(errors).length > 0) {
-    //   setErrors(errors);
-    //   return;
     // }
