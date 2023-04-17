@@ -8,7 +8,7 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   }
 
-  form {
+  .form {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,9 +31,9 @@
   input[type="password"] {
     padding: 10px;
     font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    background-color: #e6e6e6;
+    /* border-radius: 5px; */
+    border: solid 2px black;
+    background-color: rgb(234, 246, 250);
   }
 
   button[type="submit"] {
@@ -42,13 +42,13 @@
     font-size: 16px;
     border-radius: 5px;
     border: none;
-    background-color: #007bff;
+    background-color: red;
     color: #fff;
     cursor: pointer;
   }
 
   button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: red;
   }
 
   ul {

@@ -10,13 +10,21 @@ import './updatedSpotDetail.css';
 function SpotDetailPage () {
     const { spotId } = useParams();
     const spotDetail = useSelector(state => state.spot.spotDetails)
-    const spots = useSelector(state => Object.values(state.spot.spots))
+    //const spots = useSelector(state => Object.values(state.spot.spots))
+    const spotObj = useSelector(state => state.spot.spots)
     const user = useSelector(state => state.session.user);
     const dispatch = useDispatch();
     const history = useHistory();
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
+
+    // const currSpot = spots.find(spot => spot.id === spotId)
+    console.log('this is currSpot', spotObj[spotId])
+    const currSpot = (spotObj[spotId])
+    console.log('this is currSpot', currSpot)
+
+    console.log('this is spotId', spotId)
 
     //this grabs our spot details in general
     useEffect(() => {
@@ -67,6 +75,7 @@ function SpotDetailPage () {
         <h1>{spotDetail.name}</h1>
         <h2>{spotDetail.city}, {spotDetail.state}, {spotDetail.country}</h2>
         <div className ='image-container'>
+            <div className='images-box'>
                 <div className='main-spot-img'>
                     {spotDetail?.SpotImages.find(image => image.preview === true) ?
                     <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} /> :
@@ -78,6 +87,7 @@ function SpotDetailPage () {
                 {spotDetail?.SpotImages.filter(image => image.preview !== true).map((image, index) => (
                     <img key={index} id={`spotImage${index + 1}`} src={image.url} alt={spotDetail?.name} />
                 ))}
+            </div>
         </div>
         </div>
         <div className='spot-info'>
@@ -86,15 +96,16 @@ function SpotDetailPage () {
                 <p id='spot-description'>{spotDetail.description}</p>
             </div>
             <div className='review-box'>
-
                 <div className='review-box-top'>
                 <div className='price-per-night'>
                     <h1>${spotDetail.price}night</h1>
                 </div>
+                <div className='rating-container'>
+                {currSpot && (
                 <div className='star-rating'>
-                    ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
+                    ★{Number(currSpot.avgRating) ? Number(currSpot.avgRating).toFixed(1) : 'New'}
                 </div>
-
+                )}
                 {spotDetail?.numReviews > 0 && (
                     <div className='dot'><p>·</p></div>
                 )}
@@ -105,16 +116,20 @@ function SpotDetailPage () {
                 </div>
                 )}
                 </div>
-
+                </div>
                 <button className='reserve-button' onClick={handleClick}>Reserve</button>
             </div>
 
             <div className='review-content'>
                 <div className='review-content-top'>
-                    <div className='star-rating'>
+                    {/* <div className='star-rating'>
                     ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
-                    </div>
-
+                    </div> */}
+                { currSpot && (
+                <div className='star-rating'>
+                    ★{Number(currSpot.avgRating) ? Number(currSpot.avgRating).toFixed(1) : 'New'}
+                </div>
+                )}
                     {spotDetail.numReviews > 0 && (
                         <div className='dot'><p>·</p></div>
                     )}

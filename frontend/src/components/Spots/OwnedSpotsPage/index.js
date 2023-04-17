@@ -43,23 +43,23 @@ return (
 
         <div className= 'manage-spots-header'>
             <h1 className='manage-spots-title'>Manage Your Spots</h1>
-        {!ownedSpots.length && (
-            <div>
-            <Link to={`/spots/new`}className='create-spot-button'>Create a New Spot</Link>
+        {/* { !ownedSpots.length && ( */}
+            <div className='new-spot-link'>
+            <Link to={`/spots/new`}className='new-spot-button'>Create a New Spot</Link>
             </div>
-            )}
+            {/* )} */}
         </div>
         <DeleteSpotModal
             isOpen={deleteSpotModal}
             onClose={closeDeleteSpotModal}
             onDelete={handleModalDelete}
             />
+        <div className='owned-spots-list'>
         {ownedSpots.map(spot => {
          const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
          ? Number(spot.avgRating).toFixed(1)
          : 'New';
          return (
-            //
         <div className='manage-spots-list' key={spot.id} >
             <div className='owned-spot'>
                 <div className='preview-img' onClick={() => handleSpotClick(spot.id)}>
@@ -80,7 +80,7 @@ return (
                 </div>
                 <div className='owned-spot-buttons'>
                     <div className ='update-button'>
-                    <Link to={`/spots/${spot.id}/edit`}>
+                    <Link to={`/spots/${spot.id}/edit`} className='update-link'>
                                 Update
                     </Link>
                     </div>
@@ -96,6 +96,7 @@ return (
         </div>
          )
          })}
+         </div>
     </div>
     )
 }

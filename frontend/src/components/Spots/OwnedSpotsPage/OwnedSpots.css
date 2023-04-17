@@ -2,7 +2,8 @@
 .manage-spots-container {
     display: flex;
     flex-direction: column;
-    padding-top: 100px;
+    padding-top: 30px;
+    margin-left: 60px;
 }
 .manage-spots-header {
     display: flex;
@@ -14,12 +15,99 @@
   display: flex;
 
 }
-.create-spot-button {
-    display: flex;
-    position: relative;
-    left: 20%;
+
+.owned-spots-list {
+  display: flex;
+  flex-direction: row;
 }
 
+.owned-spot {
+  margin-right: 20px;
+}
+.new-spot-link {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.owned-spot-price,
+.owned-spot-reviews,
+.owned-spot-location {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.owned-spot-info-location-reviews {
+  display: flex;
+  justify-content: space-between;
+}
+.new-spot-button
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 10%;
+    text-decoration: none;
+    border: solid 1px black;
+    color: white;
+    width: 8%;
+    height: 30px;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 20px;
+    color: #fff;
+    background-color: darkgray;
+    border: solid 3px black;
+    box-shadow: 4px 4px 0px 0px #000000;
+    margin-bottom: 70px;
+}
+
+.owned-spot-buttons {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.update-button {
+  display: flex;
+  /* margin-right: 10px; */
+
+}
+.update-link {
+  text-decoration: none;
+  color: white;
+}
+
+.update-button,
+.delete-button-modal {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  left: 10%;
+  text-decoration: none;
+  border: solid 1px black;
+  color: white;
+  width: 10%;
+  height: 30px;
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 20px;
+  color: #fff;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  background-color: darkgray;
+  border: solid 3px black;
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+.delete-button-modal {
+  margin-left: 20px;
+}
+.delete-button {
+  font-weight: bolder;
+  display: flex;
+  background-color: transparent;
+  border: none;
+  color: white;
+
+}
 .manage-spots-list {
     display: flex;
     flex-direction: row;
@@ -35,11 +123,12 @@
     overflow: hidden;
   }
 
-  .previewImg {
+
+ .owned-spot-img {
     height: 400px;
     overflow: hidden;
   }
-
+ /*
   .spot-img {
     width: 100%;
     height: 100%;
@@ -82,7 +171,7 @@
   .tooltip {
     position: relative;
     display: inline-block;
-  }
+  } */
 
   .tooltip .tooltip-text {
     visibility: hidden;

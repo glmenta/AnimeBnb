@@ -23,12 +23,15 @@
 
   .image-container {
     display: flex;
-    border: solid 4px yellow;
+
     flex-wrap: wrap;
-    width: 100%;
-    height: 100%;
+    /* width: 100%;
+    height: 100%; */
+    width: 1100px;
+    height: 350px;
     flex-direction: column;
     align-items:flex-start;
+    margin-bottom: 30px;
   }
 /*
   .image-grid {
@@ -46,33 +49,39 @@
     flex-wrap: wrap;
     flex-direction: column;
     object-fit: cover;
-    border: solid 3px red;
+
   }
 
+  .images-box {
+    display: flex;
+
+  }
   .main-spot-img img {
     width: 100%;
-    height: 100%;
+    height: 375px;
     object-fit: cover;
     display: flex;
-    border: solid 3px blue;
+
     flex-wrap: wrap;
   }
 
   .spot-img-filter {
     width: 50%;
-    height: 100%;
-    border: solid 3px green;
+    /* height: 100%; */
+    height: 185px;
+
     box-sizing: border-box;
-    justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+
   }
 
   .spot-img-filter img {
-    width: 48%;
+    width: 50%;
     /* height: 350px; */
-    height: calc(50% - 16px);
+    /* height: calc(50% - 16px); */
+    height: 100%;
     /* margin-bottom: 16px; */
-    border: solid 3px purple;
+
     box-sizing: border-box;
   }
 /*
@@ -84,6 +93,7 @@
     }
   } */
   .spot-info {
+    margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -109,6 +119,12 @@
     margin-bottom: 32px;
   }
 
+  .rating-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
   .review-box {
     width: 30%;
     display: flex;
@@ -121,7 +137,10 @@
     border-radius: 20px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.18);
   }
-
+  .price-per-night {
+    display: flex;
+    margin-right: 100px;
+  }
   .review-box-top {
     display: flex;
     justify-content: space-between;
@@ -143,10 +162,11 @@
 
   .dot {
     margin: 0 8px;
-    font-size: 16px;
+    font-size: 25px;
     font-weight: 800;
     line-height: 20px;
-    color: #c4c4c4;
+    color: black;
+    font-weight: bold;
   }
 
   .reviews {
