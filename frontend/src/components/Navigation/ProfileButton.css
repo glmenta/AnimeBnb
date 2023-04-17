@@ -27,7 +27,7 @@
     padding: 5px;
 }
 
-#profile-dropdown {
+#profile-dropdown  {
  display:none;
  position: absolute;
  top: 100%;
@@ -38,21 +38,44 @@
   flex-direction: column;
   justify-content: center;
   background-color: whitesmoke;
-  border: solid 0.25px black;
+  /* border: solid 0.25px gray; */
   margin-top: 5px;
+  margin-right: 30px;
+  width: 120px;
+  align-items: center;
 }
 
 .dropdown-menu {
-  display: flex;
+  /* display: none; */
   flex-direction: column;
   justify-content: center;
+  width: 100px;
+  align-items: center;
 }
-
+/* .profile-dropdown {
+  display: none;
+  border: none;
+} */
 .dropdown-contents li {
   color: black;
   width: auto;
+  align-items: center;
+  justify-content: center;
 }
 
+.login-button {
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.signup-button {
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  margin-top: 10px;
+}
 #user-dropdown {
   background-color: whitesmoke;
   border: solid 1px black;
