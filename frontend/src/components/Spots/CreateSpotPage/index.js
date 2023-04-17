@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createSpotFxn } from '../../../store/spots'
 import { useHistory } from 'react-router-dom'
-import "./CreateNewSpot.css"
-
+//import "./CreateNewSpot.css"
+import './updatedCreate.css';
 function CreateNewSpot() {
 
   const dispatch = useDispatch();
@@ -104,7 +104,7 @@ function CreateNewSpot() {
           </p>
         </div>
 
-      <div className='form-container'>
+      <div className='create-form-container'>
 
         <form onSubmit={handleSubmit} className='create-spot-form' >
 
@@ -158,7 +158,7 @@ function CreateNewSpot() {
               className='create-new-spot-input'
             />
           </label>
-
+            <div className='lat-lng-div'>
           <label className='create-new-spot-label'>
             Latitude
             <p className='error'>{errors.lat}</p>
@@ -168,10 +168,11 @@ function CreateNewSpot() {
               value={lat}
               placeholder='Latitude'
               className='create-new-spot-input'
+              id='lat-input'
             />
+            {/* <div className ='comma'>,</div> */}
           </label>
-
-          <div className ='comma'>,</div>
+          <div className='lng-div'>
           <label className='create-new-spot-label'>
             Longitude
             <p className='error'>{errors.lng}</p>
@@ -179,12 +180,13 @@ function CreateNewSpot() {
               type="text"
               onChange={(e) => setLng(e.target.value)}
               value={lng}
-
+              id='lng-input'
               placeholder='Longitude'
               className='create-new-spot-input'
             />
           </label>
-
+          </div>
+          </div>
           <div className='line'></div>
 
           <label className='create-new-spot-label'>
@@ -225,13 +227,17 @@ function CreateNewSpot() {
             <p>
             Competitive pricing can help your listing stand out and rank higher in search results.
             </p>
+            <div className='price-div'>
+            <p className='dollar-sign'>$</p>
             <input
               type="number"
               onChange={(e) => setPrice(e.target.value)}
               value={price}
               placeholder='Price per night (USD)'
               className='create-new-spot-input'
+              id='price-input'
             />
+            </div>
           </label>
           <p className='error'>{errors.price}</p>
           <div className='line'></div>
@@ -297,7 +303,9 @@ function CreateNewSpot() {
           </label>
 
           <div className='line'></div>
-          <button onClick={handleSubmit} >Create Spot</button>
+          <div className='submit-div'>
+          <button onClick={handleSubmit} className='create-submit-button'>Create Spot</button>
+          </div>
           {/* disabled={Object.values(errors).flat().length > 0} */}
         </form>
       </div>

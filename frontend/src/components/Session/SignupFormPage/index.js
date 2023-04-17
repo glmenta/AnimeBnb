@@ -12,7 +12,7 @@ function SignupFormPage() {
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
   //validations
@@ -32,53 +32,13 @@ function SignupFormPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newErrors = {};
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const errors = [];
-
-    if (!validFirstName) {
-      errors.push('First name must be at least ' + MIN_FIRSTNAME_LENGTH + ' characters long');
-    }
-
-    if (!validLastName) {
-      errors.push('Last name must be at least ' + MIN_LASTNAME_LENGTH + ' characters long');
-    }
-
-    if (!validEmail) {
-      errors.push('Email must be at least ' + MIN_EMAIL_LENGTH + ' characters long');
-    }
-
-    if (!emailRegex.test(email)) {
-      errors.push("Please enter a valid email address")
-    }
-
-    if (!validUsername) {
-      errors.push('Username must be at least ' + MIN_USERNAME_LENGTH + ' characters long');
-    }
-
-    if (!validPassword) {
-      errors.push('Password must be at least ' + MIN_PASSWORD_LENGTH + ' characters long');
-    }
-
-    if (!validConfirmPassword) {
-      errors.push('Confirm password must be at least ' + MIN_CONFIRM_PASSWORD_LENGTH + ' characters long');
-    }
-
-    if (password !== confirmPassword) {
-      errors.push('Confirm Password field must be the same as the Password field');
-    }
-
-    if (errors.length > 0) {
-      alert(errors.join('\n'));
-      return;
-    }
+    setErrors({...errors, ...newErrors})
 
     if (password === confirmPassword) {
       setErrors([]);
-      if (!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword) {
-        setErrors(['Please correct the errors below']);
-        return;
-      }
       return dispatch(sessionActions.signup({ email, username, firstName, lastName, password }))
         .then(closeModal)
         .catch(async (res) => {
@@ -105,9 +65,11 @@ function SignupFormPage() {
     <div className='form-container'>
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
-        <ul>
-          {errors.map((error, idx) => <li key={idx}>{error}</li>)}
-        </ul>
+         <ul >
+                {Object.values(errors).map((error, idx) => {
+                return (
+                    <li className='signup-errors' key={idx}>{error}</li>)})}
+            </ul>
         <label>
           Email
           <input
@@ -117,7 +79,7 @@ function SignupFormPage() {
             required
           />
         </label>
-        <p>{errors.email}</p>
+
         <label>
           Username
           <input
@@ -127,6 +89,7 @@ function SignupFormPage() {
             required
           />
         </label>
+
         <label>
           First Name
           <input
@@ -165,7 +128,6 @@ function SignupFormPage() {
         </label>
         <button type="submit"
           disabled={!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword}
-          //disabled={!email || !username || !firstName || !lastName || !password || !confirmPassword }
         >Sign Up</button>
         <div className='demo-signup'>
         <a
@@ -179,3 +141,45 @@ function SignupFormPage() {
 }
 
 export default SignupFormPage;
+
+// if (!validFirstName) {
+//   errors.push('First name must be at least ' + MIN_FIRSTNAME_LENGTH + ' characters long');
+// }
+
+// if (!validLastName) {
+//   errors.push('Last name must be at least ' + MIN_LASTNAME_LENGTH + ' characters long');
+// }
+
+// if (!validEmail) {
+//   errors.push('Email must be at least ' + MIN_EMAIL_LENGTH + ' characters long');
+// }
+
+// if (!emailRegex.test(email)) {
+//   errors.push("Please enter a valid email address")
+// }
+
+// if (!validUsername) {
+//   errors.push('Username must be at least ' + MIN_USERNAME_LENGTH + ' characters long');
+// }
+
+// if (!validPassword) {
+//   errors.push('Password must be at least ' + MIN_PASSWORD_LENGTH + ' characters long');
+// }
+
+// if (!validConfirmPassword) {
+//   errors.push('Confirm password must be at least ' + MIN_CONFIRM_PASSWORD_LENGTH + ' characters long');
+// }
+
+// if (password !== confirmPassword) {
+//   errors.push('Confirm Password field must be the same as the Password field');
+// }
+
+// if (errors.length > 0) {
+//   alert(errors.join('\n'));
+//   return;
+// }
+
+// if (!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword) {
+//   setErrors(['Please correct the errors below']);
+//   return;
+// }

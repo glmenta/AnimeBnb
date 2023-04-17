@@ -53,6 +53,7 @@ function ProfileButton({ user }) {
     setShowMenu(false);
     setProfileClicked(false);
     dispatch(sessionActions.logout());
+    window.localStorage.clear();
     history.push('/')
   };
 
@@ -76,12 +77,13 @@ function ProfileButton({ user }) {
           <div id='user-dropdown' >
             <li id="firstname">Hello, {user.firstName} {user.lastName}</li>
             <li id="email">{user.email}</li>
+            <li id='li-border'></li>
             <li id="manage-spots">
-              {/* to={`/users/${user.id}/spots`} */}
               <NavLink to={`/spots/current`}>
                 Manage Spots
               </NavLink>
               </li>
+              <li id='li-border'></li>
             <li id="li-logout">
               <button onClick={logout} id="logout-button">Log Out</button>
             </li>
