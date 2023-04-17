@@ -49,7 +49,7 @@
 }
 
 .button {
-    display: inline-block;
+    /* display: inline-block;
     margin: 10px;
     padding: 10px 20px;
     border: 2px solid #ccc;
@@ -58,10 +58,39 @@
     cursor: pointer;
     color: black;
     text-align: center;
-    background-color: red;
+    background-color: red; */
+    width: 375px;
+    height: 38px;
+    display: flex;
+    margin-bottom: 20px;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 20px;
+    color: #fff;
+    background-color: #ff284f;
+    border: solid 3px black;
+    box-shadow: 4px 4px 0px 0px #000000;
   }
 
   .button:hover {
     background-color: #ccc;
     color: #000;
+  }
+
+  .demo-login {
+    display: flex;
+    margin-top: 30px;
+  }
+
+  .demo-login a {
+    font-size: 20px;
+    color: rgb(3, 85, 85)
+  }
+
+  #username-input {
+    display: flex;
+    width: 350px;
   }

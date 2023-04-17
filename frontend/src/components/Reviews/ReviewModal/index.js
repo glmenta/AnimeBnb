@@ -81,9 +81,10 @@ function ReviewModal({isOpen, onClose, spotId, reset}) {
                         <textarea
                         type="text"
                         placeholder='Leave your review here...'
-                        className='post-review-form-textarea'
+                        // className='post-review-form-textarea'
                         rows="10"
                         cols="50"
+                        className='review-text'
                         onChange={(e) => setReview(e.target.value)}
                         value={review}
                         />

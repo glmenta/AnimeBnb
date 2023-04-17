@@ -74,16 +74,16 @@
   }
 
   #lat-input {
-    width: 300px;
+    width: 200px;
   }
 
   #lng-input {
-    width: 430px;
+    width: 200px;
   }
 
   #price-input {
     height: 40px;
-    background-color: rgb(234, 246, 250);
+    background-color: rgb(235, 235, 235);
     width: 800px;
   }
 

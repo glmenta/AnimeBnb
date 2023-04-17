@@ -10,7 +10,6 @@ import './updatedSpotDetail.css';
 function SpotDetailPage () {
     const { spotId } = useParams();
     const spotDetail = useSelector(state => state.spot.spotDetails)
-    //const spots = useSelector(state => Object.values(state.spot.spots))
     const spotObj = useSelector(state => state.spot.spots)
     const user = useSelector(state => state.session.user);
     const dispatch = useDispatch();
@@ -19,12 +18,7 @@ function SpotDetailPage () {
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
 
-    // const currSpot = spots.find(spot => spot.id === spotId)
-    console.log('this is currSpot', spotObj[spotId])
     const currSpot = (spotObj[spotId])
-    console.log('this is currSpot', currSpot)
-
-    console.log('this is spotId', spotId)
 
     //this grabs our spot details in general
     useEffect(() => {
