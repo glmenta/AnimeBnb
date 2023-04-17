@@ -70,7 +70,7 @@ function UpdateSpotPage() {
 
     await dispatch(updateSpotFxn(updateSpot, selectSpot.id)).then((spot) => {
       updatedSpot = spot
-      console.log('newly updated spot', spot)
+
       setCountry("")
       setAddress("")
       setCity("")
