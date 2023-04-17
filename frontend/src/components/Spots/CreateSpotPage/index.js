@@ -24,40 +24,12 @@ function CreateNewSpot() {
   const [image4, setImage4] = useState("")
   const [image5, setImage5] = useState("")
   const [hasSubmitted, setHasSubmitted] = useState(false)
-
-  const [errors, setErrors] = useState({})
-
-
-  const validateFileExtension = (url) => {
-    const allowedExtensions = ['.png', '.jpeg', '.jpg'];
-    const fileExtension = url.slice(url.lastIndexOf('.'));
-
-    return allowedExtensions.includes(fileExtension);
-  };
-
-  useEffect(() => {
-
-    if (hasSubmitted) {
-      const validationErrors = { country: [], address: [], city: [], state: [], description: [], name: [], price: [], previewImage: [], image2: [], image3: [], image4: [], image5: [] }
-      if (!country.length) validationErrors.country.push("Country is required")
-      if (!address.length) validationErrors.address.push("Address is required")
-      if (!city.length) validationErrors.city.push("City is required")
-      if (!state.length) validationErrors.state.push("State is required")
-      if (description.length < 30) validationErrors.description.push("Description needs a minimum of 30 characters")
-      if (!name.length) validationErrors.name.push("Name is required")
-      if (!price.length) validationErrors.price.push("Price is required")
-      if (!validateFileExtension(previewImage)) validationErrors.previewImage.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image2) && image2.length > 0) validationErrors.image2.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image3) && image3.length > 0) validationErrors.image3.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image4) && image4.length > 0) validationErrors.image4.push("Image URL must end in .png, .jpg, or .jpeg")
-      if (!validateFileExtension(image5) && image5.length > 0) validationErrors.image5.push("Image URL must end in .png, .jpg, or .jpeg")
-      setErrors(validationErrors)
-    }
-
-  }, [hasSubmitted, country, address, city, state, description, name, price, previewImage, image2, image3, image4, image5])
+  const [errors, setErrors] = useState([])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const imgErrors = {}
 
     const newSpot = {
       country,
@@ -85,6 +57,7 @@ function CreateNewSpot() {
 
     let createdSpot;
 
+    try {
     await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
       createdSpot = spot
       setCountry("")
@@ -102,8 +75,21 @@ function CreateNewSpot() {
       setHasSubmitted(true)
       setErrors([])
       history.push(`/spots/${spot.id}`)
-      return
-    })
+    })} catch (res) {
+        const data = await res.json();
+
+        if (!previewImage) {
+          imgErrors.previewImage = 'Preview Image is required'
+        }
+
+        if (!/\.(png|jpe?g)$/i.test(image2)) {
+          imgErrors.imageUrl = 'Image URL must end in .png, .jpg or .jpeg'
+        }
+        if (data && data.errors) {
+          const combinedErrors = {...data.errors, ...imgErrors}
+          setErrors(combinedErrors)
+        }
+    }
   }
 
   return (
@@ -122,28 +108,21 @@ function CreateNewSpot() {
 
         <form onSubmit={handleSubmit} className='create-spot-form' >
 
-        {hasSubmitted && errors.country.length > 0 && errors.country.map((error, idx) => (
-              <ul key={idx} className='create-new-spot-error-ul'>
-                <li className='create-new-spot-error-li'>* {error}</li>
-              </ul>
-            ))}
-
           <label className='create-new-spot-label'>
             Country
+            <p className='error'>{errors.country}</p>
             <input
               type="text"
               onChange={(e) => setCountry(e.target.value)}
               value={country}
-
               placeholder='Country'
               className='create-new-spot-input'
             />
-
-
           </label>
 
           <label className='create-new-spot-label'>
             Street Address
+            <p className='error'>{errors.address}</p>
             <input
               type="text"
               onChange={(e) => setAddress(e.target.value)}
@@ -156,6 +135,7 @@ function CreateNewSpot() {
 
           <label className='create-new-spot-label'>
             City
+            <p className='error'>{errors.city}</p>
             <input
               type="text"
               onChange={(e) => setCity(e.target.value)}
@@ -168,6 +148,7 @@ function CreateNewSpot() {
 
           <label className='create-new-spot-label'>
             State
+            <p className='error'>{errors.state}</p>
             <input
               type="text"
               onChange={(e) => setState(e.target.value)}
@@ -180,6 +161,7 @@ function CreateNewSpot() {
 
           <label className='create-new-spot-label'>
             Latitude
+            <p className='error'>{errors.lat}</p>
             <input
               type="text"
               onChange={(e) => setLat(e.target.value)}
@@ -192,6 +174,7 @@ function CreateNewSpot() {
           <div className ='comma'>,</div>
           <label className='create-new-spot-label'>
             Longitude
+            <p className='error'>{errors.lng}</p>
             <input
               type="text"
               onChange={(e) => setLng(e.target.value)}
@@ -213,14 +196,13 @@ function CreateNewSpot() {
               type="text"
               onChange={(e) => setDescription(e.target.value)}
               value={description}
-
               placeholder='Please write at least 30 characters'
               className='create-new-spot-input'
               rows="10"
               cols="50"
             />
           </label>
-
+          <p className='error'>{errors.description}</p>
           <div className='line'></div>
 
 
@@ -233,12 +215,11 @@ function CreateNewSpot() {
               type="text"
               onChange={(e) => setName(e.target.value)}
               value={name}
-
               placeholder='Name of your spot'
               className='create-new-spot-input'
             />
           </label>
-
+          <p className='error'>{errors.name}</p>
           <label className='create-new-spot-label'>
             <h3>Set a base price for your spot</h3>
             <p>
@@ -248,12 +229,11 @@ function CreateNewSpot() {
               type="number"
               onChange={(e) => setPrice(e.target.value)}
               value={price}
-
               placeholder='Price per night (USD)'
               className='create-new-spot-input'
             />
           </label>
-
+          <p className='error'>{errors.price}</p>
           <div className='line'></div>
 
           <label className='create-new-spot-label'>
@@ -269,6 +249,7 @@ function CreateNewSpot() {
               value={previewImage}
             />
           </label>
+          <p className='error'>{errors.previewImage}</p>
 
           <label className='create-new-spot-label'>
             <input
@@ -279,7 +260,7 @@ function CreateNewSpot() {
               value={image2}
             />
           </label>
-
+          <p className='error'>{errors.imageUrl}</p>
 
           <label className='create-new-spot-label'>
             <input
@@ -316,7 +297,8 @@ function CreateNewSpot() {
           </label>
 
           <div className='line'></div>
-          <button disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
+          <button onClick={handleSubmit} >Create Spot</button>
+          {/* disabled={Object.values(errors).flat().length > 0} */}
         </form>
       </div>
       </div>
@@ -363,3 +345,66 @@ export default CreateNewSpot
     // if (!price) {
     //   errors.price = "Price is required.";
     // }
+
+
+  // const validateFileExtension = (url) => {
+  //   const allowedExtensions = ['.png', '.jpeg', '.jpg'];
+  //   const fileExtension = url.slice(url.lastIndexOf('.'));
+
+  //   return allowedExtensions.includes(fileExtension);
+  // };
+
+  // useEffect(() => {
+
+  //   if (hasSubmitted) {
+  //     const validationErrors = { country: [], address: [], city: [], state: [], description: [], name: [], price: [], previewImage: [], image2: [], image3: [], image4: [], image5: [] }
+  //     if (country.length === 0) validationErrors.country.push("Country is required")
+  //     if (!address.length) validationErrors.address.push("Address is required")
+  //     if (!city.length) validationErrors.city.push("City is required")
+  //     if (!state.length) validationErrors.state.push("State is required")
+  //     if (description.length < 30) validationErrors.description.push("Description needs a minimum of 30 characters")
+  //     if (!name.length) validationErrors.name.push("Name is required")
+  //     if (!price.length) validationErrors.price.push("Price is required")
+  //     if (!validateFileExtension(previewImage)) validationErrors.previewImage.push("Image URL must end in .png, .jpg, or .jpeg")
+  //     if (!validateFileExtension(image2) && image2.length > 0) validationErrors.image2.push("Image URL must end in .png, .jpg, or .jpeg")
+  //     if (!validateFileExtension(image3) && image3.length > 0) validationErrors.image3.push("Image URL must end in .png, .jpg, or .jpeg")
+  //     if (!validateFileExtension(image4) && image4.length > 0) validationErrors.image4.push("Image URL must end in .png, .jpg, or .jpeg")
+  //     if (!validateFileExtension(image5) && image5.length > 0) validationErrors.image5.push("Image URL must end in .png, .jpg, or .jpeg")
+  //     setErrors(validationErrors)
+  //   }
+//}, [hasSubmitted, country, address, city, state, description, name, price, previewImage, image2, image3, image4, image5])
+  // const [errors, setErrors] = useState({
+  //   country: [],
+  //   address: [],
+  //   city: [],
+  //   state: [],
+  //   description: [],
+  //   name: [],
+  //   price: [],
+  //   previewImage: [],
+  //   image2: [],
+  //   image3: [],
+  //   image4: [],
+  //   image5: [],
+  // })
+
+  // .catch(async (res) => {
+  //   const data = await res.json();
+  //   const imgErr = {}
+  //   const descriptionErr = {}
+
+  //   if (!previewImage) {
+  //     imgErr.previewImage = 'Preview Image is required'
+  //   }
+
+  //   if (!/\.(png|jpe?g)$/i.test(image2)) {
+  //     imgErr.imageUrl = 'Image URL must end in .png, .jpg or .jpeg'
+  //   }
+
+  //   if (description.length < 30) {
+  //     errors.description = 'Please write at least 30 characters'
+  //   }
+
+  //   const combinedErrors = {...data.errors, ...imgErr, ...descriptionErr}
+  //   setErrors(combinedErrors)
+  //  })
