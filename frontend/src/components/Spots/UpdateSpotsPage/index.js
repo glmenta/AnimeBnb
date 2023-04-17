@@ -13,17 +13,8 @@ function UpdateSpotPage() {
   const spots = useSelector(state => Object.values(state.spot.spots))
   const currUser = useSelector(state => state.session.user)
   const userSpots = spots.filter((spot) => currUser.id === spot.ownerId)
-  console.log('this is curr user from update spot', currUser)
-  //gives me id
-  console.log('this is user spots from update spot', userSpots)
-  //gives me array of spot objs
   const selectSpot = userSpots.find((spot) => spot.id === parseInt(spotId))
-  //this gives me everything but the spot images; I do get preview image tho
-  console.log('this is the spot we want to edit', selectSpot)
   const spotImgDetails = useSelector(state => state.spot.spotDetails)
-  //this gives me everything including the owner and spotImages
-  console.log('this is spotImgDetails', spotImgDetails)
-  console.log('this is selectSpot.id from updateSpot', selectSpot.id)
 
   const [country, setCountry] = useState(selectSpot?.country || '')
   const [address, setAddress] = useState(selectSpot?.address || '')

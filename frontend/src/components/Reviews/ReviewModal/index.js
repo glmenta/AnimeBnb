@@ -1,11 +1,11 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import { addReviewFxn } from '../../../store/reviews';
 import { useDispatch, useSelector } from 'react-redux';
 import { useModal } from '../../../context/Modal';
 import { useHistory } from 'react-router-dom';
 import './Review.css';
 
-function ReviewModal({isOpen, onClose, spotId}) {
+function ReviewModal({isOpen, onClose, spotId, reset}) {
     const dispatch = useDispatch();
     const [review, setReview] = useState('')
     const [stars, setStars] = useState(0)
@@ -20,6 +20,14 @@ function ReviewModal({isOpen, onClose, spotId}) {
         return review.length >= MIN_REVIEW_LENGTH;
       };
 
+      useEffect(() => {
+        if (!isOpen) {
+            setReview('');
+            setStars(0);
+            setErrors([]);
+        }
+    }, [isOpen])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrors([])
@@ -29,10 +37,10 @@ function ReviewModal({isOpen, onClose, spotId}) {
             stars
         }
 
-        console.log('this is review data from review modal', reviewData)
-
         return dispatch(addReviewFxn(spotId, reviewData))
-            .then(history.push(`/spots/${spotId}`))
+            // .then(history.push(`/spots/${spotId}`))
+            .then(history.go(0))
+            .then(closeModal())
             .catch(
                 async(res) => {
                     const data = await res.json();
@@ -62,9 +70,11 @@ function ReviewModal({isOpen, onClose, spotId}) {
         return starArr;
     }
 
+
     return (
+        // onClick={(e) => e.stopPropagation()}
         <div className='review-modal-container' onClick={onClose}>
-            <div className='review-modal' onClick={(e) => e.stopPropagation()}>
+            <div className='review-modal' >
                 <form className='post-review-form' onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
                     <h2 className='review-modal-title'>How was your stay?</h2>
                     <label className='post-review-label'>

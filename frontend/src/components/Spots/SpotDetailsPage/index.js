@@ -10,6 +10,7 @@ import './updatedSpotDetail.css';
 function SpotDetailPage () {
     const { spotId } = useParams();
     const spotDetail = useSelector(state => state.spot.spotDetails)
+    const spots = useSelector(state => Object.values(state.spot.spots))
     const user = useSelector(state => state.session.user);
     const dispatch = useDispatch();
     const history = useHistory();
@@ -24,7 +25,6 @@ function SpotDetailPage () {
 
     //this allows us to grab our reviews for that spot
     useEffect(() => {
-
         async function fetchReviews() {
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
@@ -60,10 +60,11 @@ function SpotDetailPage () {
     }
 
      // Dynamically calculate the average rating from reviews
-     //const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+    //  const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
 
     return spotDetail && (
         <div className = 'spot-detail-container'>
+
         <h1>{spotDetail.name}</h1>
         <h2>{spotDetail.city}, {spotDetail.state}, {spotDetail.country}</h2>
         <div className ='image-container'>
@@ -142,7 +143,7 @@ function SpotDetailPage () {
                 </div>
 
             <div className='review-map'>
-                {Array.isArray(reviews) && reviews.length > 0 ? (
+                {Array.isArray(reviews) && reviews?.length > 0 ? (
                 reviews
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .map((review) => (
@@ -156,13 +157,14 @@ function SpotDetailPage () {
                         </p>
                         <p id='review-description'>{review.review}</p>
                         <div className='delete-review-modal'>
-                        {(user && ((review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
+                        {(user &&  ((review.userId === user.id && user.id !== spotDetail?.ownerId))) && (
                             <button
                                 className='post-review-button'
                                 onClick={openDeleteReviewModal}>
                                 Delete
                             </button>
                             )}
+
                             {(review.userId === user.id && (
                                 <DeleteReviewModal
                                 isOpen={deleteReviewModalOpen}

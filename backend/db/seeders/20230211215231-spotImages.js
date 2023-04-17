@@ -27,9 +27,39 @@ module.exports = {
         preview: false
       },
       {
+        spotId: 1,
+        url: 'https://images.squarespace-cdn.com/content/v1/5c6b579e9b7d1570b89b89fa/1620941351223-5GH265HWOJ4PZAHDR5SX/konoha_wm2.jpg?format=500w',
+        preview: false
+      },
+      {
+        spotId: 1,
+        url: 'https://pbs.twimg.com/media/EfE3hFBXgAU26Ln?format=jpg&name=large',
+        preview: false
+      },
+      {
         spotId: 2,
         url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
         preview: true
+      },
+      {
+        spotId: 2,
+        url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
+        preview: false
+      },
+      {
+        spotId: 2,
+        url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
+        preview: false
+      },
+      {
+        spotId: 2,
+        url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
+        preview: false
+      },
+      {
+        spotId: 2,
+        url: 'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2022/10/Gotei_13_Captains.jpg',
+        preview: false
       },
       {
         spotId: 3,
@@ -37,20 +67,25 @@ module.exports = {
         preview: true
       },
       {
-        spotId: 4,
-        url: 'https://longreads.com/wp-content/uploads/2017/10/8d6f474fda2c0df0f47b8ad4793f1390.jpg',
-        preview: true
+        spotId: 3,
+        url: 'https://staticg.sportskeeda.com/editor/2022/03/37539-16460998057017-1920.jpg',
+        preview: false
       },
       {
-        spotId: 5,
-        url: "https://cdna.artstation.com/p/assets/images/images/034/603/768/large/collin-cantrell-untitled.jpg?1612739307",
-        preview: true
+        spotId: 3,
+        url: 'https://staticg.sportskeeda.com/editor/2022/03/37539-16460998057017-1920.jpg',
+        preview: false
       },
       {
-        spotId: 6,
-        url: "https://img.anime2you.de/2021/01/aot-city.jpg",
-        preview: true
-      }
+        spotId: 3,
+        url: 'https://staticg.sportskeeda.com/editor/2022/03/37539-16460998057017-1920.jpg',
+        preview: false
+      },
+      {
+        spotId: 3,
+        url: 'https://staticg.sportskeeda.com/editor/2022/03/37539-16460998057017-1920.jpg',
+        preview: false
+      },
     ], {});
   },
 
@@ -59,7 +94,7 @@ module.exports = {
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
       spotId: {
-        [Op.in]: [1,2,3,4,5,6]
+        [Op.in]: [1,2,3]
       }
     }, {});
   }

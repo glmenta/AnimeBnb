@@ -117,6 +117,7 @@ function SignupFormPage() {
             required
           />
         </label>
+        <p>{errors.email}</p>
         <label>
           Username
           <input

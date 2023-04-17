@@ -33,7 +33,7 @@ module.exports = {
         lng: 12.4730327,
         name: "Shinigami Headquarters",
         description: "Where the captains meet",
-        price: 10000,
+        price: 100,
       },
       {
         ownerId: 3,
@@ -45,44 +45,8 @@ module.exports = {
         lng: 237.4730327,
         name: "One Piece",
         description: "The Treasure",
-        price: 5000000000,
+        price: 5000,
       },
-      {
-        ownerId: 1,
-        address: "123 Otherworld Yokai St.",
-        city: "Some Village",
-        state: "Other Side",
-        country: "Japan",
-        lat: 50.7645358,
-        lng: 22.4730327,
-        name: "Yubaba's bathhouse",
-        description: "Hotspring n Chill",
-        price: 200,
-      },
-      {
-        ownerId: 2,
-        address: "69 Ghoul St.",
-        city: "20th Ward",
-        state: "Tokyo",
-        country: "Japan",
-        lat: 90.7645358,
-        lng: 17.4730327,
-        name: "Anteiku",
-        description: "The Treasure",
-        price: 35,
-      },
-      {
-        ownerId: 3,
-        address: "101 Wall St.",
-        city: "Shiganshina",
-        state: "Wall Maria",
-        country: "Paradis Island",
-        lat: 110.7645358,
-        lng: 27.4730327,
-        name: "Shiganshina District",
-        description: "Titans and Scouts",
-        price: 1,
-      }
     ], {})
   },
 
@@ -94,9 +58,6 @@ module.exports = {
         'Ichiraku',
         'Shinigami Headquarters',
         'One Piece',
-        "Yubaba's bathhouse",
-        "Anteiku",
-        "Shiganshina District"
       ] }
     }, {});
   }

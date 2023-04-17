@@ -10,7 +10,6 @@ function OwnedSpotsPage() {
 const history = useHistory();
 const dispatch = useDispatch();
 const user = useSelector(state => state.session.user);
-console.log(user)
 //this useSelector filters ownedSpots but has
 const unfilteredSpots = useSelector((state) => Object.values(state.spot.spots));
 const ownedSpots = unfilteredSpots.filter(spot => spot.ownerId === user.id)

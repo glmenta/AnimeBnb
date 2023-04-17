@@ -471,6 +471,7 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
             stars
         })
         if (newReview) {
+            // spot.numReviews += 1
             return res.status(201).json(newReview)
         }
     } else {

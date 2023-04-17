@@ -80,7 +80,7 @@ export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
 }
 
 export const createSpotFxn = (spot, images) => async (dispatch) => {
-    console.log('thunk fxn spot', spot)
+
     const response = await csrfFetch('/api/spots/new', {
       method: "POST",
       headers: {
@@ -92,7 +92,6 @@ export const createSpotFxn = (spot, images) => async (dispatch) => {
     if(response.ok) {
         const newSpot = await response.json()
         //this newSpot has no access to the images yet
-        console.log('thunk new spot', newSpot)
 
         const imageResponses = await Promise.all(
           images.map((img) =>
@@ -154,9 +153,9 @@ export const deleteSpotFxn = (spotId) => async dispatch => {
   });
 
   if (res.ok) {
-    const deletedSpot = res.json()
+    const deletedSpot = await res.json()
     dispatch(deleteSpot(deletedSpot))
-    return deletedSpot;
+    return spotId;
   }
 }
 

@@ -55,7 +55,7 @@ export const addReviewFxn = (spotId, review) => async(dispatch) => {
         console.log('this is addReview thunk', newReview);
         dispatch(addReviews({...newReview, spotId}));
         console.log('this is after dispatch', newReview)
-        return newReview;
+        return newReview.id;
       }
 }
 
@@ -79,7 +79,7 @@ export const deleteReviewFxn = (reviewId) => async(dispatch) => {
     })
     console.log('this is res from delete thunk', res)
     if (res.ok) {
-        const deletedReview = res.json();
+        const deletedReview = await res.json();
         console.log('this is thunk', deletedReview)
         dispatch(deleteReview(deletedReview));
         return deletedReview
