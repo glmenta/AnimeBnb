@@ -53,6 +53,7 @@ function ProfileButton({ user }) {
     setShowMenu(false);
     setProfileClicked(false);
     dispatch(sessionActions.logout());
+    window.localStorage.clear();
     history.push('/')
   };
 

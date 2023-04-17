@@ -64,7 +64,6 @@ function SpotDetailPage () {
 
     return spotDetail && (
         <div className = 'spot-detail-container'>
-
         <h1>{spotDetail.name}</h1>
         <h2>{spotDetail.city}, {spotDetail.state}, {spotDetail.country}</h2>
         <div className ='image-container'>
@@ -128,7 +127,7 @@ function SpotDetailPage () {
                 </div>
 
                 <div className='post-review-modal'>
-                        {(user && (!reviews.find(review => review.userId === user.id) && user.id !== spotDetail?.ownerId)) && (
+                        {(user && (!reviews.find(review => review.userId === user?.id) && user?.id !== spotDetail?.ownerId)) && (
                         <button
                             className='post-review-button'
                             onClick={openReviewModal}>
@@ -157,7 +156,7 @@ function SpotDetailPage () {
                         </p>
                         <p id='review-description'>{review.review}</p>
                         <div className='delete-review-modal'>
-                        {(user &&  ((review.userId === user.id && user.id !== spotDetail?.ownerId))) && (
+                        {(((review.userId === user?.id && user?.id !== spotDetail?.ownerId))) && (
                             <button
                                 className='post-review-button'
                                 onClick={openDeleteReviewModal}>
@@ -165,7 +164,7 @@ function SpotDetailPage () {
                             </button>
                             )}
 
-                            {(review.userId === user.id && (
+                            {(review.userId === user?.id && (
                                 <DeleteReviewModal
                                 isOpen={deleteReviewModalOpen}
                                 onClose={closeDeleteReviewModal}

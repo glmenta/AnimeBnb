@@ -27,7 +27,14 @@ const validateSignup = [
       .withMessage('Please provide a username with at least 4 characters.')
       .not()
       .isEmpty()
-      .withMessage('Please provide a valid username'),
+      .withMessage('Please provide a valid username')
+      .custom(async (value, { req }) => {
+        const existingUser = await User.findOne({ username: value });
+        if (existingUser) {
+          throw new Error('Username already exists. Please choose a different username.');
+        }
+        return true;
+      }),
     check('username')
       .not()
       .isEmail()
