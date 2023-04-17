@@ -10,4 +10,36 @@
     background-color: #ff284f;
     border: solid 3px black;
     box-shadow: 4px 4px 0px 0px #000000;
+    display: flex;
+    justify-content: center;
   }
+
+.create-new-spot-container {
+    display: flex;
+}
+
+.create-new-spot-contents {
+    width: 500px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    box-shadow:none
+}
+
+.update-price-div {
+    display: flex;
+    flex-direction: row;
+    height: 20px;
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.price-input {
+    height: 20px;
+    margin-left: 10px;
+}

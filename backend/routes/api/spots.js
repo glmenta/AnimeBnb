@@ -306,6 +306,7 @@ router.get('/:spotId', async (req,res) => {
             "statusCode": 404
         })
     }
+    console.log('this is spot details',checkIfExists.toString())
     let spot = await Spot.scope(['defaultScope','spotDetails']).findOne({
         where: { id },
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
@@ -471,7 +472,6 @@ router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(
             stars
         })
         if (newReview) {
-            // spot.numReviews += 1
             return res.status(201).json(newReview)
         }
     } else {

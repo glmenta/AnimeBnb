@@ -68,7 +68,8 @@
 .update-button {
   display: flex;
   /* margin-right: 10px; */
-
+  justify-content: center;
+  margin-left: 10px;
 }
 .update-link {
   text-decoration: none;

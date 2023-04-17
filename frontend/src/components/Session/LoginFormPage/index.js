@@ -48,6 +48,7 @@ function LoginFormPage() {
   return (
     <div className = 'popup'>
     <form onSubmit={handleSubmit} className='login'>
+      <h1>Log In</h1>
     <ul className='ul'>
       {errors.map((error, idx) => (
         <li key={idx} className='li'>
@@ -60,6 +61,7 @@ function LoginFormPage() {
       <input
         className='input'
         type='text'
+        id='username-input'
         value={credential}
         onChange={e => setCredential(e.target.value)}
         required
@@ -71,6 +73,7 @@ function LoginFormPage() {
         className='input'
         type='password'
         value={password}
+        id='username-input'
         onChange={e => setPassword(e.target.value)}
         required
       />

@@ -237,14 +237,17 @@ function UpdateSpotPage() {
             <p>
             Competitive pricing can help your listing stand out and rank higher in search results.
             </p>
+            <div className='update-price-div'>
+            $
             <input
               type="number"
               onChange={(e) => setPrice(e.target.value)}
               value={price}
-
+              className='price-input'
               placeholder='Price per night (USD)'
-              className='create-new-spot-input'
+              //className='create-new-spot-input'
             />
+            </div>
           </label>
 
 

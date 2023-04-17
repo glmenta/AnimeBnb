@@ -57,15 +57,20 @@
   }
 
   .review-modal-button {
+    width: 30;
+    height: 48px;
+    display: flex;
+    margin: auto;
     margin-top: 20px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #0077FF;
-    color: #fff;
+    align-items: center;
+    justify-content: center;
     font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
+    font-weight: 800;
+    line-height: 20px;
+    color: #fff;
+    background-color: #ff284f;
+    border: solid 3px black;
+    box-shadow: 4px 4px 0px 0px #000000;
   }
 
   .review-modal-button:disabled {
