@@ -63,6 +63,7 @@ function SignupFormPage() {
 
   return (
     <div className='form-container'>
+      <div className='submit-form'>
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
          <ul >
@@ -127,6 +128,7 @@ function SignupFormPage() {
           />
         </label>
         <button type="submit"
+        id='submit-signup-button'
           disabled={!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword}
         >Sign Up</button>
         <div className='demo-signup'>
@@ -136,6 +138,7 @@ function SignupFormPage() {
         >Demo Signup</a>
         </div>
       </form>
+      </div>
     </div>
   );
 }

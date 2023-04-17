@@ -1,0 +1,13 @@
+.submit-update-button {
+    width: 20%;
+    height: 48px;
+    margin: auto;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 20px;
+    color: #fff;
+    background-color: #ff284f;
+    border: solid 3px black;
+    box-shadow: 4px 4px 0px 0px #000000;
+  }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { updateSpotFxn, getSpotsFxn, getSpotDetailsFxn} from '../../../store/spots'
 import { useHistory, useParams } from 'react-router-dom'
+import './updateSpot.css';
 
 function UpdateSpotPage() {
 
@@ -65,9 +66,8 @@ function UpdateSpotPage() {
     //   preview: index === 0,
     // }));
 
-    console.log('this is updated spot', updateSpot);
     let updatedSpot;
-    console.log('this is selectSpot.id', selectSpot.id)
+
     await dispatch(updateSpotFxn(updateSpot, selectSpot.id)).then((spot) => {
       updatedSpot = spot
       console.log('newly updated spot', spot)
@@ -247,7 +247,6 @@ function UpdateSpotPage() {
             />
           </label>
 
-          <div className='line'></div>
 
           {/* <label className='create-new-spot-label'>
           <h3>Liven up your spot with photos</h3>
@@ -309,7 +308,8 @@ function UpdateSpotPage() {
           </label> */}
 
           <div className='line'></div>
-          <button disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
+          <button className='submit-update-button'
+          disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
         </form>
       </div>
       </div>
