@@ -31,7 +31,7 @@ const handleDelete = (id) => {
 }
 const handleModalDelete = () => {
     dispatch(deleteSpotFxn(spotToDelete))
-    setDeleteSpotModal(false)
+    // setDeleteSpotModal(false)
 }
 
 const handleSpotClick = (spotId) => {
