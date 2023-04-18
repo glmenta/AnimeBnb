@@ -86,6 +86,7 @@ function UpdateSpotPage() {
       setHasSubmitted(true)
       setErrors([])
       history.push(`/spots/${spot.id}`)
+      // history.go(0)
       return
     }).catch((err) => {
       console.log('Err updating spot', err)
@@ -312,7 +313,8 @@ function UpdateSpotPage() {
 
           <div className='line'></div>
           <button className='submit-update-button'
-          disabled={Object.values(errors).flat().length > 0}>Update Spot</button>
+          //disabled={Object.values(errors).flat().length > 0}
+          >Update Spot</button>
         </form>
       </div>
       </div>

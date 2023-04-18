@@ -106,7 +106,7 @@ function SpotDetailPage () {
 
                {spotDetail?.numReviews > 0 && (
                 <div className='reviews'>
-                    <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Reviews'}</p>
+                    <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p>
                 </div>
                 )}
                 </div>
@@ -130,7 +130,7 @@ function SpotDetailPage () {
 
                 {spotDetail.numReviews >= 1 && (
                 <div className='num-reviews'>
-                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Reviews'}</p>
+                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Review'}</p>
                 </div>
                 )}
                 </div>
