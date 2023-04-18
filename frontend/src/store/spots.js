@@ -54,11 +54,9 @@ export const getSpotsFxn = () => async (dispatch) => {
     if (response.ok) {
         const spotData = await response.json()
         let spotsObj = {}
-        console.log('this is spotData from getSpotsFxn', spotData)
         spotData.Spots.forEach(spot => {
           spotsObj[spot.id] = spot
         })
-        console.log('this is spotsObj', spotsObj);
         dispatch(getSpots(spotsObj))
         return spotsObj
     }
@@ -72,8 +70,6 @@ export const getSpotDetailsFxn = (spotId) => async (dispatch) => {
 
   if (response.ok) {
     const spotDetails = await response.json();
-    //console.log('spotDetails', spotDetails)
-    console.log('this is the spotId', spotId)
     dispatch(getSpotDetails(spotDetails))
     return spotDetails
   }
@@ -130,7 +126,7 @@ export const getSpotIdFxn = (id) => async (dispatch) => {
 }
 
 export const updateSpotFxn = (updatedSpot, spotId) => async dispatch => {
-  console.log('thunk fxn spot', updatedSpot);
+
   const response = await csrfFetch(`/api/spots/${spotId}/edit`, {
     method: 'PUT',
     headers: {
@@ -141,7 +137,7 @@ export const updateSpotFxn = (updatedSpot, spotId) => async dispatch => {
 
   if (response.ok) {
     const updatedSpot = await response.json();
-    console.log('thunk updated spot', updatedSpot);
+
     await dispatch(updateSpot(updatedSpot));
     return updatedSpot;
   }

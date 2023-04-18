@@ -24,11 +24,11 @@ function ProfileButton({ user }) {
 
 
   useEffect(() => {
-    console.log('useEff called')
+
     if (!showMenu) return;
 
     const closeMenu = (e) => {
-      console.log('click event', e.target);
+
       if (!ulRef.current.contains(e.target)) {
         setShowMenu(false);
         setProfileClicked(false);
