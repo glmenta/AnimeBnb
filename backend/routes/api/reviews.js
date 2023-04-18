@@ -43,16 +43,6 @@ router.get('/current', restoreUser, requireAuth, async (req,res) => {
         })
     }
 
-    // for (let review of currentReviews) {
-    //     const reviewImage = await SpotImage.findOne({
-    //       where: { spotId: review.Spot.id, preview: true },
-    //     });
-    //     if (reviewImage) {
-    //       review.Spot.dataValues.previewImage = reviewImage.url;
-    //     } else {
-    //       review.Spot.dataValues.previewImage = "No Preview Image";
-    //     }
-    //   }
     const spotIds = currentReviews.map(review => review.Spot.id);
     const reviewImages = await Promise.all(
     spotIds.map(spotId =>
