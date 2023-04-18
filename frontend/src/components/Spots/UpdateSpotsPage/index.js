@@ -312,7 +312,7 @@ function UpdateSpotPage() {
 
           <div className='line'></div>
           <button className='submit-update-button'
-          disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
+          disabled={Object.values(errors).flat().length > 0}>Update Spot</button>
         </form>
       </div>
       </div>
