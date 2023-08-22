@@ -12,8 +12,12 @@ function SignupFormPage() {
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
+  console.log("password:", password);
+  console.log("confirmPassword:", confirmPassword);
+  console.log("passwordsMatch:", passwordsMatch);
 
   //validations
   const MIN_FIRSTNAME_LENGTH = 2;
@@ -66,7 +70,7 @@ function SignupFormPage() {
       <div className='submit-form'>
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
-         <ul >
+        <ul >
                 {Object.values(errors).map((error, idx) => {
                 return (
                     <li className='signup-errors' key={idx}>{error}</li>)})}
@@ -114,7 +118,11 @@ function SignupFormPage() {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPasswordsMatch(e.target.value === confirmPassword);
+            }
+            }
             required
           />
         </label>
@@ -129,7 +137,7 @@ function SignupFormPage() {
         </label>
         <button type="submit"
         id='submit-signup-button'
-          disabled={!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword}
+          disabled={!validEmail || !validUsername || !validFirstName || !validLastName || !validPassword || !validConfirmPassword || (password !== confirmPassword)}
         >Sign Up</button>
         <div className='demo-signup'>
         <a
