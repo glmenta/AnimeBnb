@@ -26,32 +26,33 @@ function Spots() {
     <div className='spots-container'>
       {spots.map((spot) => {
         const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
-        ? Number(spot.avgRating).toFixed(1)
-        : 'New';
-        return (
-            <div className = 'spotCard'>
-            <div className='spot' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
+          ? Number(spot.avgRating).toFixed(1)
+          : 'New';
+          return (
+            <div className='spotCard tooltip' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
+              <div className='tooltip-spot' title={spot.name}></div>
+              <div className='spot'>
                 <div className='previewImg'>
-                <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`} />
+                  <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`} />
                 </div>
                 <div className='spot-container'>
-                <p className='location'>
-                    {`${spot.city}, ${spot.state}`}<span className='stars'>★{ avgRating || 'New' }</span>
-                </p>
-                <p className='spot-name tooltip' title={spot.name}>
-                  {spot.name}
-                  <span className='tooltip-text'>{spot.name}</span>
-                </p>
-                <p className='price'>
+                  <p className='location'>
+                    {`${spot.city}, ${spot.state}`}<span className='stars'>★{avgRating || 'New'}</span>
+                  </p>
+                  <p className='spot-name' title={spot.name}>
+                    <span className='tooltip-text'>{spot.name}</span>
+                  </p>
+                  <p className='price'>
                     <span className='spot-price'>${spot.price}</span> night
-                </p>
+                  </p>
                 </div>
+              </div>
             </div>
-          </div>
-        );
+          );
       })}
     </div>
   );
+
 }
 
 export default Spots;
