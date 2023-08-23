@@ -76,7 +76,7 @@
 
     /* Position the tooltip */
     position: absolute;
-    left: 30%;
+    left: 50%;
     bottom: 100%;
     z-index: 9999;
   }
