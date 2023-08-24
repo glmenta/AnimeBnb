@@ -82,7 +82,7 @@ router.get('/', async (req,res) => {
             'message': 'Validation Error',
             "statusCode": 400,
             'errors': {
-               'page': "Page must be greater than or equal to 1"
+                'page': "Page must be greater than or equal to 1"
             }
         })
     } if (size < 1) {
@@ -90,7 +90,7 @@ router.get('/', async (req,res) => {
                 'message': 'Validation Error',
                 "statusCode": 400,
                 'errors': {
-                   'size': "Size must be greater than or equal to 1"
+                    'size': "Size must be greater than or equal to 1"
                 }
             })
 
@@ -148,7 +148,7 @@ router.get('/', async (req,res) => {
             'message': 'Validation Error',
             "statusCode": 400,
             'errors': {
-               'minPrice': "Minimum price must be greater than or equal to 1"
+                'minPrice': "Minimum price must be greater than or equal to 1"
             }
         })
     } else if (maxPrice && maxPrice <= 0) {
@@ -156,7 +156,7 @@ router.get('/', async (req,res) => {
             'message': 'Validation Error',
             "statusCode": 400,
             'errors': {
-               'maxPrice': "Maximum price must be greater than or equal to 1"
+                'maxPrice': "Maximum price must be greater than or equal to 1"
             }
         })
     } else {
@@ -167,6 +167,7 @@ router.get('/', async (req,res) => {
             })
         }
 
+    let numReviews;
     for (let spot of spots) {
         const images = spot.SpotImages;
         let previewImage = 'No images';
@@ -174,29 +175,30 @@ router.get('/', async (req,res) => {
         let totalStars = 0;
 
         for (let image of images) {
-          if (image.dataValues.preview) {
+            if (image.dataValues.preview) {
             previewImage = image.url;
             break;
-          }
+            }
         }
 
         if (images.length > 0) {
-          let reviews = spot.Reviews || [];
-          let numReviews = reviews.length;
+            let reviews = spot.Reviews || [];
+            numReviews = reviews.length;
 
-          if (numReviews > 0) {
-            for (let review of reviews) {
-              totalStars += review.dataValues.stars;
-            }
+            if (numReviews > 0) {
+                for (let review of reviews) {
+                    totalStars += review.dataValues.stars;
+                }
             avgRating = totalStars / numReviews;
-          }
+            }
         }
 
         spot.dataValues.previewImage = previewImage;
         spot.dataValues.avgRating = avgRating;
+        spot.dataValues.numReviews = numReviews;
         delete spot.dataValues.SpotImages;
         delete spot.dataValues.Reviews;
-      }
+    }
 
     if(spots) {
             const allSpots = spots.map(spot => {
@@ -205,6 +207,7 @@ router.get('/', async (req,res) => {
                 const lng = parseFloat(spot.lng)
                 const price = parseFloat(spot.price)
                 const avgRating = parseFloat(spot.avgRating)
+                console.log('avgRating from get all spots', avgRating)
                 return {
                     id: spot.id,
                     ownerId: spot.ownerId,
@@ -220,7 +223,8 @@ router.get('/', async (req,res) => {
                     createdAt: spot.createdAt,
                     updatedAt: spot.updatedAt,
                     avgRating,
-                    previewImage: spot.previewImage
+                    previewImage: spot.previewImage,
+                    numReviews: spot.numReviews
                 }
             })
             page = parseFloat(page)
@@ -312,9 +316,10 @@ router.get('/:spotId', async (req,res) => {
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
     })
 
+    console.log('spot from backend', spot)
     if (spot) {
-            //console.log('this is spot from backend', spot)
             spot = spot.toJSON()
+            console.log('this is spot from backend', parseFloat(spot.avgRating))
             spot.lat = parseFloat(spot.lat)
             spot.lng = parseFloat(spot.lng)
             spot.price = parseFloat(spot.price)

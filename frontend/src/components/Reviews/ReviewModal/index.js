@@ -5,7 +5,7 @@ import { useModal } from '../../../context/Modal';
 import { useHistory } from 'react-router-dom';
 import './Review.css';
 
-function ReviewModal({isOpen, onClose, spotId, reset}) {
+function ReviewModal({isOpen, onClose, spotId}) {
     const dispatch = useDispatch();
     const [review, setReview] = useState('')
     const [stars, setStars] = useState(0)
@@ -18,9 +18,9 @@ function ReviewModal({isOpen, onClose, spotId, reset}) {
 
     const validReview = (review) => {
         return review.length >= MIN_REVIEW_LENGTH;
-      };
+    };
 
-      useEffect(() => {
+    useEffect(() => {
         if (!isOpen) {
             setReview('');
             setStars(0);
@@ -30,28 +30,26 @@ function ReviewModal({isOpen, onClose, spotId, reset}) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors([])
+        setErrors([]);
 
         const reviewData = {
             review,
             stars
+        };
+        console.log('this is reviewData', reviewData)
+        try {
+            await dispatch(addReviewFxn(spotId, reviewData));
+            closeModal();
+        } catch (res) {
+            const data = await res.json();
+            if (data && data.errors) {
+                setErrors(data.errors);
+            } else {
+                setErrors(['Please provide a review']);
+            }
         }
+    };
 
-        return dispatch(addReviewFxn(spotId, reviewData))
-            // .then(history.push(`/spots/${spotId}`))
-            .then(history.go(0))
-            .then(closeModal())
-            .catch(
-                async(res) => {
-                    const data = await res.json();
-                    if (data && data.errors) {
-                        setErrors(data.errors);
-                    } else {
-                        setErrors(['Please provide a review'])
-                    }
-                }
-            )
-    }
 
     if (!isOpen) {
         return null
@@ -63,16 +61,16 @@ function ReviewModal({isOpen, onClose, spotId, reset}) {
 
     const reviewStars = () => {
         const starArr = [];
-
+        console.log('this is starArr', starArr)
         for (let i = 1; i <= 5; i++) {
             starArr.push(<i key={i} className={`fa${stars >= i ? 's' : 'r'} fa-star`} onClick={() => handleStarClick(i)} />)
     }
+        console.log('this is starArr after iteration', starArr)
         return starArr;
     }
 
 
     return (
-        // onClick={(e) => e.stopPropagation()}
         <div className='review-modal-container' onClick={onClose}>
             <div className='review-modal' >
                 <form className='post-review-form' onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
@@ -81,7 +79,6 @@ function ReviewModal({isOpen, onClose, spotId, reset}) {
                         <textarea
                         type="text"
                         placeholder='Leave your review here...'
-                        // className='post-review-form-textarea'
                         rows="10"
                         cols="50"
                         className='review-text'

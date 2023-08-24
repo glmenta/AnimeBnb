@@ -10,15 +10,13 @@ function DeleteReviewModal ({isOpen, onClose, reviewId, spotId}) {
 
     const reviews = useSelector(state => Object.values(state.review.reviews))
     const [hasDeleted, setHasDeleted] = useState(false)
-
+    console.log('reviews', reviews)
     const handleDelete = () => {
         if(reviews) {
             return dispatch(deleteReviewFxn(reviewId))
-            //.then(() => {history.push(`/spots/${spotId}`)})
-            // .then(() => {
-            //     setHasDeleted(true)
-            // })
-            .then(history.go(0))
+            .then(() => {
+                setHasDeleted(true)
+            })
         }
     }
 
@@ -26,11 +24,11 @@ function DeleteReviewModal ({isOpen, onClose, reviewId, spotId}) {
         onClose();
     }
 
-    // useEffect(() => {
-    //     if (hasDeleted) {
-    //       history.push(`/spots/${spotId}`);
-    //     }
-    //   }, [hasDeleted, history, spotId]);
+    useEffect(() => {
+        if (hasDeleted) {
+            history.push(`/spots/${spotId}`);
+        }
+    }, [hasDeleted, spotId]);
 
     if (!isOpen) {
         return null

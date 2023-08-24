@@ -1,4 +1,5 @@
 import { csrfFetch } from './csrf'
+import { getSpotDetailsFxn } from './spots';
 
 const GET_REVIEWS = 'reviews/GET_REVIEWS';
 const ADD_REVIEWS = 'reviews/ADD_REVIEWS';
@@ -12,10 +13,11 @@ const getReviews = (reviews) => {
     }
 }
 
-const addReviews = (newReview) => {
+const addReviews = (newReview, spotId) => {
     return {
         type: ADD_REVIEWS,
-        newReview
+        newReview,
+        spotId
     }
 }
 
@@ -45,31 +47,31 @@ export const getReviewsFxn = (spotId) => async(dispatch) => {
 }
 
 export const addReviewFxn = (spotId, review) => async(dispatch) => {
+    console.log('this is spotId from thunk',spotId)
     const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
         method: 'POST',
         body: JSON.stringify(review),
-      });
+    });
 
-      if (res.ok) {
+    if (res.ok) {
         const newReview = await res.json();
-
         dispatch(addReviews({...newReview, spotId}));
-
+        // dispatch(getSpotDetailsFxn(spotId));
         return newReview.id;
-      }
+    }
 }
 
 export const updateReviewFxn = (review) => async (dispatch) => {
     const res = await csrfFetch(`/api/reviews/${review.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(review),
+    method: 'PUT',
+    body: JSON.stringify(review),
     });
 
     if (res.ok) {
-      const updatedReview = await res.json();
+        const updatedReview = await res.json();
 
-      dispatch(updateReviews(updatedReview));
-      return updatedReview;
+        dispatch(updateReviews(updatedReview));
+        return updatedReview;
     }
 };
 
@@ -97,20 +99,17 @@ const reviewReducer = (state = initialState, action) => {
                 reviews: action.reviews
             }
         case ADD_REVIEWS:
-            const spotId = action.newReview.spotId
-            const newReview = action.newReview
-            const existingReviews = newState.reviews[spotId] || {}
-            const addReview = {
-                ...existingReviews,
-                [newReview.id]: newReview
-            }
-            return {
-                ...newState,
-                reviews: {
-                    ...newState.reviews,
-                    [spotId]: addReview
-                }
-            }
+                const { spotId, newReview } = action;
+                const existingReviews = newState.reviews[spotId] || [];
+                const updatedReviews = [...existingReviews, newReview];
+
+                return {
+                    ...newState,
+                    reviews: {
+                        ...newState.reviews,
+                        [spotId]: updatedReviews,
+                    }
+                };
         case UPDATE_REVIEW:
             return {
                 ...newState,
