@@ -19,7 +19,7 @@ function SpotDetailPage () {
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
 
     const currSpot = (spotObj[spotId])
-    console.log('currSpot', currSpot);
+    // console.log('currSpot', currSpot);
     console.log('reviews', reviews)
     //this grabs our spot details in general
     useEffect(() => {
@@ -32,8 +32,8 @@ function SpotDetailPage () {
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
             setReviews(reviews);
-      }
-      fetchReviews()
+    }
+    fetchReviews()
     }, [dispatch, spotId])
        // const userReview = reviews.find(review => review.userId === user.id)
 
@@ -109,7 +109,8 @@ function SpotDetailPage () {
 
             {spotDetail?.numReviews > 0 && (
                 <div className='reviews'>
-                    <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p>
+                    <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
+                    {/* <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p> */}
                 </div>
                 )}
                 </div>
@@ -129,7 +130,7 @@ function SpotDetailPage () {
 
                 {spotDetail.numReviews >= 1 && (
                 <div className='num-reviews'>
-                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Review'}</p>
+                    <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
                 </div>
                 )}
                 </div>
