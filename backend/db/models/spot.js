@@ -91,14 +91,15 @@ module.exports = (sequelize, DataTypes) => {
         "price",
         "createdAt",
         "updatedAt",
-        [ Sequelize.fn("COALESCE", Sequelize.fn("AVG", Sequelize.col("Reviews.stars")), 0), "avgRating"],
+        //[ Sequelize.fn("COALESCE", Sequelize.fn("AVG", Sequelize.col("Reviews.stars")), 0), "avgRating"],
+        [Sequelize.fn("AVG", Sequelize.col("Reviews.stars")), "avgRating"],
         [ Sequelize.fn("COALESCE", Sequelize.col("SpotImages.url"),Sequelize.literal("'No image'")), "previewImage"],
         [Sequelize.fn('COALESCE', Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 0), 'numReviews']
       ],
       group: ["Spot.id", "SpotImages.url", "Reviews.id"],
     },
     scopes: {
-     spotDetails: {
+      spotDetails: {
       include: [
         {
           association: "Owner",

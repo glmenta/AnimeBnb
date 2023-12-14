@@ -19,11 +19,12 @@ function SpotDetailPage () {
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
 
     const currSpot = (spotObj[spotId])
-
+    // console.log('currSpot', currSpot);
+    console.log('reviews', reviews)
     //this grabs our spot details in general
     useEffect(() => {
         dispatch(getSpotDetailsFxn(spotId));
-      }, [dispatch, spotId]);
+    }, [dispatch, spotId]);
 
     //this allows us to grab our reviews for that spot
     useEffect(() => {
@@ -31,9 +32,9 @@ function SpotDetailPage () {
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
             setReviews(reviews);
-      }
-      fetchReviews()
-    }, [spotId])
+    }
+    fetchReviews()
+    }, [dispatch, spotId])
        // const userReview = reviews.find(review => review.userId === user.id)
 
     if(!spotDetail) {
@@ -61,8 +62,10 @@ function SpotDetailPage () {
         alert('Feature Coming Soon')
     }
 
-     // Dynamically calculate the average rating from reviews
-    //  const avgRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+    const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length
+    : 0;
+    console.log('avgRating', avgRating)
 
     return spotDetail && (
         <div className = 'spot-detail-container'>
@@ -95,18 +98,19 @@ function SpotDetailPage () {
                     <h1>${spotDetail.price}night</h1>
                 </div>
                 <div className='rating-container'>
-                {currSpot && (
+
                 <div className='star-rating'>
-                    ★{Number(currSpot.avgRating) ? Number(currSpot.avgRating).toFixed(1) : 'New'}
+                    ★{avgRating ? avgRating.toFixed(1) : 'New'}
                 </div>
-                )}
+
                 {spotDetail?.numReviews > 0 && (
                     <div className='dot'><p>·</p></div>
                 )}
 
-               {spotDetail?.numReviews > 0 && (
+            {spotDetail?.numReviews > 0 && (
                 <div className='reviews'>
-                    <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p>
+                    <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
+                    {/* <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p> */}
                 </div>
                 )}
                 </div>
@@ -116,21 +120,17 @@ function SpotDetailPage () {
 
             <div className='review-content'>
                 <div className='review-content-top'>
-                    {/* <div className='star-rating'>
-                    ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
-                    </div> */}
-                { currSpot && (
                 <div className='star-rating'>
-                    ★{Number(currSpot.avgRating) ? Number(currSpot.avgRating).toFixed(1) : 'New'}
+                    ★{avgRating ? avgRating.toFixed(1) : 'New'}
                 </div>
+
+                {spotDetail.numReviews > 0 && (
+                    <div className='dot'><p>·</p></div>
                 )}
-                    {spotDetail.numReviews > 0 && (
-                        <div className='dot'><p>·</p></div>
-                    )}
 
                 {spotDetail.numReviews >= 1 && (
                 <div className='num-reviews'>
-                    <p>{spotDetail.numReviews} {spotDetail.numReviews === 1 ? 'Review' : 'Review'}</p>
+                    <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
                 </div>
                 )}
                 </div>
@@ -201,42 +201,3 @@ function SpotDetailPage () {
 }
 
 export default SpotDetailPage
-     {/* { !user || user && user.id !== spotDetail.ownerId ? ( */}
-            {/* { !user || (user && user.id !== spotDetail.ownerId) ? (
-            <div className='review-content'>
-                <div className='review-content-top'>
-                <div classname='star-rating'>
-                    ★{Number(spotDetail.avgRating) ? Number(spotDetail.avgRating).toFixed(1) : 'New'}
-                </div>
-                <div className = 'dot'><p>·</p></div>
-                { spotDetail.numReviews >= 1 && (
-                    <div className='num-reviews'>
-                        <p>{Number(spotDetail.numReviews)}Reviews</p>
-                    </div>
-                )}
-                </div>
-            <div className='review-map'>
-            {Array.isArray(reviews) && reviews.length > 0 ? (
-              reviews
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .map(review => (
-                  <div key={review.id}>
-                    <p id='first-name'>{review.User.firstName}</p>
-                    <p id='createdAt'>{new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' }).format(new Date(review.createdAt))}</p>
-                    <p id='review-description'>{review.review}</p>
-                  </div>
-                ))
-            ) : (
-                <div>
-                <button className='post-review-button' onClick={openReviewModal}>Post your Review</button>
-                <ReviewModal
-                    isOpen={reviewModalOpen}
-                    onClose={closeReviewModal}
-                    spotId={spotId}
-                />
-                <p id='no-reviews'>Be the first to post a review!</p>
-              </div>
-            )}
-            </div>
-            </div>
-            ) : null} */}

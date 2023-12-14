@@ -5,6 +5,7 @@ import ProfileButton from './ProfileButton';
 import './updateNav.css';
 import * as sessionActions from '../../store/session';
 import whiteLogo from '../../images/logo.png';
+import animeLogo from '../../images/animebnblogo.png';
 import LoginModal from '../Session/LoginModal';
 import LoginFormPage from '../Session/LoginFormPage';
 import SignupModal from '../Session/SignupModal';
@@ -47,7 +48,7 @@ function Navigation({ isLoaded }){
       <div className='home-button'>
       <li className='nav-li'>
         <NavLink exact to="/">
-          <img src={whiteLogo} alt="logo" className='logo' />
+          <img src={animeLogo} alt="logo" className='logo' />
         </NavLink>
       </li>
       </div>

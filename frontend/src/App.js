@@ -11,6 +11,7 @@ import CreateNewSpot from "./components/Spots/CreateSpotPage";
 import UpdateSpotPage from "./components/Spots/UpdateSpotsPage";
 import OwnedSpotsPage from "./components/Spots/OwnedSpotsPage";
 import ReviewModal from "./components/Reviews/ReviewModal";
+import Footer from "./components/footer";
 
 function App() {
   const dispatch = useDispatch();
@@ -53,6 +54,7 @@ function App() {
           </Route>
         </Switch>
       )}
+      <Footer/>
     </div>
   );
 }
