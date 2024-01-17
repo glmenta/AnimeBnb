@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useEffect } from 'react';
-import { addReviewFxn } from '../../../store/reviews';
+import { addReviewFxn, getReviewsFxn } from '../../../store/reviews';
 import { useDispatch, useSelector } from 'react-redux';
 import { useModal } from '../../../context/Modal';
 import { useHistory } from 'react-router-dom';
@@ -10,9 +10,6 @@ function ReviewModal({isOpen, onClose, spotId}) {
     const [review, setReview] = useState('')
     const [stars, setStars] = useState(0)
     const [errors, setErrors] = useState([])
-    const { closeModal } = useModal();
-    const history = useHistory();
-
     //validations
     const MIN_REVIEW_LENGTH = 10;
 
@@ -37,9 +34,11 @@ function ReviewModal({isOpen, onClose, spotId}) {
             stars
         };
         console.log('this is reviewData', reviewData)
+        console.log('spotId', spotId)
         try {
             await dispatch(addReviewFxn(spotId, reviewData));
-            closeModal();
+            await dispatch(getReviewsFxn(spotId));
+            onClose()
         } catch (res) {
             const data = await res.json();
             if (data && data.errors) {
@@ -71,9 +70,11 @@ function ReviewModal({isOpen, onClose, spotId}) {
 
 
     return (
-        <div className='review-modal-container' onClick={onClose}>
+        <div className='review-modal-container'>
             <div className='review-modal' >
-                <form className='post-review-form' onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
+                <form className='post-review-form'
+                onClick={(e) => e.stopPropagation()}
+                onSubmit={handleSubmit}>
                     <h2 className='review-modal-title'>How was your stay?</h2>
                     <label className='post-review-label'>
                         <textarea
@@ -87,8 +88,11 @@ function ReviewModal({isOpen, onClose, spotId}) {
                         />
                     </label>
                     <div className='review-modal-star'>{reviewStars()} Stars</div>
+
                     <button className='review-modal-button'
-                        disabled={stars < 1 || review.length < 10 || !validReview(review)}>
+                        type="submit"
+                        disabled={stars < 1 || review.length < 10 || !validReview(review)}
+                        >
                         Submit your Review
                     </button>
                 </form>

@@ -17,25 +17,18 @@ function SpotDetailPage () {
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
-
     const currSpot = (spotObj[spotId])
     // console.log('currSpot', currSpot);
-    console.log('reviews', reviews)
-    //this grabs our spot details in general
     useEffect(() => {
-        dispatch(getSpotDetailsFxn(spotId));
-    }, [dispatch, spotId]);
-
-    //this allows us to grab our reviews for that spot
-    useEffect(() => {
-        async function fetchReviews() {
+        async function fetchData() {
+            await dispatch(getSpotDetailsFxn(spotId));
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
             setReviews(reviews);
-    }
-    fetchReviews()
-    }, [dispatch, spotId])
-       // const userReview = reviews.find(review => review.userId === user.id)
+        }
+
+        fetchData();
+    }, [dispatch, spotId]);
 
     if(!spotDetail) {
         return <div>Loading...</div>
@@ -46,7 +39,15 @@ function SpotDetailPage () {
     }
 
     const closeReviewModal = () => {
+        console.log('closing review modal')
         setReviewModalOpen(false)
+        async function fetchReviews() {
+            const response = await dispatch(getReviewsFxn(spotId));
+            const reviews = response.Reviews;
+            console.log('reviews', reviews)
+            setReviews(reviews);
+        }
+        fetchReviews()
     }
 
     const openDeleteReviewModal = () => {
@@ -54,17 +55,33 @@ function SpotDetailPage () {
     }
 
     const closeDeleteReviewModal = () => {
-        setDeleteReviewModalOpen(false)
-    }
+        setDeleteReviewModalOpen(false);
+        dispatch(getReviewsFxn(spotId))
+            .then((response) => {
+                const reviews = response.Reviews;
+                setReviews(reviews);
+            })
+            .catch((error) => {
+                console.error("Error fetching reviews:", error);
+            });
+    };
+
 
     //This is for the reserve button
     function handleClick () {
         alert('Feature Coming Soon')
     }
 
+
     const avgRating = reviews.length > 0
     ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length
     : 0;
+    // const avgRating = reviews.length > 0
+    // ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(2)
+    // : 'New';
+
+    console.log('reviews', reviews)
+    console.log('numReviews:', reviews.length, spotDetail.numReviews);
     console.log('avgRating', avgRating)
 
     return spotDetail && (
@@ -101,13 +118,14 @@ function SpotDetailPage () {
 
                 <div className='star-rating'>
                     ★{avgRating ? avgRating.toFixed(1) : 'New'}
+                    {/* ★{typeof avgRating === 'number' ? avgRating.toFixed(1) : avgRating} */}
                 </div>
 
-                {spotDetail?.numReviews > 0 && (
+                {reviews?.length > 0 && (
                     <div className='dot'><p>·</p></div>
                 )}
 
-            {spotDetail?.numReviews > 0 && (
+            {reviews?.length > 0 && (
                 <div className='reviews'>
                     <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
                     {/* <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p> */}
@@ -124,11 +142,11 @@ function SpotDetailPage () {
                     ★{avgRating ? avgRating.toFixed(1) : 'New'}
                 </div>
 
-                {spotDetail.numReviews > 0 && (
+                {reviews?.length > 0 && (
                     <div className='dot'><p>·</p></div>
                 )}
 
-                {spotDetail.numReviews >= 1 && (
+                {reviews?.length >= 1 && (
                 <div className='num-reviews'>
                     <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
                 </div>
@@ -143,11 +161,14 @@ function SpotDetailPage () {
                             Post your Review
                         </button>
                         )}
-                        <ReviewModal
-                        isOpen={reviewModalOpen}
-                        onClose={closeReviewModal}
-                        spotId={spotId}
-                        />
+                        {reviewModalOpen && (
+                            <ReviewModal
+                            isOpen={reviewModalOpen}
+                            onClose={closeReviewModal}
+                            spotId={spotId}
+                            />
+                        )}
+
                 </div>
 
             <div className='review-map'>

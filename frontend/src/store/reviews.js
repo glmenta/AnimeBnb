@@ -13,13 +13,14 @@ const getReviews = (reviews) => {
     }
 }
 
-const addReviews = (newReview, spotId) => {
+const addReviews = (spotId, newReview) => {
     return {
         type: ADD_REVIEWS,
+        spotId,
         newReview,
-        spotId
-    }
-}
+    };
+};
+
 
 const updateReviews = (review) => {
     return {
@@ -46,20 +47,34 @@ export const getReviewsFxn = (spotId) => async(dispatch) => {
     }
 }
 
-export const addReviewFxn = (spotId, review) => async(dispatch) => {
-    console.log('this is spotId from thunk',spotId)
-    const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
-        method: 'POST',
-        body: JSON.stringify(review),
-    });
+export const addReviewFxn = (spotId, review) => async (dispatch) => {
+    const numericSpotId = Number(spotId);
 
-    if (res.ok) {
-        const newReview = await res.json();
-        dispatch(addReviews({...newReview, spotId}));
-        // dispatch(getSpotDetailsFxn(spotId));
-        return newReview.id;
+    try {
+        const res = await csrfFetch(`/api/spots/${numericSpotId}/reviews`, {
+            method: 'POST',
+            body: JSON.stringify(review),
+        });
+
+        if (res.ok) {
+            // Assuming the response is in JSON format
+            const newReview = await res.json();
+
+            dispatch(addReviews(numericSpotId, newReview));
+            dispatch(getReviewsFxn(numericSpotId));
+
+            return newReview.id;
+        } else {
+            // Handle non-OK responses
+            throw res;
+        }
+    } catch (error) {
+        // Handle errors, including non-JSON responses
+        console.error('Error adding review:', error);
+        throw error; // Rethrow the error for the calling function to handle
     }
-}
+};
+
 
 export const updateReviewFxn = (review) => async (dispatch) => {
     const res = await csrfFetch(`/api/reviews/${review.id}`, {
@@ -99,17 +114,24 @@ const reviewReducer = (state = initialState, action) => {
                 reviews: action.reviews
             }
         case ADD_REVIEWS:
-                const { spotId, newReview } = action;
-                const existingReviews = newState.reviews[spotId] || [];
-                const updatedReviews = [...existingReviews, newReview];
-
+            const { spotId, newReview } = action;
+            const existingReviews = newState.reviews[spotId] || [];
+            const updatedReviews = [...existingReviews, newReview];
+            console.log('Updated Reviews:', updatedReviews);
+            console.log('Updated numReviews:', updatedReviews.length);
+            // const updatedSpotDetail = {
+            //     ...newState.spotDetails[spotId],
+            //     numReviews: updatedReviews.length,
+            // };
+            //console.log('Updated Spot Detail:', updatedSpotDetail);
                 return {
-                    ...newState,
-                    reviews: {
-                        ...newState.reviews,
-                        [spotId]: updatedReviews,
-                    }
-                };
+                ...newState,
+                reviews: {
+                    ...newState.reviews,
+                    [spotId]: updatedReviews,
+                },
+            };
+
         case UPDATE_REVIEW:
             return {
                 ...newState,
