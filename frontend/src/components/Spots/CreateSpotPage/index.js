@@ -30,6 +30,14 @@ function CreateNewSpot() {
     e.preventDefault()
 
     const imgErrors = {}
+    const validateImage = async (url) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    };
 
     const newSpot = {
       country,
@@ -58,39 +66,44 @@ function CreateNewSpot() {
     let createdSpot;
 
     try {
-    await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
-      createdSpot = spot
-      setCountry("")
-      setAddress("")
-      setCity("")
-      setState("")
-      setDescription("")
-      setName("")
-      setPrice("")
-      setPreviewImage("")
-      setImage2("")
-      setImage3("")
-      setImage4("")
-      setImage5("")
-      setHasSubmitted(true)
-      setErrors([])
-      history.push(`/spots/${spot.id}`)
-    })} catch (res) {
-        const data = await res.json();
+      if (!previewImage) {
+        imgErrors.previewImage = 'Preview Image is required'
+      } else if (!/\.(png|jpe?g)$/i.test(previewImage)) {
+        imgErrors.previewImage = 'Preview Image must end in .png, .jpg or .jpeg'
+      }
 
-        if (!previewImage) {
-          imgErrors.previewImage = 'Preview Image is required'
-        }
+      await validateImage();
 
-        if (!/\.(png|jpe?g)$/i.test(image2)) {
-          imgErrors.imageUrl = 'Image URL must end in .png, .jpg or .jpeg'
-        }
-        if (data && data.errors) {
-          const combinedErrors = {...data.errors, ...imgErrors}
-          setErrors(combinedErrors)
-        }
+      await dispatch(createSpotFxn(newSpot, newSpotImgs)).then((spot) => {
+        createdSpot = spot
+        setCountry("")
+        setAddress("")
+        setCity("")
+        setState("")
+        setDescription("")
+        setName("")
+        setPrice("")
+        setPreviewImage("")
+        setImage2("")
+        setImage3("")
+        setImage4("")
+        setImage5("")
+        setHasSubmitted(true)
+        setErrors([])
+        history.push(`/spots/${spot.id}`)
+      })} catch (res) {
+          const data = await res.json();
+          const imgErrors = {};
+
+          if (!/\.(png|jpe?g)$/i.test(image2)) {
+            imgErrors.imageUrl = 'Image URL must end in .png, .jpg or .jpeg'
+          }
+          if (data && data.errors) {
+            const combinedErrors = {...data.errors, ...imgErrors}
+            setErrors(combinedErrors)
+          }
+      }
     }
-  }
 
   return (
     <div className='create-new-spot-container'>
@@ -246,6 +259,7 @@ function CreateNewSpot() {
           <h3>Liven up your spot with photos</h3>
           <p>
             Submit a link to at least one photo to publish your spot.
+          <p className='error'>{errors.previewImage}</p>
           </p>
             <input
               type="text"
@@ -255,8 +269,8 @@ function CreateNewSpot() {
               value={previewImage}
             />
           </label>
-          <p className='error'>{errors.previewImage}</p>
 
+          <p className='error'>{errors.imageUrl}</p>
           <label className='create-new-spot-label'>
             <input
               type="text"
@@ -266,7 +280,7 @@ function CreateNewSpot() {
               value={image2}
             />
           </label>
-          <p className='error'>{errors.imageUrl}</p>
+
 
           <label className='create-new-spot-label'>
             <input
@@ -304,9 +318,9 @@ function CreateNewSpot() {
 
           <div className='line'></div>
           <div className='submit-div'>
-          <button onClick={handleSubmit} className='create-submit-button'>Create Spot</button>
+          <button onClick={handleSubmit} className='create-submit-button' disabled={Object.values(errors).flat().length > 0}>Create Spot</button>
           </div>
-          {/* disabled={Object.values(errors).flat().length > 0} */}
+
         </form>
       </div>
       </div>
@@ -315,104 +329,3 @@ function CreateNewSpot() {
 }
 
 export default CreateNewSpot
-
-  // const errors = {};
-
-    // if (!country) {
-    //   errors.country = "Country is required.";
-    // }
-
-    // if (!address) {
-    //   errors.address = "Street address is required.";
-    // }
-
-    // if (!city) {
-    //   errors.city = "City is required.";
-    // }
-
-    // if (!state) {
-    //   errors.state = "State is required.";
-    // }
-
-    // if (!lat) {
-    //   errors.lat = "Latitude is required.";
-    // }
-
-    // if (!lng) {
-    //   errors.lng = "Longitude is required.";
-    // }
-
-    // if (!description || description.length < 30) {
-    //   errors.description = "Description must be at least 30 characters.";
-    // }
-
-    // if (!name) {
-    //   errors.name = "Name is required.";
-    // }
-
-    // if (!price) {
-    //   errors.price = "Price is required.";
-    // }
-
-
-  // const validateFileExtension = (url) => {
-  //   const allowedExtensions = ['.png', '.jpeg', '.jpg'];
-  //   const fileExtension = url.slice(url.lastIndexOf('.'));
-
-  //   return allowedExtensions.includes(fileExtension);
-  // };
-
-  // useEffect(() => {
-
-  //   if (hasSubmitted) {
-  //     const validationErrors = { country: [], address: [], city: [], state: [], description: [], name: [], price: [], previewImage: [], image2: [], image3: [], image4: [], image5: [] }
-  //     if (country.length === 0) validationErrors.country.push("Country is required")
-  //     if (!address.length) validationErrors.address.push("Address is required")
-  //     if (!city.length) validationErrors.city.push("City is required")
-  //     if (!state.length) validationErrors.state.push("State is required")
-  //     if (description.length < 30) validationErrors.description.push("Description needs a minimum of 30 characters")
-  //     if (!name.length) validationErrors.name.push("Name is required")
-  //     if (!price.length) validationErrors.price.push("Price is required")
-  //     if (!validateFileExtension(previewImage)) validationErrors.previewImage.push("Image URL must end in .png, .jpg, or .jpeg")
-  //     if (!validateFileExtension(image2) && image2.length > 0) validationErrors.image2.push("Image URL must end in .png, .jpg, or .jpeg")
-  //     if (!validateFileExtension(image3) && image3.length > 0) validationErrors.image3.push("Image URL must end in .png, .jpg, or .jpeg")
-  //     if (!validateFileExtension(image4) && image4.length > 0) validationErrors.image4.push("Image URL must end in .png, .jpg, or .jpeg")
-  //     if (!validateFileExtension(image5) && image5.length > 0) validationErrors.image5.push("Image URL must end in .png, .jpg, or .jpeg")
-  //     setErrors(validationErrors)
-  //   }
-//}, [hasSubmitted, country, address, city, state, description, name, price, previewImage, image2, image3, image4, image5])
-  // const [errors, setErrors] = useState({
-  //   country: [],
-  //   address: [],
-  //   city: [],
-  //   state: [],
-  //   description: [],
-  //   name: [],
-  //   price: [],
-  //   previewImage: [],
-  //   image2: [],
-  //   image3: [],
-  //   image4: [],
-  //   image5: [],
-  // })
-
-  // .catch(async (res) => {
-  //   const data = await res.json();
-  //   const imgErr = {}
-  //   const descriptionErr = {}
-
-  //   if (!previewImage) {
-  //     imgErr.previewImage = 'Preview Image is required'
-  //   }
-
-  //   if (!/\.(png|jpe?g)$/i.test(image2)) {
-  //     imgErr.imageUrl = 'Image URL must end in .png, .jpg or .jpeg'
-  //   }
-
-  //   if (description.length < 30) {
-  //     errors.description = 'Please write at least 30 characters'
-  //   }
-
-  //   const combinedErrors = {...data.errors, ...imgErr, ...descriptionErr}
-  //   setErrors(combinedErrors)
-  //  })
