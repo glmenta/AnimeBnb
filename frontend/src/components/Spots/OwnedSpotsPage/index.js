@@ -7,47 +7,45 @@ import DeleteSpotModal from '../UpdateSpotsPage/DeleteSpotModal';
 
 function OwnedSpotsPage() {
 
-const history = useHistory();
-const dispatch = useDispatch();
-const user = useSelector(state => state.session.user);
-const unfilteredSpots = useSelector((state) => Object.values(state.spot.spots));
-const ownedSpots = unfilteredSpots.filter(spot => spot.ownerId === user.id)
-const [deleteSpotModal, setDeleteSpotModal] = useState(false)
-const [spotToDelete, setSpotToDelete] = useState('')
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.session.user);
+    const unfilteredSpots = useSelector((state) => Object.values(state.spot.spots));
+    const ownedSpots = unfilteredSpots.filter(spot => spot.ownerId === user.id)
+    const [deleteSpotModal, setDeleteSpotModal] = useState(false)
+    const [spotToDelete, setSpotToDelete] = useState('')
 
-useEffect(() => {
-    dispatch(getSpotsFxn())
-},[dispatch])
+    useEffect(() => {
+        dispatch(getSpotsFxn())
+    },[dispatch])
 
-//handle click functions
-const closeDeleteSpotModal = () => {
-    setDeleteSpotModal(false)
-}
+    //handle click functions
+    const closeDeleteSpotModal = () => {
+        setDeleteSpotModal(false)
+    }
 
-const handleDelete = (id) => {
-    setSpotToDelete(id)
-    setDeleteSpotModal(true)
-}
-const handleModalDelete = () => {
-    dispatch(deleteSpotFxn(spotToDelete))
-    setDeleteSpotModal(false)
-    dispatch(getSpotsFxn())
-}
+    const handleDelete = (id) => {
+        setSpotToDelete(id)
+        setDeleteSpotModal(true)
+    }
+    const handleModalDelete = async () => {
+        await dispatch(deleteSpotFxn(spotToDelete))
+        setDeleteSpotModal(false)
+        dispatch(getSpotsFxn())
+    }
 
-const handleSpotClick = (spotId) => {
-    history.push(`/spots/${spotId}`);
-};
+    const handleSpotClick = (spotId) => {
+        history.push(`/spots/${spotId}`);
+    };
 
 return (
     <div className ='manage-spots-container'>
 
         <div className= 'manage-spots-header'>
             <h1 className='manage-spots-title'>Manage Your Spots</h1>
-        {/* { !ownedSpots.length && ( */}
             <div className='new-spot-link'>
             <Link to={`/spots/new`}className='new-spot-button'>Create a New Spot</Link>
             </div>
-            {/* )} */}
         </div>
         {deleteSpotModal && (
             <DeleteSpotModal
