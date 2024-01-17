@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { deleteReviewFxn } from "../../../store/reviews";
+import { deleteReviewFxn, getReviewsFxn } from "../../../store/reviews";
 import React, {useEffect, useState} from "react";
 import { useModal } from "../../../context/Modal";
 import { useParams, useHistory } from "react-router-dom";
@@ -16,6 +16,7 @@ function DeleteReviewModal ({isOpen, onClose, reviewId, spotId}) {
             return dispatch(deleteReviewFxn(reviewId))
             .then(() => {
                 setHasDeleted(true)
+                onClose();
             })
         }
     }
