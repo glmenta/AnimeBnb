@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import { getSpotDetailsFxn } from '../../../store/spots';
 import { getReviewsFxn } from '../../../store/reviews';
+import placeholderImg from '../../../../src/images/placeholder.jpg';
 import ReviewModal from '../../Reviews/ReviewModal';
 import DeleteReviewModal from '../../Reviews/DeleteReviewModal';
 import './updatedSpotDetail.css';
@@ -10,15 +11,12 @@ import './updatedSpotDetail.css';
 function SpotDetailPage () {
     const { spotId } = useParams();
     const spotDetail = useSelector(state => state.spot.spotDetails)
-    const spotObj = useSelector(state => state.spot.spots)
     const user = useSelector(state => state.session.user);
     const dispatch = useDispatch();
-    const history = useHistory();
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
-    const currSpot = (spotObj[spotId])
-    // console.log('currSpot', currSpot);
+
     useEffect(() => {
         async function fetchData() {
             console.log('Fetching data...');
@@ -41,12 +39,10 @@ function SpotDetailPage () {
     }
 
     const closeReviewModal = () => {
-        console.log('closing review modal')
         setReviewModalOpen(false)
         async function fetchReviews() {
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
-            console.log('reviews', reviews)
             setReviews(reviews);
         }
         fetchReviews()
@@ -74,21 +70,10 @@ function SpotDetailPage () {
         alert('Feature Coming Soon')
     }
 
-    //if there are reviews =>
-    // const avgRating = reviews.length > 0
-    // ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length
-    // : 0;
     const sumOfStars = reviews.reduce((sum, review) => sum + Number(review.stars), 0);
     const totalReviews = reviews.length;
-    console.log('Sum of Stars:', sumOfStars);
-    console.log('Total Reviews:', totalReviews);
 
     const avgRating = totalReviews > 0 ? sumOfStars / totalReviews : 0;
-    console.log('Average Rating:', avgRating);
-
-    console.log('reviews', reviews)
-    console.log('numReviews:', reviews.length, spotDetail.numReviews);
-    console.log('avgRating', avgRating)
 
     return spotDetail && (
         <div className = 'spot-detail-container'>
@@ -102,12 +87,18 @@ function SpotDetailPage () {
                     <p>No image available</p>
                     }
                 </div>
-
                 <div className='spot-img-filter'>
-                {spotDetail?.SpotImages.filter(image => image.preview !== true).map((image, index) => (
-                    <img key={index} id={`spotImage${index + 1}`} src={image.url} alt={spotDetail?.name} />
-                ))}
-            </div>
+                {spotDetail?.SpotImages && spotDetail.SpotImages.length > 0 ? (
+                    spotDetail.SpotImages
+                    .filter(image => image && image.preview !== true)
+                    .map((image, index) => (
+                        <img key={index} id={`spotImage${index + 1}`} src={image.url || placeholderImg} alt={spotDetail?.name} />
+                    ))
+                ) : (
+                    <img src={placeholderImg} alt="Placeholder" />
+                )}
+                </div>
+
         </div>
         </div>
         <div className='spot-info'>
