@@ -78,7 +78,7 @@ function SpotDetailPage () {
     // const avgRating = reviews.length > 0
     // ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length
     // : 0;
-    const sumOfStars = reviews.reduce((sum, review) => sum + review.stars, 0);
+    const sumOfStars = reviews.reduce((sum, review) => sum + Number(review.stars), 0);
     const totalReviews = reviews.length;
     console.log('Sum of Stars:', sumOfStars);
     console.log('Total Reviews:', totalReviews);
