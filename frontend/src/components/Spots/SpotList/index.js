@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { getSpotsFxn } from '../../../store/spots';
+import placeholderImg from '../../../../src/images/placeholder.jpg';
 import './Spots.css';
 
 function Spots() {
@@ -33,9 +34,13 @@ function Spots() {
               <div className='tooltip-spot' title={spot.name}></div>
               <div className='spot'>
                 <div className='previewImg'>
-                  <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`} />
+                  <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`}
+                    onError={(e) => {
+                    e.target.src = placeholderImg;
+                }}/>
                 </div>
                 <div className='spot-container'>
+                  <p className='spot-name'>{spot.name}</p>
                   <p className='location'>
                     {`${spot.city}, ${spot.state}`}<span className='stars'>★{avgRating || 'New'}</span>
                   </p>

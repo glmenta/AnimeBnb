@@ -14,7 +14,7 @@ function DeleteSpotModal ({isOpen, onClose, onDelete}) {
 
     const handleDelete = () => {
         onDelete();
-        history.go(0)
+        // history.go(0)
     }
 
     return (

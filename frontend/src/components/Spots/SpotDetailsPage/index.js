@@ -19,11 +19,9 @@ function SpotDetailPage () {
 
     useEffect(() => {
         async function fetchData() {
-            console.log('Fetching data...');
             await dispatch(getSpotDetailsFxn(spotId));
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
-            console.log('Fetched data:', spotDetail, reviews);
             setReviews(reviews);
         }
 
@@ -79,32 +77,49 @@ function SpotDetailPage () {
         <div className = 'spot-detail-container'>
         <h1>{spotDetail.name}</h1>
         <h2>{spotDetail.city}, {spotDetail.state}, {spotDetail.country}</h2>
-        <div className ='image-container'>
-            <div className='images-box'>
-                <div className='main-spot-img'>
-                    {spotDetail?.SpotImages.find(image => image.preview === true) ?
-                    <img src={spotDetail?.SpotImages.find(image => image.preview === true).url} alt={spotDetail?.name} /> :
-                    <p>No image available</p>
-                    }
-                </div>
-                <div className='spot-img-filter'>
-                {spotDetail?.SpotImages && spotDetail.SpotImages.length > 0 ? (
-                    spotDetail.SpotImages
-                    .filter(image => image && image.preview !== true)
-                    .map((image, index) => (
-                        <img key={index} id={`spotImage${index + 1}`} src={image.url || placeholderImg} alt={spotDetail?.name} />
-                    ))
-                ) : (
-                    <img src={placeholderImg} alt="Placeholder" />
-                )}
-                </div>
+        <div className='image-container'>
+        <div className='images-box'>
+            <div className='main-spot-img'>
+            {spotDetail?.SpotImages.find(image => image.preview === true) ? (
+                <img
+                src={spotDetail?.SpotImages.find(image => image.preview === true).url}
+                alt={spotDetail?.name}
+                onError={(e) => {
+                    e.target.src = placeholderImg;
+                }}
+                />
+            ) : (
+                <p>No image available</p>
+            )}
+            </div>
+            <div className='spot-img-filter'>
+            {spotDetail?.SpotImages && spotDetail.SpotImages.length > 0 ? (
+                spotDetail.SpotImages
+                .filter(image => image && image.preview !== true)
+                .map((image, index) => (
+                    <img
+                    key={index}
+                    id={`spotImage${index + 1}`}
+                    src={image.url || placeholderImg}
+                    alt={spotDetail?.name}
+                    onError={(e) => {
+                        e.target.src = placeholderImg;
+                    }}
+                    />
+                ))
+            ) : (
+                <img src={placeholderImg} alt='Placeholder' />
+            )}
+            </div>
+        </div>
+        </div>
 
-        </div>
-        </div>
         <div className='spot-info'>
             <div className='host-text'>
                 <h1 id = 'host-info'>Hosted by {spotDetail.Owner.firstName} {spotDetail.Owner.lastName}</h1>
-                <p id='spot-description'>{spotDetail.description}</p>
+                <div className='description-container'>
+                    <p className='spot-description'>{spotDetail.description}</p>
+                </div>
             </div>
             <div className='review-box'>
                 <div className='review-box-top'>
@@ -115,7 +130,6 @@ function SpotDetailPage () {
 
                 <div className='star-rating'>
                     ★{avgRating ? avgRating.toFixed(1) : 'New'}
-                    {/* ★{typeof avgRating === 'number' ? avgRating.toFixed(1) : avgRating} */}
                 </div>
 
                 {reviews?.length > 0 && (
@@ -125,7 +139,6 @@ function SpotDetailPage () {
             {reviews?.length > 0 && (
                 <div className='reviews'>
                     <p>{reviews?.length} {reviews?.length === 1 ? 'Review' : 'Reviews'}</p>
-                    {/* <p>{spotDetail?.numReviews} {spotDetail?.numReviews === 1 ? 'Review' : 'Review'}</p> */}
                 </div>
                 )}
                 </div>
