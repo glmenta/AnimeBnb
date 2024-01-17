@@ -21,9 +21,11 @@ function SpotDetailPage () {
     // console.log('currSpot', currSpot);
     useEffect(() => {
         async function fetchData() {
+            console.log('Fetching data...');
             await dispatch(getSpotDetailsFxn(spotId));
             const response = await dispatch(getReviewsFxn(spotId));
             const reviews = response.Reviews;
+            console.log('Fetched data:', spotDetail, reviews);
             setReviews(reviews);
         }
 
@@ -72,13 +74,17 @@ function SpotDetailPage () {
         alert('Feature Coming Soon')
     }
 
-
-    const avgRating = reviews.length > 0
-    ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length
-    : 0;
+    //if there are reviews =>
     // const avgRating = reviews.length > 0
-    // ? (reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length).toFixed(2)
-    // : 'New';
+    // ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length
+    // : 0;
+    const sumOfStars = reviews.reduce((sum, review) => sum + review.stars, 0);
+    const totalReviews = reviews.length;
+    console.log('Sum of Stars:', sumOfStars);
+    console.log('Total Reviews:', totalReviews);
+
+    const avgRating = totalReviews > 0 ? sumOfStars / totalReviews : 0;
+    console.log('Average Rating:', avgRating);
 
     console.log('reviews', reviews)
     console.log('numReviews:', reviews.length, spotDetail.numReviews);

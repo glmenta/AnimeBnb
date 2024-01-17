@@ -57,21 +57,17 @@ export const addReviewFxn = (spotId, review) => async (dispatch) => {
         });
 
         if (res.ok) {
-            // Assuming the response is in JSON format
             const newReview = await res.json();
-
             dispatch(addReviews(numericSpotId, newReview));
             dispatch(getReviewsFxn(numericSpotId));
 
             return newReview.id;
         } else {
-            // Handle non-OK responses
             throw res;
         }
     } catch (error) {
-        // Handle errors, including non-JSON responses
         console.error('Error adding review:', error);
-        throw error; // Rethrow the error for the calling function to handle
+        throw error;
     }
 };
 
@@ -119,11 +115,6 @@ const reviewReducer = (state = initialState, action) => {
             const updatedReviews = [...existingReviews, newReview];
             console.log('Updated Reviews:', updatedReviews);
             console.log('Updated numReviews:', updatedReviews.length);
-            // const updatedSpotDetail = {
-            //     ...newState.spotDetails[spotId],
-            //     numReviews: updatedReviews.length,
-            // };
-            //console.log('Updated Spot Detail:', updatedSpotDetail);
                 return {
                 ...newState,
                 reviews: {
