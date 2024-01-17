@@ -112,11 +112,30 @@
     margin-bottom: 16px;
   }
 
-  #spot-description {
+  .description-container {
+    display: flex;
+    width: 500px;
+    height: 200px;
+    /* background-color: ; */
+    border: solid 3px black;
+    border-radius: 10px;
+  }
+
+  .description-container:hover {
+    box-shadow: 2px 2px 2px black;
+  }
+
+  .spot-description {
     font-size: 16px;
     font-weight: 400;
     line-height: 20px;
-    margin-bottom: 32px;
+    /* margin-bottom: 32px; */
+    white-space: normal;
+    padding: 10px;
+    max-width: 500px;
+    overflow: hidden;
+    word-wrap: break-word;
+
   }
 
   .rating-container {

@@ -85,6 +85,7 @@ function UpdateSpotPage() {
       // setImage5("")
       setHasSubmitted(true)
       setErrors([])
+      console.log('this is spot', spot.id)
       history.push(`/spots/${spot.id}`)
       // history.go(0)
       return
@@ -128,7 +129,7 @@ function UpdateSpotPage() {
             )} */}
           </label>
 
-       {/* {hasSubmitted && errors.country.length > 0 && (
+      {/* {hasSubmitted && errors.country.length > 0 && (
               <ul>
                 {Object.values(errors.country).map((error, index) => (
                 <li key={index}>{error}</li>

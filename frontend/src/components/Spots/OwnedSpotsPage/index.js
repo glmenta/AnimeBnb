@@ -10,7 +10,6 @@ function OwnedSpotsPage() {
 const history = useHistory();
 const dispatch = useDispatch();
 const user = useSelector(state => state.session.user);
-//this useSelector filters ownedSpots but has
 const unfilteredSpots = useSelector((state) => Object.values(state.spot.spots));
 const ownedSpots = unfilteredSpots.filter(spot => spot.ownerId === user.id)
 const [deleteSpotModal, setDeleteSpotModal] = useState(false)
@@ -31,7 +30,8 @@ const handleDelete = (id) => {
 }
 const handleModalDelete = () => {
     dispatch(deleteSpotFxn(spotToDelete))
-    // setDeleteSpotModal(false)
+    setDeleteSpotModal(false)
+    dispatch(getSpotsFxn())
 }
 
 const handleSpotClick = (spotId) => {
@@ -39,7 +39,7 @@ const handleSpotClick = (spotId) => {
 };
 
 return (
-   <div className ='manage-spots-container'>
+    <div className ='manage-spots-container'>
 
         <div className= 'manage-spots-header'>
             <h1 className='manage-spots-title'>Manage Your Spots</h1>
@@ -49,17 +49,19 @@ return (
             </div>
             {/* )} */}
         </div>
-        <DeleteSpotModal
+        {deleteSpotModal && (
+            <DeleteSpotModal
             isOpen={deleteSpotModal}
             onClose={closeDeleteSpotModal}
             onDelete={handleModalDelete}
             />
+        )}
         <div className='owned-spots-list'>
         {ownedSpots.map(spot => {
-         const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
-         ? Number(spot.avgRating).toFixed(1)
-         : 'New';
-         return (
+        const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
+        ? Number(spot.avgRating).toFixed(1)
+        : 'New';
+        return (
         <div className='manage-spots-list' key={spot.id} >
             <div className='owned-spot'>
                 <div className='preview-img' onClick={() => handleSpotClick(spot.id)}>
@@ -94,9 +96,9 @@ return (
             </div>
             </div>
         </div>
-         )
-         })}
-         </div>
+        )
+        })}
+        </div>
     </div>
     )
 }

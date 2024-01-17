@@ -83,7 +83,7 @@ export const createSpotFxn = (spot, images) => async (dispatch) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(spot)
-     })
+    })
 
     if(response.ok) {
         const newSpot = await response.json()
@@ -126,7 +126,7 @@ export const getSpotIdFxn = (id) => async (dispatch) => {
 }
 
 export const updateSpotFxn = (updatedSpot, spotId) => async dispatch => {
-
+  console.log('this is updatedSpot', updatedSpot, spotId)
   const response = await csrfFetch(`/api/spots/${spotId}/edit`, {
     method: 'PUT',
     headers: {
@@ -170,22 +170,41 @@ const spotReducer = (state = initialState, action) => {
         newState.spotDetails = action.spotDetails;
         return newState;
     case UPDATE_SPOT:
-      const spotId = action.spot.id;
-      const spotToUpdate = newState.spots[spotId];
-
-      if (spotToUpdate) {
-        newState[spotId] = action.spot
-      } else {
-        return newState;
+      const updatedSpotId = action.spot.id;
+      if (newState[updatedSpotId]) {
+        newState[updatedSpotId] = action.spot;
       }
-      case DELETE_SPOT:
-        // delete newState.spots[action.spotId];
-        // return newState;
-        const newSpots = newState.spots.filter(spot => spot.id !== action.spotId);
-        return {
-            ...newState,
-            spots: newSpots
-        }
+
+      return newState;
+      // const spotId = action.spot.id;
+      // const spotToUpdate = newState.spots[spotId];
+
+      // if (spotToUpdate) {
+      //   newState[spotId] = action.spot
+      // } else {
+      //   return newState;
+      // }
+
+    case DELETE_SPOT:
+      const deletedSpotId = action.spotId;
+
+      // Filter out the deleted spot from the state
+      const newSpots = Object.keys(newState.spots)
+        .filter(spotId => spotId !== deletedSpotId)
+        .reduce((result, spotId) => {
+          result[spotId] = newState.spots[spotId];
+          return result;
+        }, {});
+
+      return {
+        ...newState,
+        spots: newSpots,
+      };
+        // const newSpots = newState.spots.filter(spot => spot.id !== action.spotId);
+        // return {
+        //     ...newState,
+        //     spots: newSpots
+        // }
     default:
       return state
   }
