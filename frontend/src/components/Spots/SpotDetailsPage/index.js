@@ -186,8 +186,8 @@ function SpotDetailPage () {
                 reviews
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .map((review) => (
-                    <div key={review.id}>
-                        <p id='first-name'>{review.User.firstName}</p>
+                    <div key={review.id} className='user-review'>
+                        <p className='first-name'>{review.User.firstName}</p>
                         <p id='createdAt'>
                         {new Intl.DateTimeFormat('default', {
                             month: 'long',

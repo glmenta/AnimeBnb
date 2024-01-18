@@ -23,24 +23,13 @@
 
   .image-container {
     display: flex;
-
     flex-wrap: wrap;
-    /* width: 100%;
-    height: 100%; */
     width: 1120px;
     height: 350px;
     flex-direction: column;
     align-items:flex-start;
     margin-bottom: 50px;
   }
-/*
-  .image-grid {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    border: solid 5px black;
-    flex-basis: 100%;
-  } */
 
   .main-spot-img {
     width: 50%;
@@ -49,9 +38,14 @@
     flex-wrap: wrap;
     flex-direction: column;
     object-fit: cover;
-
+    margin-right: 5px;
   }
 
+  .main-spot-img:hover,
+  .spot-img-filter img:hover
+  {
+    transform: scale(1.1)
+  }
   .images-box {
     display: flex;
 
@@ -80,10 +74,11 @@
     /* height: 350px; */
     /* height: calc(50% - 16px); */
     height: 100%;
-    /* margin-bottom: 16px; */
-
+    /* margin-bottom: 5px; */
     box-sizing: border-box;
   }
+
+
 /*
   @media screen and (min-width: 768px) {
     .spot-img-filter img {
@@ -115,14 +110,8 @@
   .description-container {
     display: flex;
     width: 500px;
-    height: 200px;
+    height: 100px;
     /* background-color: ; */
-    border: solid 3px black;
-    border-radius: 10px;
-  }
-
-  .description-container:hover {
-    box-shadow: 2px 2px 2px black;
   }
 
   .spot-description {
@@ -239,3 +228,29 @@
   .num-reviews {
     margin-top: 4px;
   }
+
+  .review-map {
+    border: solid 2px black;
+    border-radius: 10px;
+    box-shadow: 2px 2px 0px 0px #000000;
+    margin-top: 20px;
+    width: auto;
+  }
+  .user-review {
+    margin: 10px;
+  }
+
+  .first-name {
+    font-weight: bolder;
+    margin-bottom: 3px;
+  }
+
+    #createdAt {
+      color: gray;
+      margin-top: 2px;
+    }
+
+    #review-description {
+      margin-top: 2px;
+      color: black;
+    }

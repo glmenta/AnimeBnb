@@ -24,6 +24,9 @@
 
 .owned-spot {
   margin-right: 20px;
+  border: solid 2px black;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 .new-spot-link {
   display: flex;
@@ -36,9 +39,17 @@
   margin-left: 10px;
   margin-right: 10px;
 }
+
+.owned-spot-name {
+  font-weight: bolder;
+  font-size: 24px;
+  margin-left: 10px;
+  margin-bottom: 0px;
+}
 .owned-spot-info-location-reviews {
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
 }
 .new-spot-button
 {
@@ -55,15 +66,17 @@
     font-weight: 800;
     line-height: 20px;
     color: #fff;
-    background-color: darkgray;
+    background-color:rgb(255, 145, 0);
     border: solid 3px black;
     box-shadow: 4px 4px 0px 0px #000000;
     margin-bottom: 70px;
+    cursor: pointer;
 }
 
 .owned-spot-buttons {
   display: flex;
   justify-content: flex-start;
+  cursor: pointer;
 }
 
 .update-button {
@@ -96,9 +109,10 @@
   color: #fff;
   margin-left: 5px;
   margin-bottom: 10px;
-  background-color: darkgray;
+  background-color: rgb(255, 145, 0);
   border: solid 3px black;
   box-shadow: 4px 4px 0px 0px #000000;
+  cursor: pointer;
 }
 .delete-button-modal {
   margin-left: 20px;
@@ -124,12 +138,17 @@
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     overflow: hidden;
+    cursor: pointer;
   }
 
 
  .owned-spot-img {
     height: 400px;
     overflow: hidden;
+  }
+
+  .stars {
+    margin-left: 0px;
   }
  /*
   .spot-img {

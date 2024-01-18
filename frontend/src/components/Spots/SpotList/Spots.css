@@ -3,7 +3,7 @@
     grid-template-columns: repeat(4, minmax(300px, 1fr));
     grid-gap: 20px;
     padding-top: 100px;
-    max-width: 1200px;
+    max-width: 1500px;
     min-height: 100%;
     margin: 0 auto;
   }
@@ -11,12 +11,18 @@
 
   .spot {
     display: flex;
+    position: relative;
     flex-direction: column;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     overflow: hidden;
+    border: solid 2px black;
+    cursor: pointer;
   }
 
+  .spot:hover {
+    box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.2);
+  }
   .previewImg {
     height: 400px;
     overflow: hidden;
@@ -45,6 +51,7 @@
   }
 
   .spot-name {
+    margin-top: 5px;
     font-weight: 500;
     font-size: 24px;
     margin-bottom: 10px;
@@ -53,6 +60,7 @@
   .price {
     font-weight: 500;
     font-size: 20px;
+    margin-bottom: 5px;
   }
 
   .spot-price {
@@ -60,28 +68,27 @@
     font-weight: 600;
     font-size: 24px;
   }
+  .spotCard:hover .tooltip-text {
+    opacity: 1;
+  }
 
   .tooltip {
-    position: relative;
-    display: inline-block;
-  }
-
-  .tooltip .tooltip-text {
     visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    /* border-radius: 6px; */
-    padding: 5px 0;
-
-    /* Position the tooltip */
-    position: absolute;
-    left: 50%;
+    opacity: 0;
+    z-index: 999;
     bottom: 100%;
-    z-index: 9999;
-  }
-
-  .tooltip:hover .tooltip-text {
+    left: 50%;
+    position: relative;
+    text-align: center;
+    transform: translateX(-50%);
+    padding: 0.3rem 0.5rem;
+    background-color: #393939;
+    color: white;
+    font-size: 1.0rem;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid black;
+}
+  .spot:hover .tooltip {
     visibility: visible;
+    opacity: 1;
   }

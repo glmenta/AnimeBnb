@@ -79,6 +79,7 @@
 #user-dropdown {
   background-color: whitesmoke;
   border: solid 1px black;
+  border-radius: 10px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -86,6 +87,8 @@
   right: 50%;
   padding: 5px;
   height: auto;
+  z-index: 9999;
+  /* transition: all 0.3s ease-in-out; */
 }
 
 #user-dropdown li {
@@ -102,6 +105,10 @@
   border: solid 0.5px black;
   border-radius: 5px;
   padding: 5px;
+}
+
+.manage-spots a{
+  background-color: rgb(255, 145, 0);
 }
 /* .signup-button li{
   display: flex;

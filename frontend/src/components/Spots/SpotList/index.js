@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { getSpotsFxn } from '../../../store/spots';
@@ -18,7 +18,6 @@ function Spots() {
     return null;
   }
 
-  //redirects user to spot detail page
   const handleSpotClick = (spotId) => {
     history.push(`/spots/${spotId}`);
   };
@@ -29,9 +28,12 @@ function Spots() {
         const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
           ? Number(spot.avgRating).toFixed(1)
           : 'New';
+
           return (
-            <div className='spotCard tooltip' key={spot.id} onClick={() => handleSpotClick(spot.id)}>
-              <div className='tooltip-spot' title={spot.name}></div>
+            <div className='spotCard'
+              key={spot.id}
+              onClick={() => handleSpotClick(spot.id)}
+              >
               <div className='spot'>
                 <div className='previewImg'>
                   <img className='spot-img' src={spot.previewImage || null} alt={`${spot.name}`}
@@ -44,13 +46,11 @@ function Spots() {
                   <p className='location'>
                     {`${spot.city}, ${spot.state}`}<span className='stars'>★{avgRating || 'New'}</span>
                   </p>
-                  <p className='spot-name' title={spot.name}>
-                    <span className='tooltip-text'>{spot.name}</span>
-                  </p>
                   <p className='price'>
                     <span className='spot-price'>${spot.price}</span> night
                   </p>
                 </div>
+                <span className='tooltip'>{spot.name}</span>
               </div>
             </div>
           );
