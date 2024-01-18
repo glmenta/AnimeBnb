@@ -52,7 +52,7 @@
   }
 
   .create-spot-button a {
-    color: lightseagreen;
+    color: rgb(255, 145, 0);
     text-decoration: none;
     font-weight: bold;
   }

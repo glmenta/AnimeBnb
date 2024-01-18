@@ -67,6 +67,9 @@ return (
                 </div>
                 <div className='owned-spot-info'>
                     <div className='owned-spot-info-location-reviews'>
+                        <p className='owned-spot-name'>
+                            {spot.name}
+                        </p>
                         <p className='owned-spot-location'>
                             {`${spot.city}, ${spot.state}`}
                         </p>
