@@ -3,6 +3,10 @@
 ### Live Link below:
 - https://airbnb-project-92yx.onrender.com
 
+<div>
+   <img src="https://github.com/glmenta/AnimeBnb/assets/111015201/2152ca46-2aba-4cce-8d56-7536bb797d0e" width="400" height="400"
+</div>
+
 ### What is AnimeBnb?
 AnimeBnb is a dynamic application that emulates the core functionalities of AirBnb; Users are able to utilize user-created spots stored in the database to create/update/delete custom anime-inspired spots that they can share with other users to review!
 
