@@ -42,15 +42,13 @@ This project was my first big milestone as a software developer; I wanted to cre
    2. Navigate to the root directory of the app and install dependencies:
    ```bash
    cd Animebnb
-   pip install -r requirements.txt
+   npm install
    ```
-   3. Activate the virtual environment and start the backend server
+   3. Navigate to the backend folder to start the backend server
    ```bash
-   pipenv shell
-   flask run
+   npm start
    ```
-   5. Open another terminal and navigate to the react app to start the frontend app
+   4. Open another terminal and navigate to the frontend folder to start the frontend app
    ```bash
-   cd react-app
    npm start
    ```
