@@ -10,6 +10,7 @@ import SpotDetailPage from "./components/Spots/SpotDetailsPage";
 import CreateNewSpot from "./components/Spots/CreateSpotPage";
 import UpdateSpotPage from "./components/Spots/UpdateSpotsPage";
 import OwnedSpotsPage from "./components/Spots/OwnedSpotsPage";
+import UserBookingsPage from "./components/Bookings/UserBookingsPage";
 import ReviewModal from "./components/Reviews/ReviewModal";
 import Footer from "./components/footer";
 
@@ -51,6 +52,9 @@ function App() {
           </Route>
           <Route path='/spots/:spotId/reviews'>
             <ReviewModal spotId={spotId} setSpotId={setSpotId}/>
+          </Route>
+          <Route path='/users/:userId/bookings'>
+            <UserBookingsPage/>
           </Route>
         </Switch>
       )}
