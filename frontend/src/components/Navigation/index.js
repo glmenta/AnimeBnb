@@ -55,8 +55,10 @@ function Navigation({ isLoaded }){
 
           <div className='create-spot-div'>
           {sessionUser && (
-              <div className='create-spot-button'>
-                <NavLink to={`/spots/new`} className="create-spot-link">Create a New Spot</NavLink>
+              <div>
+                <div className='create-spot-button'>
+                  <NavLink to={`/spots/new`} className="create-spot-link">Create a New Spot</NavLink>
+                </div>
               </div>
             )}
             </div>

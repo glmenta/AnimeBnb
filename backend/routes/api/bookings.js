@@ -6,7 +6,7 @@ const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize')
 const router = express.Router();
 
-//get all current bookings
+//get all current user bookings
 router.get('/current', restoreUser, requireAuth, async(req,res) => {
     const userId = req.user.id
     const currentBookings = await Booking.findAll({ where:{ userId },
@@ -74,9 +74,36 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
             "statusCode": 404
         })
 })
+//get details of a booking
+router.get('/:bookingId', requireAuth, async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const booking = await Booking.findByPk(bookingId, {
+            include: [{
+                model: Spot.scope('spotInfo'),
+                attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price'],
+                include: [{
+                    model: SpotImage,
+                    attributes: ['url'],
+                    where: { preview: true },
+                    required: false
+                }]
+            }]
+        });
+
+        if (booking) {
+            return res.status(200).json({ booking });
+        } else {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+    } catch (error) {
+        console.error("Error fetching booking:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 //edit booking
-router.put('/:bookingId', requireAuth, async (req,res) => {
+router.put('/:bookingId/edit', requireAuth, async (req,res) => {
     const bookingId = req.params.bookingId
     const { startDate, endDate } = req.body
     const booking = await Booking.findByPk(bookingId)
@@ -159,7 +186,7 @@ router.delete('/:bookingId', requireAuth, async (req,res) => {
         res.status(404).json({
             "message": "Booking couldn't be found",
             "statusCode": 404
-          })
+        })
     }
 
     const checkDate = new Date();
@@ -184,7 +211,7 @@ router.delete('/:bookingId', requireAuth, async (req,res) => {
     res.status(200).json({
         "message": "Successfully deleted",
         "statusCode": 200
-      })
+    })
 })
 
 
