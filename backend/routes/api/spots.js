@@ -316,10 +316,8 @@ router.get('/:spotId', async (req,res) => {
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
     })
 
-    console.log('spot from backend', spot)
     if (spot) {
             spot = spot.toJSON()
-            console.log('this is spot from backend', parseFloat(spot.avgRating))
             spot.lat = parseFloat(spot.lat)
             spot.lng = parseFloat(spot.lng)
             spot.price = parseFloat(spot.price)
@@ -327,31 +325,8 @@ router.get('/:spotId', async (req,res) => {
         }
     return res.status(200).json(spot)
 })
-// router.get('/:spotId', async (req, res) => {
-//     const id = req.params.spotId;
-//     const checkIfExists = await Spot.findByPk(id);
-//     if (!checkIfExists) {
-//         res.status(404).json({
-//             "message": "Spot couldn't be found",
-//             "statusCode": 404
-//         });
-//     }
-//     let spot = await Spot.findOne({
-//         where: { id },
-//         include: [{ model: SpotImage }],
-//         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']
-//     });
-//     if (spot) {
-//         spot = spot.toJSON();
-//         spot.lat = parseFloat(spot.lat);
-//         spot.lng = parseFloat(spot.lng);
-//         spot.price = parseFloat(spot.price);
-//         spot.avgRating = parseFloat(spot.avgRating);
-//     }
-//     return res.status(200).json(spot);
-// });
+
 //create a spot
-//need to change this to /:spotId/new
 router.post('/new', restoreUser, requireAuth, validateSpots, async (req,res) => {
     const ownerId = req.user.id
     const { address, city, state, country, lat, lng, name, description, price } = req.body
@@ -443,7 +418,7 @@ router.get('/:spotId/reviews', async(req,res) => {
         return res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
-          })
+        })
     } else {
         const reviews = await Review.findAll({ where: { spotId: id },
             attributes: ['id', 'userId', 'spotId', 'review', 'stars', 'createdAt', 'updatedAt'],

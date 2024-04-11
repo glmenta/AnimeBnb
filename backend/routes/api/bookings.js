@@ -81,7 +81,11 @@ router.get('/:bookingId', requireAuth, async (req, res) => {
         const booking = await Booking.findByPk(bookingId, {
             include: [{
                 model: Spot.scope('spotInfo'),
-                attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price'],
+                attributes: [
+                    'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng',
+                    'name', 'description', 'price',
+                    [Sequelize.literal('(SELECT AVG(stars) FROM "Reviews" WHERE "Reviews"."spotId" = "Spot"."id")'), 'avgRating']
+                ],
                 include: [{
                     model: SpotImage,
                     attributes: ['url'],

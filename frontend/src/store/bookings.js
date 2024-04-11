@@ -62,9 +62,11 @@ export const getUserBookingsThunk = () => async dispatch => {
 }
 
 export const getBookingByIdThunk = (bookingId) => async dispatch => {
+    console.log('this is bookingId', bookingId)
     const response = await csrfFetch(`/api/bookings/${bookingId}`)
     if (response.ok) {
         const booking = await response.json()
+        console.log('this is booking', booking)
         dispatch(getBookingById(booking))
         return booking
     } else {
@@ -73,6 +75,21 @@ export const getBookingByIdThunk = (bookingId) => async dispatch => {
     }
 }
 
+export const updateBookingThunk = (booking) => async dispatch => {
+    const response = await csrfFetch(`/api/bookings/${booking.id}/edit`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(booking)
+    })
+    if (response.ok) {
+        const updatedBooking = await response.json()
+        dispatch(updateBooking(updatedBooking))
+        return updatedBooking
+    } else {
+        const error = await response.json()
+        return error
+    }
+}
 const initialState ={
     currentUserBookings: [],
     bookingDetails: {}
@@ -85,6 +102,9 @@ const bookingReducer = (state = initialState, action) => {
             newState.currentUserBookings = action.bookings
             return newState
         case GET_BOOKING_BY_ID:
+            newState.bookingDetails = action.bookingId
+            return newState
+        case UPDATE_BOOKING:
             newState.bookingDetails = action.booking
             return newState
         default:
