@@ -77,7 +77,7 @@ function SpotDetailPage () {
     // Function to check if the user already has a booking for the spot
     const hasBookingForSpot = () => {
         console.log('userBookings: ', userBookings);
-        return userBookings.some(booking => booking.spotId === parseInt(spotId, 10));
+        return Array.isArray(userBookings) && userBookings.some(booking => booking.spotId === parseInt(spotId, 10));
     }
     //This is for the reserve button
     // Function to handle reserve button click
