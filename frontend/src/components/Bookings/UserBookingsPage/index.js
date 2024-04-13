@@ -4,6 +4,7 @@ import { NavLink,useHistory } from 'react-router-dom';
 import * as bookingActions from '../../../store/bookings';
 import BookingDetailModal from '../BookingDetailModal';
 import UpdateBookingModal from '../UpdateUserBookingModal';
+import DeleteBookingModal from '../DeleteBookingModal';
 
 function UserBookingsPage() {
     const dispatch = useDispatch();
@@ -12,6 +13,8 @@ function UserBookingsPage() {
     const [selectedBooking, setSelectedBooking] = useState([]);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteErrorMessage, setDeleteErrorMessage] = useState('');
 
     const userBookings = useSelector(state => state.booking.currentUserBookings.Bookings);
     console.log('user: ', userBookings)
@@ -44,6 +47,25 @@ function UserBookingsPage() {
         }
     };
 
+    const handleDeleteBooking = async (bookingId, bookingDate) => {
+        try {
+            if (isToday(bookingDate)) {
+                setDeleteErrorMessage('You cannot delete a booking for today.');
+            } else {
+                const bookingDetails = await dispatch(bookingActions.getBookingByIdThunk(bookingId));
+                setSelectedBooking(bookingDetails);
+                setShowDeleteModal(true);
+            }
+        } catch (error) {
+            console.error("Error fetching booking:", error);
+        }
+    }
+
+    const isToday = (dateString) => {
+        const today = new Date().toLocaleDateString();
+        return today === dateString;
+    }
+
     return (
         <div>
             <h1>Bookings</h1>
@@ -57,7 +79,7 @@ function UserBookingsPage() {
                         <p>End: {booking.endDate}</p>
                         <button onClick={() => handleBookingClick(booking)}>View Details</button>
                         <button onClick={() => handleUpdateBooking(booking.id)}>Edit Booking</button>
-                        <button onClick={() => history.push(`/bookings/${booking.id}/delete`)}>Delete Booking</button>
+                        <button onClick={() => handleDeleteBooking(booking.id)}>Delete Booking</button>
                     </div>
                 ))
             ) : (
@@ -68,8 +90,10 @@ function UserBookingsPage() {
             )}
         </div>
             <div>
+                {deleteErrorMessage && <p>{deleteErrorMessage}</p>}
                 {showDetailModal && <BookingDetailModal selectedBooking={selectedBooking} isOpen={showDetailModal} onClose={() => setShowDetailModal(false)}/>}
                 {showUpdateModal && <UpdateBookingModal selectedBooking={selectedBooking} isOpen={showUpdateModal} onClose={() => setShowUpdateModal(false)}/>}
+                {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal booking={selectedBooking} isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}/>}
             </div>
         </div>
     )

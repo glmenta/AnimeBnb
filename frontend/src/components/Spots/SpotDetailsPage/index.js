@@ -6,16 +6,19 @@ import { getReviewsFxn } from '../../../store/reviews';
 import placeholderImg from '../../../../src/images/placeholder.jpg';
 import ReviewModal from '../../Reviews/ReviewModal';
 import DeleteReviewModal from '../../Reviews/DeleteReviewModal';
+import CreateBookingsModal from '../../Bookings/CreateBookingsModal';
 import './updatedSpotDetail.css';
 
 function SpotDetailPage () {
     const { spotId } = useParams();
+    const history = useHistory();
     const spotDetail = useSelector(state => state.spot.spotDetails)
     const user = useSelector(state => state.session.user);
     const dispatch = useDispatch();
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
     const [deleteReviewModalOpen, setDeleteReviewModalOpen] = useState(false);
+    const [showCreateBookingModal, setShowCreateBookingModal] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -65,7 +68,10 @@ function SpotDetailPage () {
 
     //This is for the reserve button
     function handleClick () {
-        alert('Feature Coming Soon')
+        if (!user) {
+            history.push('/login');
+        }
+        setShowCreateBookingModal(true);
     }
 
     const sumOfStars = reviews.reduce((sum, review) => sum + Number(review.stars), 0);
@@ -225,6 +231,11 @@ function SpotDetailPage () {
                 </div>
 
             </div>
+        </div>
+        <div>
+            {user && user?.id !== spotDetail?.ownerId && showCreateBookingModal && (
+                <CreateBookingsModal spotId={spotId}/>
+            )}
         </div>
     </div>
     )
