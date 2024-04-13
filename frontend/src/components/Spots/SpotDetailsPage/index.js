@@ -7,6 +7,7 @@ import placeholderImg from '../../../../src/images/placeholder.jpg';
 import ReviewModal from '../../Reviews/ReviewModal';
 import DeleteReviewModal from '../../Reviews/DeleteReviewModal';
 import CreateBookingsModal from '../../Bookings/CreateBookingsModal';
+import * as bookingActions from '../../../store/bookings';
 import './updatedSpotDetail.css';
 
 function SpotDetailPage () {
@@ -14,6 +15,8 @@ function SpotDetailPage () {
     const history = useHistory();
     const spotDetail = useSelector(state => state.spot.spotDetails)
     const user = useSelector(state => state.session.user);
+    const userBookings = useSelector(state => state.booking.currentUserBookings.Bookings);
+    console.log('userBookings: ', userBookings);
     const dispatch = useDispatch();
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -30,6 +33,12 @@ function SpotDetailPage () {
 
         fetchData();
     }, [dispatch, spotId]);
+
+    useEffect(() => {
+        if (user) {
+            dispatch(bookingActions.getUserBookingsThunk(user.id));
+        }
+    }, [dispatch, user]);
 
     if(!spotDetail) {
         return <div>Loading...</div>
@@ -65,14 +74,26 @@ function SpotDetailPage () {
             });
     };
 
-
+    // Function to check if the user already has a booking for the spot
+    const hasBookingForSpot = () => {
+        console.log('userBookings: ', userBookings);
+        return userBookings.some(booking => booking.spotId === parseInt(spotId, 10));
+    }
     //This is for the reserve button
-    function handleClick () {
+    // Function to handle reserve button click
+    const handleClick = () => {
         if (!user) {
             history.push('/login');
+        } else {
+            if (hasBookingForSpot()) {
+                // If the user already has a booking for the spot, show a message and navigate to the bookings page
+                alert('You already have a booking for this spot.');
+            } else {
+                // If the user doesn't have a booking for the spot, show the create booking modal
+                setShowCreateBookingModal(true);
+            }
         }
-        setShowCreateBookingModal(true);
-    }
+    };
 
     const sumOfStars = reviews.reduce((sum, review) => sum + Number(review.stars), 0);
     const totalReviews = reviews.length;
