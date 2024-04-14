@@ -84,7 +84,7 @@ router.get('/:bookingId', restoreUser, requireAuth, async (req, res) => {
                 attributes: [
                     'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng',
                     'name', 'description', 'price',
-                    [Sequelize.literal('(SELECT AVG(stars) FROM "Reviews" WHERE "Reviews"."spotId" = "Spot"."id")'), 'avgRating']
+                    [Sequelize.literal('(SELECT AVG(stars) FROM "Review" WHERE "Review"."spotId" = "Spot"."id")'), 'avgRating']
                 ],
                 include: [{
                     model: SpotImage,
