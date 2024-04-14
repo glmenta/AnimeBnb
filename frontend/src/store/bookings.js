@@ -63,7 +63,10 @@ export const getUserBookingsThunk = () => async dispatch => {
 
 export const getBookingByIdThunk = (bookingId) => async dispatch => {
     console.log('this is bookingId', bookingId)
-    const response = await csrfFetch(`/api/bookings/${bookingId}`)
+    const response = await csrfFetch(`/api/bookings/${bookingId}`, {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'},
+    })
     if (response.ok) {
         const booking = await response.json()
         console.log('this is booking', booking)

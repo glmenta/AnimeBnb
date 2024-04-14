@@ -75,7 +75,7 @@ router.get('/current', restoreUser, requireAuth, async(req,res) => {
         })
 })
 //get details of a booking
-router.get('/:bookingId', requireAuth, async (req, res) => {
+router.get('/:bookingId', restoreUser, requireAuth, async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
         const booking = await Booking.findByPk(bookingId, {
@@ -94,7 +94,8 @@ router.get('/:bookingId', requireAuth, async (req, res) => {
                 }]
             }]
         });
-
+        console.log('this is booking', booking)
+        console.log('this is booking id', bookingId)
         if (booking) {
             return res.status(200).json({ booking });
         } else {
