@@ -17,7 +17,7 @@ function DeleteBookingModal({ booking, isOpen, onClose }) {
     };
 
     return (
-        isOpen &&
+        // isOpen &&
         <div className='delete-booking-modal'>
             <div className='delete-booking-modal-container'>
                 <p className='delete-booking-prompt'>Are you sure you want to delete this booking?</p>
