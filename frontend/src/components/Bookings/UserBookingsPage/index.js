@@ -61,7 +61,7 @@ function UserBookingsPage() {
 
     const refreshBookings = () => {
         if (user) {
-            dispatch(bookingActions.getUserBookingsThunk(user.id))
+            dispatch(bookingActions.getUserBookingsThunk())
                 .catch(error => console.error('Failed to refresh bookings:', error));
         }
     };
