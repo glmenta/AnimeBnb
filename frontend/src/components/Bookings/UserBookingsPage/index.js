@@ -21,7 +21,7 @@ function UserBookingsPage() {
 
     useEffect(() => {
         if (user) {
-            dispatch(bookingActions.getUserBookingsThunk(user.id));
+            dispatch(bookingActions.getUserBookingsThunk());
         }
     }, [dispatch, user]);
 
@@ -46,12 +46,12 @@ function UserBookingsPage() {
     };
 
     const handleCloseUpdateModal = () => {
-        dispatch(bookingActions.getUserBookingsThunk(user.id));
+        dispatch(bookingActions.getUserBookingsThunk());
         setShowUpdateModal(false);
     };
 
     const handleCloseDeleteModal = () => {
-        dispatch(bookingActions.getUserBookingsThunk(user.id))
+        dispatch(bookingActions.getUserBookingsThunk())
             .then(() => {
                 setShowDeleteModal(false);
                 setDeleteErrorMessage('');
