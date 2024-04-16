@@ -51,9 +51,14 @@ function UserBookingsPage() {
     };
 
     const handleCloseDeleteModal = () => {
-        dispatch(bookingActions.getUserBookingsThunk(user.id));
-        setShowDeleteModal(false);
+        dispatch(bookingActions.getUserBookingsThunk(user.id))
+            .then(() => {
+                setShowDeleteModal(false);
+                setDeleteErrorMessage('');
+            })
+            .catch(error => console.error('Failed to refresh bookings:', error));
     };
+
 
     const handleDeleteBooking = async (bookingId, bookingStartDate, bookingEndDate) => {
         try {

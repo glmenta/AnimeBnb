@@ -28,13 +28,13 @@ This project was my first big milestone as a software developer; I wanted to cre
 | React           | User Interface                    |
 | Redux           | Managing application state        |
 | PostgreSQL      | Relational Database Management    |
-| SQLAlchemy      | ORM                               |
+| Sequelize       | ORM                               |
 | Git             | Version Control System            |
 | Render          | Deployment                        |
 
 ### Getting Started
    In order to run this app locally, there are a couple of steps to take:
-   
+
    1. Clone the app repository on your local machine:
    ```bash
    git@github.com:glmenta/AnimeBnb.git

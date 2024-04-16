@@ -25,6 +25,7 @@ function Spots() {
   return spots && (
     <div className='spots-container'>
       {spots.map((spot) => {
+                  console.log('avgRating', spot.avgRating)
         const avgRating = spot.avgRating !== undefined && spot.avgRating !== null
           ? Number(spot.avgRating).toFixed(1)
           : 'New';
