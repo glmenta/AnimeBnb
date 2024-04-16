@@ -120,13 +120,11 @@ export const getSpotIdFxn = (id) => async (dispatch) => {
   const res = await fetch(`/api/spots/${id}`)
   if (res.ok) {
     const data = await res.json();
-    console.log('this is spotIdFxn', data);
     dispatch(getSpotId(data))
   }
 }
 
 export const updateSpotFxn = (updatedSpot, spotId) => async dispatch => {
-  console.log('this is updatedSpot', updatedSpot, spotId)
   const response = await csrfFetch(`/api/spots/${spotId}/edit`, {
     method: 'PUT',
     headers: {

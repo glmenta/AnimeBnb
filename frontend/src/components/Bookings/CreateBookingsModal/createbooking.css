@@ -1,0 +1,103 @@
+/* Overlay and modal container */
+.create-booking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black for modal background */
+    z-index: 1500; /* Ensures modal is on top */
+}
+
+.create-booking-modal-container {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 400px; /* Optimal width for form */
+    justify-content: center;
+}
+
+/* Modal title styling */
+.create-booking-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px; /* Space between title and form */
+}
+
+/* Form group styling */
+.form-group {
+    margin-bottom: 20px; /* Space between form groups */
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 5px; /* Space between label and input */
+}
+
+input[type='date'] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px; /* Ensures readability */
+}
+
+/* Error message styling */
+.error-message {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.create-booking-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+/* Submit button styling */
+.submit-button, .cancel-button {
+    width: 100%;
+    padding: 10px;
+    background-color: red; /* Green, indicating a go-ahead or positive action */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.end-date-input, .start-date-input {
+    max-width: 500px;
+}
+.submit-button {
+    margin-bottom: 20px;
+}
+.submit-button:hover, .cancel-button:hover {
+    background-color: darkred; /* Darker green on hover */
+}
+
+.create-booking-modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}

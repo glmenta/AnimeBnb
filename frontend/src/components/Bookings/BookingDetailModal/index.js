@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import * as bookingActions from '../../../store/bookings';
-
+import './bookingdetail.css'
 function BookingDetailModal({selectedBooking, isOpen, onClose}) {
-    const dispatch = useDispatch();
     const history = useHistory();
-    console.log('selectedBooking', selectedBooking)
     const booking = selectedBooking.booking
     const navigateToSpot = () => {
         history.push(`/spots/${booking.Spot.id}`);
@@ -15,15 +12,16 @@ function BookingDetailModal({selectedBooking, isOpen, onClose}) {
     return (
         isOpen &&
         <div className='booking-detail-modal'>
-            <h3 onClick={navigateToSpot}>{booking.Spot.name}</h3>
-            <img className='booking-spot-img' src={booking.Spot.previewImage || null}/>
-            <p>{booking.Spot.avgRating}</p>
-            <p>{booking.Spot.address}</p>
-            <p>{booking.Spot.state}, {booking.Spot.city}</p>
-            <p>{booking.Spot.country}</p>
-            <p>Price: ${booking.Spot.price}</p>
-
-            <button onClick={onClose}>Close</button>
+            <div className='booking-detail-container'>
+                <h3 className='booking-spot-name' onClick={navigateToSpot}>{booking.Spot.name}</h3>
+                <h3 className='booking-descriptiopn'>{booking.Spot.description}</h3>
+                <img className='booking-spot-img' src={booking.Spot.SpotImages[0]?.url || null}/>
+                <p className='booking-address'>{booking.Spot.address}</p>
+                <p className='booking-location'>{booking.Spot.state}, {booking.Spot.city}</p>
+                <p className='booking-country'>{booking.Spot.country}</p>
+                <p className='booking-price'>Price: ${booking.Spot.price} per night</p>
+                <button className='close-booking-button' onClick={onClose}>Close</button>
+            </div>
         </div>
     )
 }

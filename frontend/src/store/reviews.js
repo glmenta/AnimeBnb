@@ -113,8 +113,6 @@ const reviewReducer = (state = initialState, action) => {
             const { spotId, newReview } = action;
             const existingReviews = newState.reviews[spotId] || [];
             const updatedReviews = [...existingReviews, newReview];
-            console.log('Updated Reviews:', updatedReviews);
-            console.log('Updated numReviews:', updatedReviews.length);
                 return {
                 ...newState,
                 reviews: {

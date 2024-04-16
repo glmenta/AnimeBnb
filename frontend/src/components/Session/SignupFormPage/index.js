@@ -15,9 +15,6 @@ function SignupFormPage() {
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
-  console.log("password:", password);
-  console.log("confirmPassword:", confirmPassword);
-  console.log("passwordsMatch:", passwordsMatch);
 
   //validations
   const MIN_FIRSTNAME_LENGTH = 2;

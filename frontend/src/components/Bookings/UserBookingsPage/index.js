@@ -18,7 +18,7 @@ function UserBookingsPage() {
     const [deleteErrorMessage, setDeleteErrorMessage] = useState('');
 
     const userBookings = useSelector(state => state.booking.currentUserBookings.Bookings);
-    console.log('user: ', userBookings);
+
     useEffect(() => {
         if (user) {
             dispatch(bookingActions.getUserBookingsThunk(user.id));
@@ -28,7 +28,6 @@ function UserBookingsPage() {
     const handleBookingClick = async (booking) => {
         try {
             const bookingDetails = await dispatch(bookingActions.getBookingByIdThunk(booking.id));
-            console.log('bookingDetails: ', bookingDetails);
             setSelectedBooking(bookingDetails);
             setShowDetailModal(true);
         } catch (error) {
@@ -36,8 +35,7 @@ function UserBookingsPage() {
         }
     };
 
-    const handleUpdateBooking = async (bookingId, bookingStartDate, bookingEndDate) => {
-        console.log('bookingId in handleUpdateBooking: ', bookingId);
+    const handleUpdateBooking = async (bookingId) => {
         try {
             const bookingDetails = await dispatch(bookingActions.getBookingByIdThunk(bookingId));
             setSelectedBooking(bookingDetails);
@@ -75,13 +73,10 @@ function UserBookingsPage() {
 
     const isBookingLive = (startDate, endDate) => {
         const today = new Date();
-        console.log('isBookingLive startDate: ', startDate);
-        console.log('isBookingLive endDate: ', endDate);
         const bookingStartDate = new Date(startDate);
         const bookingEndDate = new Date(endDate);
 
         bookingEndDate.setDate(bookingEndDate.getDate() + 1);
-        // console.log('isBookingLive bookingEndDate: ', bookingEndDate, today);
         return today >= bookingStartDate && today <= bookingEndDate;
     };
 
@@ -89,7 +84,6 @@ function UserBookingsPage() {
         const today = new Date();
         const bookingEndDate = new Date(endDate);
         bookingEndDate.setDate(bookingEndDate.getDate() + 1);
-        console.log('isBookingOver bookingEndDate: ', bookingEndDate);
         return today > bookingEndDate;
     };
 
@@ -98,38 +92,41 @@ function UserBookingsPage() {
     }
 
     return (
-        <div>
-            <h1>Bookings</h1>
-            <div>
-                {userBookings && userBookings.length > 0 ? (
-                    userBookings.map((booking) => (
-                        <div key={booking.id} className='booking-card' >
-                            <div onClick={() => viewSpot(booking.Spot.id)}>
-                                <h3>{booking.Spot.name}</h3>
-                                {isBookingLive(booking.startDate, booking.endDate) && <p className='booking-live'>This booking is currently live!</p>}
-                                {isBookingOver(booking.endDate) && <p className='booking-over'>This booking is over.</p>}
-                                <img className='booking-spot-img' src={booking.Spot.previewImage || null} />
-                                <p className='booking-date'>{booking.startDate} to {booking.endDate}</p>
+        <div className='user-bookings-page'>
+            <div className='user-bookings-container'>
+                <h1 className='user-bookings-title'>Current Bookings</h1>
+                <div>
+                    {userBookings && userBookings.length > 0 ? (
+                        userBookings.map((booking) => (
+                            <div key={booking.id} className='booking-card' >
+                                <div className='booking-details' onClick={() => viewSpot(booking.Spot.id)}>
+                                    <h3>{booking.Spot.name}</h3>
+                                    {isBookingLive(booking.startDate, booking.endDate) && <p className='booking-live'>This booking is currently live!</p>}
+                                    {isBookingOver(booking.endDate) && <p className='booking-over'>This booking is over.</p>}
+                                    <img className='booking-spot-img' src={booking.Spot.previewImage || null} />
+                                    <p className='booking-date'>{booking.startDate} to {booking.endDate}</p>
+                                </div>
+
+                                <div className='booking-buttons'>
+                                <button onClick={() => handleBookingClick(booking)}>View Details</button>
+                                <button onClick={() => handleUpdateBooking(booking.id, booking.startDate, booking.endDate)} disabled={isBookingLive(booking.startDate, booking.endDate) || isBookingOver(booking.endDate)}>Edit Booking</button>
+                                <button onClick={() => handleDeleteBooking(booking.id, booking.startDate, booking.endDate)} disabled={isBookingLive(booking.startDate, booking.endDate) || isBookingOver(booking.endDate)}>Delete Booking</button>
+                                </div>
                             </div>
-
-                            <button onClick={() => handleBookingClick(booking)}>View Details</button>
-                            <button onClick={() => handleUpdateBooking(booking.id, booking.startDate, booking.endDate)} disabled={isBookingLive(booking.startDate, booking.endDate) || isBookingOver(booking.endDate)}>Edit Booking</button>
-                            <button onClick={() => handleDeleteBooking(booking.id, booking.startDate, booking.endDate)} disabled={isBookingLive(booking.startDate, booking.endDate) || isBookingOver(booking.endDate)}>Delete Booking</button>
-
+                        ))
+                    ) : (
+                        <div className='no-bookings-container'>
+                            <p>No Bookings Yet!</p>
+                            <NavLink to='/'>Explore Spots</NavLink>
                         </div>
-                    ))
-                ) : (
-                    <div>
-                        <p>No Bookings Yet!</p>
-                        <NavLink to='/'>Explore Spots</NavLink>
-                    </div>
-                )}
-            </div>
-            <div>
-                {deleteErrorMessage && <p>{deleteErrorMessage}</p>}
-                {showDetailModal && <BookingDetailModal selectedBooking={selectedBooking} isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} />}
-                {showUpdateModal && <UpdateBookingModal selectedBooking={selectedBooking} isOpen={showUpdateModal} onClose={() => handleCloseUpdateModal()} />}
-                {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal booking={selectedBooking} isOpen={showDeleteModal} onClose={() => handleCloseDeleteModal()} />}
+                    )}
+                </div>
+                <div className='user-bookings-modal-container'>
+                    {deleteErrorMessage && <p>{deleteErrorMessage}</p>}
+                    {showDetailModal && <BookingDetailModal selectedBooking={selectedBooking} isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} />}
+                    {showUpdateModal && <UpdateBookingModal selectedBooking={selectedBooking} isOpen={showUpdateModal} onClose={() => handleCloseUpdateModal()} />}
+                    {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal booking={selectedBooking} isOpen={showDeleteModal} onClose={() => handleCloseDeleteModal()} />}
+                </div>
             </div>
         </div>
     );

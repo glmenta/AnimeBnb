@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as bookingActions from '../../../store/bookings';
+import './updatebooking.css'
 
 function UpdateBookingModal({ selectedBooking, isOpen, onClose }) {
     const dispatch = useDispatch();
@@ -54,7 +55,6 @@ function UpdateBookingModal({ selectedBooking, isOpen, onClose }) {
             startDate,
             endDate
         };
-        console.log('this is payload', payload)
         const updatedBooking = await dispatch(bookingActions.updateBookingThunk(payload));
         if (updatedBooking) {
             onClose();
@@ -67,25 +67,29 @@ function UpdateBookingModal({ selectedBooking, isOpen, onClose }) {
     return (
         isOpen &&
         <div className='update-booking-modal'>
-            <h3>Update Your Booking</h3>
-            <form onSubmit={handleUpdateBooking}>
-                <label>Start Date</label>
-                <input
-                    type='date'
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                />
-                {errors.startDate && <p className='error-message'>{errors.startDate}</p>}
-                <label>End Date</label>
-                <input
-                    type='date'
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                />
-                {errors.endDate && <p className='error-message'>{errors.endDate}</p>}
-                <button type='submit' className='update-booking-button'>Update</button>
-            </form>
-            <button onClick={onClose}>Close</button>
+            <div className='update-booking-container'>
+                <h3 classname='update-booking-title'>Update Your Booking</h3>
+                <form onSubmit={handleUpdateBooking}>
+                    <label className='update-booking-label'>Start Date</label>
+                    <input
+                        type='date'
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    />
+                    {errors.startDate && <p className='error-message'>{errors.startDate}</p>}
+                    <label className='update-booking-label'>End Date</label>
+                    <input
+                        type='date'
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                    />
+                    {errors.endDate && <p className='error-message'>{errors.endDate}</p>}
+                    <div className='update-booking-buttons'>
+                        <button type='submit' className='update-booking-button'>Update</button>
+                        <button className='update-close-button' onClick={onClose}>Close</button>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }

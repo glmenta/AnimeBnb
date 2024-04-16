@@ -52,7 +52,6 @@ export const getUserBookingsThunk = () => async dispatch => {
     const response = await csrfFetch(`/api/bookings/current`)
     if (response.ok) {
         const bookings = await response.json()
-        console.log('bookings', bookings)
         dispatch(getBookings(bookings))
         return bookings
     } else {
@@ -62,14 +61,12 @@ export const getUserBookingsThunk = () => async dispatch => {
 }
 
 export const getBookingByIdThunk = (bookingId) => async dispatch => {
-    console.log('this is bookingId', bookingId)
     const response = await csrfFetch(`/api/bookings/${bookingId}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json'},
     })
     if (response.ok) {
         const booking = await response.json()
-        console.log('this is booking', booking)
         dispatch(getBookingById(booking))
         return booking
     } else {
@@ -95,7 +92,6 @@ export const updateBookingThunk = (booking) => async dispatch => {
 }
 
 export const createBookingThunk = (booking, spotId) => async dispatch => {
-    console.log('booking in createBookingThunk: ', booking)
     const response = await csrfFetch(`/api/spots/${spotId}/bookings`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
