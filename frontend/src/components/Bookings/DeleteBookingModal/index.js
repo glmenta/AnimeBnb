@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as bookingActions from '../../../store/bookings';
 import './deletebooking.css';
-function DeleteBookingModal({ booking, isOpen, onClose }) {
+function DeleteBookingModal({ userId, booking, isOpen, onClose }) {
     const dispatch = useDispatch();
     const bookingId = booking.booking.id;
 
@@ -10,7 +10,7 @@ function DeleteBookingModal({ booking, isOpen, onClose }) {
         try {
             await dispatch(bookingActions.deleteBookingThunk(bookingId));
             onClose();
-            await dispatch(bookingActions.getUserBookingsThunk(booking.userId));
+            await dispatch(bookingActions.getUserBookingsThunk(userId));
         } catch (error) {
             console.error("Error deleting booking:", error);
         }
