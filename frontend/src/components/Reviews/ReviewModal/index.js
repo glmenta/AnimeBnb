@@ -33,8 +33,6 @@ function ReviewModal({isOpen, onClose, spotId}) {
             review,
             stars
         };
-        console.log('this is reviewData', reviewData)
-        console.log('spotId', spotId)
         try {
             await dispatch(addReviewFxn(spotId, reviewData));
             await dispatch(getReviewsFxn(spotId));
@@ -60,11 +58,9 @@ function ReviewModal({isOpen, onClose, spotId}) {
 
     const reviewStars = () => {
         const starArr = [];
-        console.log('this is starArr', starArr)
         for (let i = 1; i <= 5; i++) {
             starArr.push(<i key={i} className={`fa${stars >= i ? 's' : 'r'} fa-star`} onClick={() => handleStarClick(i)} />)
     }
-        console.log('this is starArr after iteration', starArr)
         return starArr;
     }
 

@@ -94,8 +94,6 @@ router.get('/:bookingId', restoreUser, requireAuth, async (req, res) => {
                 }]
             }]
         });
-        console.log('this is booking', booking)
-        console.log('this is booking id', bookingId)
         if (booking) {
             return res.status(200).json({ booking });
         } else {

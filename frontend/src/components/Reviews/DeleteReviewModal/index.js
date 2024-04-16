@@ -10,7 +10,6 @@ function DeleteReviewModal ({isOpen, onClose, reviewId, spotId}) {
 
     const reviews = useSelector(state => Object.values(state.review.reviews))
     const [hasDeleted, setHasDeleted] = useState(false)
-    console.log('reviews', reviews)
     const handleDelete = () => {
         if(reviews) {
             return dispatch(deleteReviewFxn(reviewId))

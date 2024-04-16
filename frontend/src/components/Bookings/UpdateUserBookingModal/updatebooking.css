@@ -1,0 +1,101 @@
+/* Overlay for the modal, covering the entire viewport */
+.update-booking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensures it's on top of other content */
+  }
+
+  /* Modal content box styling */
+  .update-booking-modal form {
+    background-color: #ffffff;
+    padding: 20px;
+
+    width: 90%;
+    max-width: 500px; /* Adjust width as necessary */
+  }
+
+  .update-booking-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 500px;
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
+  /* Styling for modal titles */
+  .update-booking-title {
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* Form labels */
+  .update-booking-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  /* Input fields */
+  input[type='date'] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  /* Error messages */
+  .error-message {
+    color: #d32f2f;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  /* Buttons */
+  .update-booking-button, .update-close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    /* margin-top: 10px; */
+  }
+
+  .update-booking-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    margin-top: 0px;
+  }
+
+  .update-close-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    margin-left: 10px;
+    max-height: 50px;
+  }
+
+  .update-booking-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+  }
+  /* Button hover effects */
+  .update-booking-button:hover {
+    background-color: #45a049;
+  }
+
+  .close-button:hover {
+    background-color: #d32f2f;
+  }

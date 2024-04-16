@@ -85,7 +85,6 @@ function UpdateSpotPage() {
       // setImage5("")
       setHasSubmitted(true)
       setErrors([])
-      console.log('this is spot', spot.id)
       history.push(`/spots/${spot.id}`)
       // history.go(0)
       return

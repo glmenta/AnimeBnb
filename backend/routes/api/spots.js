@@ -207,7 +207,6 @@ router.get('/', async (req,res) => {
                 const lng = parseFloat(spot.lng)
                 const price = parseFloat(spot.price)
                 const avgRating = parseFloat(spot.avgRating)
-                console.log('avgRating from get all spots', avgRating)
                 return {
                     id: spot.id,
                     ownerId: spot.ownerId,
@@ -310,7 +309,7 @@ router.get('/:spotId', async (req,res) => {
             "statusCode": 404
         })
     }
-    console.log('this is spot details',checkIfExists.toString())
+
     let spot = await Spot.scope(['defaultScope','spotDetails']).findOne({
         where: { id },
         group: ['Spot.id', 'SpotImages.id', 'SpotImages.url', 'SpotImages.preview', 'Owner.id', 'Owner.firstName', 'Owner.lastName']

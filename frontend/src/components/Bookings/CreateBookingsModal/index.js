@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as bookingActions from '../../../store/bookings';
+import './createbooking.css';
 
-function CreateBookingsModal({ spotId }) {
+function CreateBookingsModal({ spotId, isOpen, onClose }) {
     const dispatch = useDispatch();
     const history = useHistory();
     const user = useSelector((state) => state.session.user);
@@ -46,31 +47,43 @@ function CreateBookingsModal({ spotId }) {
     }
 
     return (
-        <div className="create-booking-modal">
-            <h3>Create Booking</h3>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="startDate">Start Date</label>
-                    <input
-                        type="date"
-                        id="startDate"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                    />
-                    {errors.startDate && <p className="error-message">{errors.startDate}</p>}
+        isOpen &&
+        <div className="create-booking-modal" >
+            <div className="create-booking-modal-container">
+                <div className="create-booking-modal-content">
+                <h3 className="create-booking-title">Create Booking</h3>
+                    <form className="create-booking-form" onSubmit={handleSubmit}>
+                        <div className="form-container">
+                            <div className="form-group">
+                                <label htmlFor="startDate">Start Date</label>
+                                <input
+                                    type="date"
+                                    id="startDate"
+                                    value={startDate}
+                                    className='start-date-input'
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                                {errors.startDate && <p className="error-message">{errors.startDate}</p>}
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="endDate">End Date</label>
+                                <input
+                                    type="date"
+                                    id="endDate"
+                                    className='end-date-input'
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                                {errors.endDate && <p className="error-message">{errors.endDate}</p>}
+                            </div>
+                        </div>
+                        <div className='button-container'>
+                            <button type="submit" className="submit-button">Create Booking</button>
+                            <button type="button" className="cancel-button" onClick={onClose}>Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="endDate">End Date</label>
-                    <input
-                        type="date"
-                        id="endDate"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                    />
-                    {errors.endDate && <p className="error-message">{errors.endDate}</p>}
-                </div>
-                <button type="submit" className="submit-button">Create Booking</button>
-            </form>
+            </div>
         </div>
     );
 }

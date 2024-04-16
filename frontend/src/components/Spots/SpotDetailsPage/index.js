@@ -16,7 +16,6 @@ function SpotDetailPage () {
     const spotDetail = useSelector(state => state.spot.spotDetails)
     const user = useSelector(state => state.session.user);
     const userBookings = useSelector(state => state.booking.currentUserBookings.Bookings);
-    console.log('userBookings: ', userBookings);
     const dispatch = useDispatch();
     const [reviews, setReviews] = useState([])
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -76,7 +75,6 @@ function SpotDetailPage () {
 
     // Function to check if the user already has a booking for the spot
     const hasBookingForSpot = () => {
-        console.log('userBookings: ', userBookings);
         return Array.isArray(userBookings) && userBookings.some(booking => booking.spotId === parseInt(spotId, 10));
     }
     //This is for the reserve button
@@ -255,7 +253,7 @@ function SpotDetailPage () {
         </div>
         <div>
             {user && user?.id !== spotDetail?.ownerId && showCreateBookingModal && (
-                <CreateBookingsModal spotId={spotId}/>
+                <CreateBookingsModal spotId={spotId} isOpen={showCreateBookingModal} onClose={() => setShowCreateBookingModal(false)}/>
             )}
         </div>
     </div>
