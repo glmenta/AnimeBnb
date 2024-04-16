@@ -431,35 +431,57 @@ router.get('/:spotId/reviews', async(req,res) => {
 })
 
 //create review for spot based on spot id
-router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async(req,res) => {
-    const userId = req.user.id
-    const spotId = req.params.spotId
-    const spot = await Spot.findByPk(spotId)
-    const { review, stars } = req.body
-    const existingReview = await Review.findOne({ where: { userId, spotId }})
+router.post('/:spotId/reviews', restoreUser, requireAuth, validateReview, async (req, res) => {
+    const userId = req.user.id;
+    const spotId = req.params.spotId;
+    const spot = await Spot.findByPk(spotId);
+    const { review, stars } = req.body;
+
+    const existingReview = await Review.findOne({ where: { userId, spotId } });
     if (existingReview) {
         return res.status(403).json({
             "message": "User already has a review for this spot",
             "statusCode": 403
-          })
+        });
     }
-    if (spot) {
-        const newReview = await Review.create({
-            userId,
-            spotId: parseInt(spotId),
-            review,
-            stars
-        })
-        if (newReview) {
-            return res.status(201).json(newReview)
-        }
-    } else {
+
+    if (!spot) {
         return res.status(404).json({
             "message": "Spot couldn't be found",
             "statusCode": 404
-          })
+        });
     }
-})
+
+    const newReview = await Review.create({
+        userId,
+        spotId: parseInt(spotId),
+        review,
+        stars
+    });
+
+    // Recalculate the average rating
+    const reviews = await Review.findAll({
+        where: { spotId: spot.id },
+        attributes: ['stars']
+    });
+
+    const sumOfStars = reviews.reduce((acc, review) => acc + review.stars, 0);
+    const avgRating = sumOfStars / reviews.length;
+
+    // Update the spot's average rating
+    spot.avgRating = avgRating;
+    await spot.save();
+
+    if (newReview) {
+        return res.status(201).json(newReview);
+    } else {
+        return res.status(500).json({
+            "message": "Failed to create review",
+            "statusCode": 500
+        });
+    }
+});
+
 
 
 
