@@ -23,7 +23,7 @@ function UserBookingsPage() {
         if (user) {
             dispatch(bookingActions.getUserBookingsThunk(user.id));
         }
-    }, [dispatch, user, userBookings.length]);
+    }, [dispatch, user]);
 
     const handleBookingClick = async (booking) => {
         try {
@@ -59,6 +59,12 @@ function UserBookingsPage() {
             .catch(error => console.error('Failed to refresh bookings:', error));
     };
 
+    const refreshBookings = () => {
+        if (user) {
+            dispatch(bookingActions.getUserBookingsThunk(user.id))
+                .catch(error => console.error('Failed to refresh bookings:', error));
+        }
+    };
 
     const handleDeleteBooking = async (bookingId, bookingStartDate, bookingEndDate) => {
         try {
@@ -130,7 +136,7 @@ function UserBookingsPage() {
                     {deleteErrorMessage && <p>{deleteErrorMessage}</p>}
                     {showDetailModal && <BookingDetailModal selectedBooking={selectedBooking} isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} />}
                     {showUpdateModal && <UpdateBookingModal selectedBooking={selectedBooking} isOpen={showUpdateModal} onClose={() => handleCloseUpdateModal()} />}
-                    {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal booking={selectedBooking} isOpen={showDeleteModal} onClose={() => handleCloseDeleteModal()} />}
+                    {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal refreshBookings={refreshBookings} booking={selectedBooking} isOpen={showDeleteModal} onClose={() => handleCloseDeleteModal()} />}
                 </div>
             </div>
         </div>
