@@ -11,6 +11,7 @@ function CreateBookingsModal({ spotId, isOpen, onClose }) {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [errors, setErrors] = useState({});
+    const currentDate = new Date();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,11 +21,17 @@ function CreateBookingsModal({ spotId, isOpen, onClose }) {
         // Validate start date
         if (!startDate) {
             validationErrors.startDate = 'Start date is required';
+        } else if (new Date(startDate) < currentDate) {
+            validationErrors.startDate = 'Start date must be in the future';
         }
 
         // Validate end date
         if (!endDate) {
             validationErrors.endDate = 'End date is required';
+        } else if (new Date(endDate) < currentDate) {
+            validationErrors.endDate = 'End date must be in the future';
+        } else if (new Date(startDate) > new Date(endDate)) {
+            validationErrors.endDate = 'End date must be after start date';
         }
 
         setErrors(validationErrors);
