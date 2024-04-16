@@ -130,7 +130,7 @@ function UserBookingsPage() {
                     {deleteErrorMessage && <p>{deleteErrorMessage}</p>}
                     {showDetailModal && <BookingDetailModal selectedBooking={selectedBooking} isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} />}
                     {showUpdateModal && <UpdateBookingModal selectedBooking={selectedBooking} isOpen={showUpdateModal} onClose={() => handleCloseUpdateModal()} />}
-                    {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal booking={selectedBooking} isOpen={showDeleteModal} onClose={() => handleCloseDeleteModal()} />}
+                    {deleteErrorMessage.length === 0 && showDeleteModal && <DeleteBookingModal userId={user.id} booking={selectedBooking} isOpen={showDeleteModal} onClose={() => handleCloseDeleteModal()} />}
                 </div>
             </div>
         </div>
